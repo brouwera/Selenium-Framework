@@ -37,6 +37,7 @@ Readable, beginner‑friendly, and recruiter‑friendly
 
 📂 Project Structure
 Code
+```
 selenium-framework/
 │
 ├── src/
@@ -55,6 +56,7 @@ selenium-framework/
 │
 ├── pom.xml
 └── README.md
+```
 🧪 Test Coverage
 Positive Tests
 Valid login with correct username and password
