@@ -1,42 +1,39 @@
-📘 Selenium Automation Framework (Java + TestNG + POM)
-A clean, modular Selenium automation framework built in Java, using TestNG and the Page Object Model (POM) design pattern.
-This project includes a complete suite of positive, negative, and UI behavior tests for a sample login application.
+# 📘 **Selenium Automation Framework (Java + TestNG + POM)**
 
-This framework is part of a structured 60‑day QA Automation Upskilling Plan, with Day 4 representing the completion of the initial POM structure and login test suite.
+A clean, modular Selenium automation framework built in **Java**, using **TestNG** and the **Page Object Model (POM)** design pattern.  
+This project includes a complete suite of **positive**, **negative**, and **UI behavior** tests for a sample login application.
 
-🚀 Features
-✔ Page Object Model (POM)
-Clean separation of test logic and UI interactions
+This framework is part of a structured **60‑day QA Automation Upskilling Plan**, with Day 4 representing the completion of the initial POM structure and login test suite.
 
-Reusable, maintainable page classes
+---
 
-Easy to scale as the project grows
+## 🚀 **Features**
 
-✔ TestNG Integration
-Organized test structure
+### ✔ Page Object Model (POM)
+- Clean separation of test logic and UI interactions
+- Reusable, maintainable page classes
+- Easy to scale as the project grows
 
-Assertions for functional and UI validation
+### ✔ TestNG Integration
+- Organized test structure
+- Assertions for functional and UI validation
+- Supports grouping, parallel execution, and reporting
 
-Supports grouping, parallel execution, and reporting
-
-✔ Login Test Suite
+### ✔ Login Test Suite
 Includes:
+- **Positive tests** (valid login)
+- **Negative tests** (invalid username, invalid password, empty fields)
+- **UI behavior tests** (error message visibility, password masking)
 
-Positive tests (valid login)
+### ✔ Professional Code Structure
+- Clear comments explaining test intent
+- Logical grouping of tests
+- Readable, beginner‑friendly, and recruiter‑friendly
 
-Negative tests (invalid username, invalid password, empty fields)
+---
 
-UI behavior tests (error message visibility, password masking)
+## 📂 **Project Structure**
 
-✔ Professional Code Structure
-Clear comments explaining test intent
-
-Logical grouping of tests
-
-Readable, beginner‑friendly, and recruiter‑friendly
-
-📂 Project Structure
-Code
 ```
 selenium-framework/
 │
@@ -57,52 +54,59 @@ selenium-framework/
 ├── pom.xml
 └── README.md
 ```
-🧪 Test Coverage
-Positive Tests
-Valid login with correct username and password
 
-Password field masking behavior
+---
 
-Negative Tests
-Invalid username
+## 🧪 **Test Coverage**
 
-Invalid password
+### **Positive Tests**
+- Valid login with correct username and password
+- Password field masking behavior
 
-Empty username and password fields
+### **Negative Tests**
+- Invalid username
+- Invalid password
+- Empty username and password fields
 
-UI Behavior Tests
-Error message appears when clicking Login with empty fields
+### **UI Behavior Tests**
+- Error message appears when clicking Login with empty fields
 
-🛠 Technologies Used
-Tool / Library	Purpose
-Java 17	Programming language
-Selenium WebDriver 4.18	Browser automation
-TestNG 7.10	Test framework
-Maven	Dependency management
-ChromeDriver	Browser driver
-📌 Current Status (End of Day 4)
-Framework structure complete
+---
 
-POM implemented
+## 🛠 **Technologies Used**
 
-Login tests written and organized
+| Tool / Library | Purpose |
+|----------------|---------|
+| **Java 17** | Programming language |
+| **Selenium WebDriver 4.18** | Browser automation |
+| **TestNG 7.10** | Test framework |
+| **Maven** | Dependency management |
+| **ChromeDriver** | Browser driver |
 
-Tests run successfully, with expected timing‑related failures
+---
 
-Explicit waits will be added in Day 5 to stabilize negative tests
+## 📌 **Current Status (End of Day 4)**
 
-🔜 Next Steps (Day 5)
-Add WaitUtils.java
+- Framework structure complete
+- POM implemented
+- Login tests written and organized
+- Tests run successfully, with expected timing‑related failures
+- Explicit waits will be added in **Day 5** to stabilize negative tests
 
-Implement WebDriverWait and ExpectedConditions
+---
 
-Update page classes to use explicit waits
+## 🔜 **Next Steps (Day 5)**
 
-Re‑run tests for full stability
+- Add `WaitUtils.java`
+- Implement WebDriverWait and ExpectedConditions
+- Update page classes to use explicit waits
+- Re‑run tests for full stability
+- Push second commit
 
-Push second commit
+---
 
-👤 Author
-Adam Brouwer  
-QA Analyst / SDET in training
+## 👤 **Author**
+
+**Adam Brouwer**  
+QA Analyst / SDET in training  
 Building a full automation framework as part of a structured 60‑day upskilling plan.
