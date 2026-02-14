@@ -2,57 +2,64 @@ package pages;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class LoginPage {
 
     private WebDriver driver;
+    private WebDriverWait wait;
 
-    // Constructor
-    public LoginPage(WebDriver driver) {
+    public LoginPage(WebDriver driver, WebDriverWait wait) {
         this.driver = driver;
+        this.wait = wait;
     }
 
-    // ============================
     // Locators
-    // ============================
     private By usernameField = By.id("username");
     private By passwordField = By.id("password");
     private By loginButton = By.id("submit");
     private By errorMessage = By.id("error");
 
-    // ============================
-    // Actions
-    // ============================
-
-    // Enters text into the username field
+    // Enter username
     public void enterUsername(String username) {
-        driver.findElement(usernameField).sendKeys(username);
+        WebElement user = wait.until( ExpectedConditions.visibilityOfElementLocated(usernameField) );
+        user.sendKeys(username);
     }
 
-    // Enters text into the password field
+    // Enter password
     public void enterPassword(String password) {
-        driver.findElement(passwordField).sendKeys(password);
+        WebElement pass = wait.until( ExpectedConditions.visibilityOfElementLocated(passwordField) );
+        pass.sendKeys(password);
     }
 
-    // Clicks the Login button
-    public void clickLogin() {
-        driver.findElement(loginButton).click();
+    // Click login button
+    public void clickLoginButton() {
+        WebElement button = wait.until( ExpectedConditions.elementToBeClickable(loginButton) );
+        button.click();
     }
 
-    // Performs a full login action using username + password
+    // Combined login action
     public void login(String username, String password) {
         enterUsername(username);
         enterPassword(password);
-        clickLogin();
+        clickLoginButton();
     }
 
-    // Retrieves the error message text displayed on the page
+    // Get error message text
     public String getErrorMessage() {
-        return driver.findElement(errorMessage).getText();
+        WebElement error = wait.until( ExpectedConditions.visibilityOfElementLocated(errorMessage) );
+        return error.getText();
     }
 
-    // Retrieves the input type of the password field (used to verify masking)
+    // Get the type attribute of the password field
     public String getPasswordFieldType() {
-        return driver.findElement(passwordField).getAttribute("type");
+        WebElement pass = wait.until( ExpectedConditions.visibilityOfElementLocated(passwordField) );
+        return pass.getAttribute("type");
+    }
+
+    // Click login without entering anything
+    public void clickLogin() { clickLoginButton();
     }
 }

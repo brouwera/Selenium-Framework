@@ -1,112 +1,152 @@
-# 📘 **Selenium Automation Framework (Java + TestNG + POM)**
+# Selenium Framework – Practice Test Automation (Login Tests)
 
-A clean, modular Selenium automation framework built in **Java**, using **TestNG** and the **Page Object Model (POM)** design pattern.  
-This project includes a complete suite of **positive**, **negative**, and **UI behavior** tests for a sample login application.
-
-This framework is part of a structured **60‑day QA Automation Upskilling Plan**, with Day 4 representing the completion of the initial POM structure and login test suite.
+A clean, modular, and scalable Selenium + TestNG automation framework built as part of a structured 60‑day QA Automation Upskill Plan.  
+This project demonstrates professional Page Object Model (POM) design, explicit waits, stable test execution, and clean test organization.
 
 ---
 
-## 🚀 **Features**
+## 🚀 Project Overview
+
+This framework automates the login functionality of:
+
+**https://practicetestautomation.com/practice-test-login/**
+
+It includes:
+
+- A reusable **BaseTest** class for WebDriver lifecycle management
+- A **LoginPage** and **HomePage** built using the Page Object Model
+- Full use of **explicit waits** for stability
+- A suite of **positive, negative, and UI behavior tests**
+- Clean, readable, and maintainable code suitable for real‑world SDET work
+
+All tests currently pass with **zero failures**.
+
+---
+
+## 🧱 Project Structure
+
+```
+src
+└── test
+├── java
+│    ├── base
+│    │     └── BaseTest.java
+│    ├── pages
+│    │     ├── LoginPage.java
+│    │     └── HomePage.java
+│    └── tests
+│          └── LoginTest.java
+└── resources
+```
+
+---
+
+## 🧩 Key Features
 
 ### ✔ Page Object Model (POM)
-- Clean separation of test logic and UI interactions
-- Reusable, maintainable page classes
-- Easy to scale as the project grows
+Each page encapsulates:
 
-### ✔ TestNG Integration
-- Organized test structure
-- Assertions for functional and UI validation
-- Supports grouping, parallel execution, and reporting
+- Locators
+- Actions
+- Explicit waits
+- Page‑specific behavior
 
-### ✔ Login Test Suite
-Includes:
-- **Positive tests** (valid login)
-- **Negative tests** (invalid username, invalid password, empty fields)
-- **UI behavior tests** (error message visibility, password masking)
-
-### ✔ Professional Code Structure
-- Clear comments explaining test intent
-- Logical grouping of tests
-- Readable, beginner‑friendly, and recruiter‑friendly
+This keeps tests clean and readable.
 
 ---
 
-## 📂 **Project Structure**
+### ✔ Explicit Waits Everywhere They Matter
 
-```
-selenium-framework/
-│
-├── src/
-│   ├── main/
-│   │   └── java/
-│   │       └── pages/
-│   │           ├── LoginPage.java
-│   │           └── HomePage.java
-│   │
-│   └── test/
-│       └── java/
-│           ├── base/
-│           │   └── BaseTest.java
-│           └── tests/
-│               └── LoginTest.java
-│
-├── pom.xml
-└── README.md
-```
+All element interactions use:
 
----
+```java
+wait.until(ExpectedConditions.visibilityOfElementLocated(...));
+wait.until(ExpectedConditions.elementToBeClickable(...));
+This eliminates flakiness and ensures stable execution.
 
-## 🧪 **Test Coverage**
+✔ Clean Test Lifecycle
+BaseTest handles:
 
-### **Positive Tests**
-- Valid login with correct username and password
-- Password field masking behavior
+WebDriver setup
 
-### **Negative Tests**
-- Invalid username
-- Invalid password
-- Empty username and password fields
+Window management
 
-### **UI Behavior Tests**
-- Error message appears when clicking Login with empty fields
+WebDriverWait initialization
 
----
+Navigation
 
-## 🛠 **Technologies Used**
+Cleanup
 
-| Tool / Library | Purpose |
-|----------------|---------|
-| **Java 17** | Programming language |
-| **Selenium WebDriver 4.18** | Browser automation |
-| **TestNG 7.10** | Test framework |
-| **Maven** | Dependency management |
-| **ChromeDriver** | Browser driver |
+Every test inherits this behavior.
 
----
+✔ Full Test Coverage for Login Page
+Positive Test
+Valid login with correct credentials
 
-## 📌 **Current Status (End of Day 4)**
+Negative Tests
+Invalid username
 
-- Framework structure complete
-- POM implemented
-- Login tests written and organized
-- Tests run successfully, with expected timing‑related failures
-- Explicit waits will be added in **Day 5** to stabilize negative tests
+Invalid password
 
----
+Empty fields
 
-## 🔜 **Next Steps (Day 5)**
+Error message validation
 
-- Add `WaitUtils.java`
-- Implement WebDriverWait and ExpectedConditions
-- Update page classes to use explicit waits
-- Re‑run tests for full stability
-- Push second commit
+UI Behavior Test
+Password masking
 
----
+Error message visibility when clicking Login with empty fields
 
-## 👤 **Author**
+🧪 Running the Tests
+From IntelliJ:
 
-**Adam Brouwer**  
-QA Analyst / SDET in training  
+Right‑click the tests package
+
+Select Run 'LoginTest'
+
+Or via Maven (if configured):
+
+Code
+mvn test
+All 6 tests should pass.
+
+📸 Sample Output
+Code
+===============================================
+Default Suite
+Total tests run: 6, Passes: 6, Failures: 0, Skips: 0
+===============================================
+🔧 Tools & Technologies
+Java 17
+
+Selenium 4
+
+TestNG
+
+ChromeDriver
+
+Page Object Model (POM)
+
+Explicit Waits (WebDriverWait + ExpectedConditions)
+
+📚 Next Steps (Day 6 and Beyond)
+Add a BasePage class for shared utilities
+
+Introduce WaitUtils for reusable wait logic
+
+Add logging
+
+Add reporting (Allure or Extent)
+
+Expand test coverage to additional pages
+
+Add cross‑browser support
+
+🏁 Status
+This framework is fully functional, stable, and ready for expansion.
+All tests pass consistently using explicit waits and clean POM design.
+
+👤 Author
+Adam Brouwer  
+QA Analyst / SDET in training
 Building a full automation framework as part of a structured 60‑day upskilling plan.

@@ -17,17 +17,18 @@ public class LoginTest extends BaseTest {
     // Validates that login is successful when entering correct username and password
     @Test
     public void validLoginTest() {
-        LoginPage login = new LoginPage(driver);
+        LoginPage login = new LoginPage(driver, wait);
         login.login("student", "Password123");
-        HomePage home = new HomePage(driver);
 
+        HomePage home = new HomePage(driver, wait);
         assertTrue(home.isSuccessMessageDisplayed());
         assertTrue(home.isLogoutButtonDisplayed());
     }
 
     // Validates that password is masked when entered into the password field
-    @Test public void passwordFieldShouldMaskInputTest() {
-        LoginPage login = new LoginPage(driver);
+    @Test
+    public void passwordFieldShouldMaskInputTest() {
+        LoginPage login = new LoginPage(driver, wait);
         login.enterPassword("Password123");
 
         assertEquals(login.getPasswordFieldType(), "password");
@@ -40,16 +41,15 @@ public class LoginTest extends BaseTest {
     // Validates that username error displays when incorrect username is entered
     @Test
     public void invalidUsernameTest() {
-        LoginPage login = new LoginPage(driver);
+        LoginPage login = new LoginPage(driver, wait);
         login.login("WrongUsername", "Password123");
 
         assertEquals(login.getErrorMessage(), "Your username is invalid!");
     }
 
     // Validates that password error displays when incorrect password is entered
-    @Test
-    public void invalidPasswordTest() {
-        LoginPage login = new LoginPage(driver);
+    @Test public void invalidPasswordTest() {
+        LoginPage login = new LoginPage(driver, wait);
         login.login("student", "WrongPassword");
 
         assertEquals(login.getErrorMessage(), "Your password is invalid!");
@@ -58,7 +58,7 @@ public class LoginTest extends BaseTest {
     // Validates that username error displays when username and password fields are blank
     @Test
     public void emptyFieldsTest() {
-        LoginPage login = new LoginPage(driver);
+        LoginPage login = new LoginPage(driver, wait);
         login.login("", "");
 
         assertEquals(login.getErrorMessage(), "Your username is invalid!");
@@ -71,7 +71,7 @@ public class LoginTest extends BaseTest {
     // Validates that username error displays in UI when clicking Login with empty fields
     @Test
     public void errorMessageAppearsWhenFieldsAreEmptyTest() {
-        LoginPage login = new LoginPage(driver);
+        LoginPage login = new LoginPage(driver, wait);
         login.clickLogin();
 
         assertEquals(login.getErrorMessage(), "Your username is invalid!");
