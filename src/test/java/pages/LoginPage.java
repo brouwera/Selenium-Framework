@@ -8,33 +8,29 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class LoginPage {
 
-    private WebDriver driver;
-    private WebDriverWait wait;
+    private final WebDriver driver;
+    private final WebDriverWait wait;
+
+    // Locators private final
+    By usernameField = By.id("username");
+    private final By passwordField = By.id("password");
+    private final By loginButton = By.id("submit");
+    private final By errorMessage = By.id("error");
 
     public LoginPage(WebDriver driver, WebDriverWait wait) {
-        this.driver = driver;
-        this.wait = wait;
+        this.driver = driver; this.wait = wait;
     }
 
-    // Locators
-    private By usernameField = By.id("username");
-    private By passwordField = By.id("password");
-    private By loginButton = By.id("submit");
-    private By errorMessage = By.id("error");
-
-    // Enter username
     public void enterUsername(String username) {
         WebElement user = wait.until( ExpectedConditions.visibilityOfElementLocated(usernameField) );
         user.sendKeys(username);
     }
 
-    // Enter password
     public void enterPassword(String password) {
         WebElement pass = wait.until( ExpectedConditions.visibilityOfElementLocated(passwordField) );
         pass.sendKeys(password);
     }
 
-    // Click login button
     public void clickLoginButton() {
         WebElement button = wait.until( ExpectedConditions.elementToBeClickable(loginButton) );
         button.click();
@@ -47,19 +43,13 @@ public class LoginPage {
         clickLoginButton();
     }
 
-    // Get error message text
     public String getErrorMessage() {
         WebElement error = wait.until( ExpectedConditions.visibilityOfElementLocated(errorMessage) );
         return error.getText();
     }
 
-    // Get the type attribute of the password field
     public String getPasswordFieldType() {
         WebElement pass = wait.until( ExpectedConditions.visibilityOfElementLocated(passwordField) );
         return pass.getAttribute("type");
-    }
-
-    // Click login without entering anything
-    public void clickLogin() { clickLoginButton();
     }
 }

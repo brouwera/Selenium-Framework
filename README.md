@@ -24,7 +24,6 @@ All tests currently pass with **zero failures**.
 ---
 
 ## 🧱 Project Structure
-
 ```
 src
 └── test
@@ -38,7 +37,6 @@ src
 │          └── LoginTest.java
 └── resources
 ```
-
 ---
 
 ## 🧩 Key Features
@@ -59,12 +57,14 @@ This keeps tests clean and readable.
 
 All element interactions use:
 
-```java
+```
 wait.until(ExpectedConditions.visibilityOfElementLocated(...));
 wait.until(ExpectedConditions.elementToBeClickable(...));
 This eliminates flakiness and ensures stable execution.
-
+```
+---
 ✔ Clean Test Lifecycle
+---
 BaseTest handles:
 
 WebDriver setup
@@ -80,10 +80,14 @@ Cleanup
 Every test inherits this behavior.
 
 ✔ Full Test Coverage for Login Page
+---
+
 Positive Test
+---
 Valid login with correct credentials
 
 Negative Tests
+---
 Invalid username
 
 Invalid password
@@ -93,29 +97,30 @@ Empty fields
 Error message validation
 
 UI Behavior Test
+---
 Password masking
 
 Error message visibility when clicking Login with empty fields
 
-🧪 Running the Tests
-From IntelliJ:
-
+🧪 Running the Tests From IntelliJ:
+---
 Right‑click the tests package
 
 Select Run 'LoginTest'
 
-Or via Maven (if configured):
+Or via Maven:
 
-Code
 mvn test
-All 6 tests should pass.
+All tests should pass.
 
 📸 Sample Output
-Code
+---
+```
 ===============================================
 Default Suite
 Total tests run: 6, Passes: 6, Failures: 0, Skips: 0
 ===============================================
+```
 🔧 Tools & Technologies
 Java 17
 
@@ -129,7 +134,8 @@ Page Object Model (POM)
 
 Explicit Waits (WebDriverWait + ExpectedConditions)
 
-📚 Next Steps (Day 6 and Beyond)
+📚 Next Steps (Future Enhancements)
+---
 Add a BasePage class for shared utilities
 
 Introduce WaitUtils for reusable wait logic
@@ -142,9 +148,162 @@ Expand test coverage to additional pages
 
 Add cross‑browser support
 
-🏁 Status
-This framework is fully functional, stable, and ready for expansion.
-All tests pass consistently using explicit waits and clean POM design.
+---
+
+📅 Day 3 — First Working Selenium + TestNG Login Automation
+---
+Overview
+---
+Day 3 marked the first major functional milestone:
+I successfully built and executed working Selenium + TestNG login tests using direct WebDriver interactions.
+
+This established the foundation for the framework.
+
+🏗️ What I Built
+---
+Created the initial BaseTest class
+
+Wrote the first LoginTest using raw Selenium commands
+
+Validated:
+
+Browser launches correctly
+
+Elements can be located
+
+Login workflow executes end‑to‑end
+
+Assertions work as expected
+
+🧪 Test Coverage Achieved
+---
+Successful login with valid credentials
+
+Error message validation for invalid username/password
+
+This proved the environment, dependencies, and WebDriver setup were all functioning correctly.
+
+---
+
+📅 Day 5 — Explicit Waits + Stability Improvements
+---
+Overview
+---
+Day 5 focused on stability and reliability.
+I replaced all direct element interactions with explicit waits, eliminating timing issues and improving test consistency.
+
+🏗️ What I Improved
+---
+Added WebDriverWait to BaseTest
+
+Replaced all findElement() calls with:
+```
+wait.until(ExpectedConditions.visibilityOfElementLocated(...));
+```
+Ensured elements are:
+
+Visible before interacting
+
+Clickable before clicking
+
+Present before retrieving text
+
+📈 Why This Matters
+---
+Explicit waits dramatically reduce flakiness and are a core best practice in real automation frameworks.
+This upgrade made the tests stable, repeatable, and production‑ready.
+
+---
+
+📅 Day 7 — Page Object Model (POM) Implementation
+---
+Overview
+---
+Day 7 introduced the Page Object Model (POM), transforming the framework from simple scripts into a scalable, maintainable automation architecture.
+
+🏗️ What I Built
+---
+Added Page Object Classes
+
+Created a new pages package and added:
+
+LoginPage.java
+
+HomePage.java
+
+Each Page Object now contains:
+
+Private, stable locators
+
+Explicit waits for all interactions
+
+Clean, action‑based methods
+
+No assertions or test logic
+
+Updated BaseTest for Cleaner Setup
+---
+Disabled implicit waits
+
+Centralized WebDriver and WebDriverWait creation
+
+Ensured consistent navigation before each test
+
+Improved teardown logic
+
+Rewrote Login Tests Using POM
+---
+Tests now:
+---
+Contain no locators
+
+Contain no Selenium logic
+
+Read like user workflows
+
+Focus only on assertions
+
+This is a major step toward a professional SDET‑level framework.
+
+🧪 Test Coverage Achieved Today
+---
+Positive Tests
+---
+
+Valid login
+
+Password masking
+
+Negative Tests
+---
+
+Invalid username
+
+Invalid password
+
+Empty fields
+
+UI Behavior Tests
+---
+
+Error message appears when clicking Login with empty fields
+
+📈 Why This Matters
+---
+Implementing POM provides:
+---
+
+Cleaner test code
+
+Centralized UI logic
+
+Easier maintenance when UI changes
+
+Reusable page actions
+
+Better scalability for future test suites
+
+This is the point where the framework starts looking like something used on an actual QA automation team.
 
 👤 Author
 Adam Brouwer  
