@@ -3,7 +3,7 @@ package tests;
 import base.BaseTest;
 import org.testng.annotations.Test;
 import pages.LoginPage;
-import pages.HomePage;
+import pages.SuccessfulLoginPage;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
@@ -16,7 +16,7 @@ public class LoginTest extends BaseTest {
     public void validLoginTest() {
         LoginPage login = new LoginPage(driver, wait);
         login.login("student", "Password123");
-        HomePage home = new HomePage(driver, wait);
+        SuccessfulLoginPage home = new SuccessfulLoginPage(driver, wait);
 
         assertTrue(home.isSuccessMessageDisplayed(), "Success message should be visible");
         assertTrue(home.isLogoutButtonDisplayed(), "Logout button should be visible");

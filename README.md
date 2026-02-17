@@ -122,6 +122,7 @@ Total tests run: 6, Passes: 6, Failures: 0, Skips: 0
 ===============================================
 ```
 🔧 Tools & Technologies
+
 Java 17
 
 Selenium 4
@@ -304,6 +305,12 @@ Reusable page actions
 Better scalability for future test suites
 
 This is the point where the framework starts looking like something used on an actual QA automation team.
+
+### Day 8 – Multi‑Page Navigation & Full Login Workflow Test
+- Added HomePage, LoginPage, and SuccessfulLoginPage with full POM structure
+- Implemented a complete navigation flow test using TestNG
+- Added professional comments across all Page Objects and BaseTest
+- Improved readability, maintainability, and clarity of the framework
 
 👤 Author
 Adam Brouwer  
