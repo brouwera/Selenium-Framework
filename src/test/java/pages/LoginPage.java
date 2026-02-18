@@ -1,5 +1,6 @@
 package pages;
 
+import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -11,55 +12,78 @@ public class LoginPage {
     private final WebDriver driver;
     private final WebDriverWait wait;
 
-    // Input fields and actions for the Practice Test Automation login page
-    By usernameField = By.id("username");
+    // Locators
+    private final By usernameField = By.id("username");
     private final By passwordField = By.id("password");
     private final By loginButton = By.id("submit");
     private final By errorMessage = By.id("error");
 
-    // Constructor initializes driver and wait for this page object
     public LoginPage(WebDriver driver, WebDriverWait wait) {
-        this.driver = driver; this.wait = wait;
+        this.driver = driver;
+        this.wait = wait;
     }
 
-    // Enters the provided username into the username input field
+    // Navigate to login page
+    @Step("Navigate to Login Page")
+    public LoginPage open(String baseUrl) {
+        driver.get(baseUrl + "/practice-test-login/");
+        return this;
+    }
+
+    @Step("Enter username: {username}")
     public void enterUsername(String username) {
         WebElement user = wait.until(
-                ExpectedConditions.visibilityOfElementLocated(usernameField) );
+                ExpectedConditions.visibilityOfElementLocated(usernameField));
         user.sendKeys(username);
     }
 
-    // Enters the provided password into the password input field
+    @Step("Enter password")
     public void enterPassword(String password) {
         WebElement pass = wait.until(
-                ExpectedConditions.visibilityOfElementLocated(passwordField) );
+                ExpectedConditions.visibilityOfElementLocated(passwordField));
         pass.sendKeys(password);
     }
 
-    // Clicks the login button and returns the next page object upon successful login
+    @Step("Click Login button")
     public SuccessfulLoginPage clickLoginButton() {
         wait.until(ExpectedConditions.elementToBeClickable(loginButton)).click();
         return new SuccessfulLoginPage(driver, wait);
     }
 
-    // Performs a full login action using the provided credentials
+    @Step("Login with username: {username} and password")
     public SuccessfulLoginPage login(String username, String password) {
         enterUsername(username);
         enterPassword(password);
         return clickLoginButton();
     }
 
-    // Retrieves the error message text displayed after an invalid login attempt
+    @Step("Click Login button without entering credentials")
+    public void clickLoginOnly() {
+        wait.until(ExpectedConditions.elementToBeClickable(loginButton)).click();
+    }
+
+    @Step("Get error message text")
     public String getErrorMessage() {
         WebElement error = wait.until(
-                ExpectedConditions.visibilityOfElementLocated(errorMessage) );
+                ExpectedConditions.visibilityOfElementLocated(errorMessage));
         return error.getText();
     }
 
-    // Returns the HTML 'type' attribute of the password field (e.g., "password")
+    @Step("Check if error message is visible")
+    public boolean isErrorMessageVisible() {
+        try {
+            WebElement error = wait.until(
+                    ExpectedConditions.visibilityOfElementLocated(errorMessage) );
+            return error.isDisplayed();
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    @Step("Get password field type attribute")
     public String getPasswordFieldType() {
         WebElement pass = wait.until(
-                ExpectedConditions.visibilityOfElementLocated(passwordField) );
+                ExpectedConditions.visibilityOfElementLocated(passwordField));
         return pass.getAttribute("type");
     }
 }

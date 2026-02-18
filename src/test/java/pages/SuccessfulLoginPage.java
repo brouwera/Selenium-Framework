@@ -23,13 +23,15 @@ public class SuccessfulLoginPage {
 
     // Confirms that the success message is visible after a valid login
     public boolean isSuccessMessageDisplayed() {
-        WebElement message = wait.until( ExpectedConditions.visibilityOfElementLocated(successMessage) );
+        WebElement message = wait.until(
+                ExpectedConditions.visibilityOfElementLocated(successMessage) );
         return message.isDisplayed();
     }
 
     // Confirms that the logout button is visible on the success page
     public boolean isLogoutButtonDisplayed() {
-        WebElement logout = wait.until( ExpectedConditions.visibilityOfElementLocated(logoutButton) );
+        WebElement logout = wait.until(
+                ExpectedConditions.visibilityOfElementLocated(logoutButton) );
         return logout.isDisplayed();
     }
 
@@ -38,5 +40,15 @@ public class SuccessfulLoginPage {
         WebElement message = wait.until(
                 ExpectedConditions.visibilityOfElementLocated(successMessage) );
         return message.getText();
+    }
+
+    // Returns the current page title
+    public String getPageTitle() {
+        return driver.getTitle();
+    }
+
+    // Returns the current page URL
+    public String getCurrentUrl() {
+        return driver.getCurrentUrl();
     }
 }

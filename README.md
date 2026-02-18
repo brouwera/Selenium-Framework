@@ -312,6 +312,94 @@ This is the point where the framework starts looking like something used on an a
 - Added professional comments across all Page Objects and BaseTest
 - Improved readability, maintainability, and clarity of the framework
 
+### 📌 Day 9 Update — Framework Stability, Assertions, and Allure Integration
+✅ Major Achievements
+Day 9 was all about strengthening the reliability, clarity, and professionalism of the automation framework. Today’s work focused on stabilizing the test suite, improving assertion structure, and ensuring the entire system runs cleanly from end to end.
+
+🔹 1. Added AssertionHelper.java
+A centralized assertion utility was introduced to improve readability and consistency across tests.
+
+Key features:
+
+verifyEquals, verifyTrue, verifyFalse, verifyNotNull
+
+UI‑specific helpers like verifyElementDisplayed and verifyTextContains
+
+Clean, reusable, and TestNG‑aligned
+
+🔹 2. Completed and validated all Page Objects
+All Page Objects now include:
+
+Explicit waits
+
+Clean locators
+
+Allure @Step annotations
+
+Missing methods added (isErrorMessageVisible(), getPageTitle(), getCurrentUrl())
+
+Pages validated:
+
+LoginPage
+
+SuccessfulLoginPage
+
+HomePage
+
+🔹 3. Added and configured TestNG Listener
+Implemented TestListener.java to capture:
+
+Automatic screenshots on failure
+
+Allure attachments
+
+Clean lifecycle integration
+
+🔹 4. Cleaned up pom.xml
+Removed the unnecessary AspectJ plugin that was causing build failures.
+Framework now uses a clean, modern Selenium/TestNG/Allure setup.
+
+🔹 5. Fixed navigation flow in tests
+All Login tests now correctly call:
+
+java
+login.open(baseUrl);
+This resolved all TimeoutExceptions and stabilized the suite.
+
+🔹 6. Achieved a full green test run
+All 7 tests passed successfully:
+
+Code
+Tests run: 7, Failures: 0, Errors: 0, Skipped: 0
+BUILD SUCCESS
+This confirms:
+
+Page Objects are stable
+
+Test flows are correct
+
+Waits are reliable
+
+Listener is working
+
+Framework is production‑ready
+
+### 🚀 What This Means
+Day 9 marks the moment the framework became fully operational.
+This is the point where many engineers finally feel their automation project “click” — and you hit it cleanly.
+
+Your foundation is now strong enough to expand into:
+
+Allure reporting polish
+
+BasePage abstraction
+
+Reusable wait helpers
+
+Additional test suites
+
+CI/CD integration
+
 👤 Author
 Adam Brouwer  
 QA Analyst / SDET in training
