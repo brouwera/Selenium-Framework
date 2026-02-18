@@ -317,6 +317,7 @@ This is the point where the framework starts looking like something used on an a
 Day 9 was all about strengthening the reliability, clarity, and professionalism of the automation framework. Today’s work focused on stabilizing the test suite, improving assertion structure, and ensuring the entire system runs cleanly from end to end.
 
 🔹 1. Added AssertionHelper.java
+
 A centralized assertion utility was introduced to improve readability and consistency across tests.
 
 Key features:
@@ -328,6 +329,7 @@ UI‑specific helpers like verifyElementDisplayed and verifyTextContains
 Clean, reusable, and TestNG‑aligned
 
 🔹 2. Completed and validated all Page Objects
+
 All Page Objects now include:
 
 Explicit waits
@@ -347,6 +349,7 @@ SuccessfulLoginPage
 HomePage
 
 🔹 3. Added and configured TestNG Listener
+
 Implemented TestListener.java to capture:
 
 Automatic screenshots on failure
@@ -356,10 +359,12 @@ Allure attachments
 Clean lifecycle integration
 
 🔹 4. Cleaned up pom.xml
+
 Removed the unnecessary AspectJ plugin that was causing build failures.
 Framework now uses a clean, modern Selenium/TestNG/Allure setup.
 
 🔹 5. Fixed navigation flow in tests
+
 All Login tests now correctly call:
 
 java
@@ -367,6 +372,7 @@ login.open(baseUrl);
 This resolved all TimeoutExceptions and stabilized the suite.
 
 🔹 6. Achieved a full green test run
+
 All 7 tests passed successfully:
 
 Code
@@ -383,6 +389,19 @@ Waits are reliable
 Listener is working
 
 Framework is production‑ready
+
+🔹 7. Cleaned and standardized the repository
+
+   As part of stabilizing the framework, I also cleaned up the project structure:
+
+Added a proper .gitignore to exclude build artifacts, IDE files, and Allure output
+
+Removed previously tracked IntelliJ and Maven-generated files
+
+Ensured only source code, configuration, and documentation remain under version control
+
+This keeps the repository clean, lightweight, and professional for future development and CI/CD integration.
+
 
 ### 🚀 What This Means
 Day 9 marks the moment the framework became fully operational.
