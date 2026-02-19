@@ -73,7 +73,7 @@ public class LoginPage {
     public boolean isErrorMessageVisible() {
         try {
             WebElement error = wait.until(
-                    ExpectedConditions.visibilityOfElementLocated(errorMessage) );
+                    ExpectedConditions.visibilityOfElementLocated(errorMessage));
             return error.isDisplayed();
         } catch (Exception e) {
             return false;
@@ -85,5 +85,16 @@ public class LoginPage {
         WebElement pass = wait.until(
                 ExpectedConditions.visibilityOfElementLocated(passwordField));
         return pass.getAttribute("type");
+    }
+
+    @Step("Check if Login button is displayed")
+    public boolean isLoginButtonDisplayed() {
+        try {
+            WebElement button = wait.until(
+                    ExpectedConditions.visibilityOfElementLocated(loginButton));
+            return button.isDisplayed();
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

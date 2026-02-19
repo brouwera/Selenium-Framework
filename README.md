@@ -419,6 +419,46 @@ Additional test suites
 
 CI/CD integration
 
+### 📅 Day 10 — Expanding Test Coverage with Flow-Based Scenarios
+
+Today’s focus was on writing new end‑to‑end functional tests using the existing Page Object Model and TestNG framework. No new architecture was added — instead, the goal was to validate that the framework scales cleanly as new test scenarios are introduced.
+
+### 🔍 What I Completed
+
+Added two new flow-based TestNG tests in LoginFlowTest.java:
+
+Navigation Login Flow: Home → Practice → Login → Successful Login
+
+Logout Flow: Login → Logout → Return to Login Page
+
+Reused existing Page Objects (HomePage, LoginPage, SuccessfulLoginPage) to ensure framework consistency.
+
+Updated Page Objects with missing helper methods:
+
+LoginPage.isLoginButtonDisplayed()
+
+SuccessfulLoginPage.clickLogoutButton()
+
+Enhanced AssertionHelper with standardized assertTrue, assertFalse, and other assertion methods for cleaner, more maintainable validations.
+
+Confirmed full suite execution: 8 tests passing, no failures.
+
+Allure annotations (@Epic, @Feature, @Story, @Step) now provide clear reporting structure.
+
+### 🧠 Key Takeaways
+
+The framework is now validated for multi‑page workflows, not just single‑page interactions.
+
+Page Objects remain clean, reusable, and scalable.
+
+AssertionHelper centralization improves readability and consistency across tests.
+
+Allure reporting is now more structured and enterprise‑ready.
+
+### 📈 Outcome
+
+The framework successfully handled new test scenarios without requiring architectural changes — a strong indicator of good design. This completes Day 10 with a fully passing suite and a more robust test coverage footprint.
+
 👤 Author
 Adam Brouwer  
 QA Analyst / SDET in training
