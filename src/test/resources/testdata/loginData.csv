@@ -1,0 +1,7 @@
+username,password,expectedResult
+student,Password123,success
+student,WrongPassword,failure
+wrongUser,Password123,failure
+wrongUser,WrongPassword,failure
+,Password123,failure
+student,,failure

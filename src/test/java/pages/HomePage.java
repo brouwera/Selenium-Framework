@@ -1,33 +1,38 @@
 package pages;
 
+import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class HomePage {
+public class HomePage extends BasePage {
 
-    private final WebDriver driver;
-    private final WebDriverWait wait;
-
-    // Navigation elements on the main Practice Test Automation homepage
+    // Locators
     private final By practiceButton = By.xpath("//a[contains(text(),'Practice')]");
     private final By testLoginLink = By.xpath("//a[contains(text(),'Test Login Page')]");
+    private final By testInputsLink = By.xpath("//a[contains(text(),'Test Inputs Page')]");
 
-    // Constructor initializes driver and wait for this page object
     public HomePage(WebDriver driver, WebDriverWait wait) {
-        this.driver = driver;
-        this.wait = wait;
+        super(driver, wait);
     }
 
-    // Clicks the "Practice" button to navigate into the practice section
+    // ============================
+    // Actions with Allure Steps
+    // ============================
+    @Step("Click 'Practice' button on Home Page")
     public void clickPracticeButton() {
-        wait.until(ExpectedConditions.elementToBeClickable(practiceButton)).click();
+        click(practiceButton);
     }
 
-    // Clicks the "Test Login Page" link and returns a new LoginPage object
+    @Step("Navigate to Test Login Page")
     public LoginPage clickTestLoginLink() {
-        wait.until(ExpectedConditions.elementToBeClickable(testLoginLink)).click();
+        click(testLoginLink);
         return new LoginPage(driver, wait);
+    }
+
+    @Step("Navigate to Test Inputs Page")
+    public InputsPage clickTestInputsLink() {
+        click(testInputsLink);
+        return new InputsPage(driver, wait);
     }
 }
