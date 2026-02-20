@@ -501,6 +501,14 @@ Pushed a clean, professional commit to GitHub
 
 Day 11 was all about tightening the foundation — removing legacy code, modernizing the Login module, and ensuring the framework is stable and scalable for the next modules.
 
+## Day 12 – Alerts Testing + Full Framework Validation
+
+- Implemented AlertsPage and AlertsTest
+- Added Allure categories.json and environment.properties
+- Validated BaseTest, TestListener, AssertionHelper, and all Page Objects
+- Completed a full Maven + TestNG + Allure run (all tests passed)
+- Committed and pushed all new framework components
+
 👤 Author
 Adam Brouwer  
 QA Analyst / SDET in training
