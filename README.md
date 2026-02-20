@@ -459,6 +459,48 @@ Allure reporting is now more structured and enterprise‑ready.
 
 The framework successfully handled new test scenarios without requiring architectural changes — a strong indicator of good design. This completes Day 10 with a fully passing suite and a more robust test coverage footprint.
 
+### Day 11 Update — Login Module Refactor + Framework Stabilization
+### 🔧 Refactored Login Module
+Removed outdated LoginFlowTest and consolidated logic into a modernized LoginTest
+
+Updated navigation flow to start from the homepage for stability
+
+Ensured all interactions use BasePage explicit wait utilities
+
+Improved readability and maintainability across all login‑related classes
+
+### 📄 Page Object Improvements
+Updated HomePage, LoginPage, and SuccessfulLoginPage to align with the new framework structure
+
+Added Allure steps for clearer reporting
+
+Ensured all locators and actions follow clean POM standards
+
+### 🧪 Inputs Module Added
+Implemented InputsPage with stable locators and explicit waits
+
+Added InputsTest to validate input behavior and navigation
+
+Expanded overall test coverage beyond login workflows
+
+### 📊 Data‑Driven Testing
+Added LoginDataProvider and loginData.csv
+
+Centralized positive and negative login scenarios
+
+Improved scalability for future test expansion
+
+### 🧱 Framework Stability
+Updated BaseTest and TestListener for consistency
+
+Cleaned up test suite structure
+
+Achieved a full green run using mvn clean test
+
+Pushed a clean, professional commit to GitHub
+
+Day 11 was all about tightening the foundation — removing legacy code, modernizing the Login module, and ensuring the framework is stable and scalable for the next modules.
+
 👤 Author
 Adam Brouwer  
 QA Analyst / SDET in training
