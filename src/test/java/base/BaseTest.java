@@ -11,7 +11,7 @@ import java.time.Duration;
 
 public class BaseTest {
 
-    protected WebDriver driver;
+    private static ThreadLocal<WebDriver> driver = new ThreadLocal<>();
     protected WebDriverWait wait;
 
     protected String baseUrl = "https://practicetestautomation.com/practice-test-login/";
@@ -21,19 +21,31 @@ public class BaseTest {
 
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--start-maximized");
-        driver = new ChromeDriver(options);
-        wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+
+        WebDriver webDriver = new ChromeDriver(options);
+        driver.set(webDriver);
+
+        wait = new WebDriverWait(getDriver(), Duration.ofSeconds(10));
+
+        // Recommended: always start from a known URL
+        getDriver().get(baseUrl);
     }
 
     @AfterMethod
     public void tearDown() {
 
-        if (driver != null) {
-            driver.quit(); }
+        if (getDriver() != null) {
+            getDriver().quit();
+            driver.remove();
+        }
     }
 
-    // Getter for TestListener
-    public WebDriver getDriver() {
-        return driver;
+    public static WebDriver getDriver() {
+        return driver.get();
+    }
+
+    // Optional but recommended
+    public WebDriverWait getWait() {
+        return wait;
     }
 }

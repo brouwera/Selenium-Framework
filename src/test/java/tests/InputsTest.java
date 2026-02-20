@@ -10,7 +10,7 @@ import static org.testng.Assert.assertEquals;
 public class InputsTest extends BaseTest {
 
     private InputsPage goToInputsPage() {
-        HomePage home = new HomePage(driver, wait);
+        HomePage home = new HomePage(BaseTest.getDriver(), wait);
         home.clickPracticeButton();
         return home.clickTestInputsLink();
     }

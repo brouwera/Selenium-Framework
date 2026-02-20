@@ -14,23 +14,28 @@ public class InputsPage extends BasePage {
     }
 
     // ============================
-    // Actions with Allure Steps
+    // Actions
     // ============================
+
     @Step("Enter number: {value}")
-    public void enterNumber(String value) {
+    public InputsPage enterNumber(String value) {
         scrollToElement(numberInput);
         type(numberInput, value);
+        return this;
     }
 
     @Step("Clear number input field")
-    public void clearInput() {
+    public InputsPage clearInput() {
         scrollToElement(numberInput);
         find(numberInput).clear();
+        return this;
     }
 
     // ============================
-    // Getters
+    // Getters / Assertions
     // ============================
+
+    @Step("Get current value from number input field")
     public String getInputValue() {
         return getAttribute(numberInput, "value");
     }

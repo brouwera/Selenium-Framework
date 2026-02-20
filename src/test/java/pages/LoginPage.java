@@ -15,15 +15,41 @@ public class LoginPage extends BasePage {
         super(driver, wait);
     }
 
-    @Step("Logging in with username: {username} and password: {password}")
-    public SuccessfulLoginPage login(String username, String password) {
+    // ============================
+    // Individual Actions
+    // ============================
+    @Step("Enter username: {username}")
+    public LoginPage enterUsername(String username) {
         type(usernameField, username);
+        return this;
+    }
+
+    @Step("Enter password: ******")
+    public LoginPage enterPassword(String password) {
         type(passwordField, password);
+        return this;
+    }
+
+    @Step("Click Login button")
+    public SuccessfulLoginPage clickLoginButton() {
         click(submitButton);
         return new SuccessfulLoginPage(driver, wait);
     }
 
-    @Step("Check if Login button is displayed")
+    // ============================
+    // Composite Action
+    // ============================
+    @Step("Log in as user: {username}")
+    public SuccessfulLoginPage login(String username, String password) {
+        enterUsername(username);
+        enterPassword(password);
+        return clickLoginButton();
+    }
+
+    // ============================
+    // Assertions / Visibility Checks
+    // ============================
+    @Step("Verify Login button is displayed")
     public boolean isLoginButtonDisplayed() {
         return isVisible(submitButton);
     }

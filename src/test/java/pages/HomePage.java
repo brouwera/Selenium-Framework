@@ -11,6 +11,7 @@ public class HomePage extends BasePage {
     private final By practiceButton = By.xpath("//a[contains(text(),'Practice')]");
     private final By testLoginLink = By.xpath("//a[contains(text(),'Test Login Page')]");
     private final By testInputsLink = By.xpath("//a[contains(text(),'Test Inputs Page')]");
+    private final By testAlertsLink = By.xpath("//a[contains(text(),'Test Alerts Page')]");
 
     public HomePage(WebDriver driver, WebDriverWait wait) {
         super(driver, wait);
@@ -19,6 +20,7 @@ public class HomePage extends BasePage {
     // ============================
     // Actions with Allure Steps
     // ============================
+
     @Step("Click 'Practice' button on Home Page")
     public void clickPracticeButton() {
         click(practiceButton);
@@ -34,5 +36,11 @@ public class HomePage extends BasePage {
     public InputsPage clickTestInputsLink() {
         click(testInputsLink);
         return new InputsPage(driver, wait);
+    }
+
+    @Step("Navigate to Test Alerts Page")
+    public AlertsPage clickTestAlertsLink() {
+        click(testAlertsLink);
+        return new AlertsPage(driver, wait);
     }
 }

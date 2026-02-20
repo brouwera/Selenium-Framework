@@ -16,8 +16,8 @@ import pages.SuccessfulLoginPage;
 public class LoginTest extends BaseTest {
 
     private LoginPage goToLoginPage() {
-        driver.get("https://practicetestautomation.com/");
-        HomePage home = new HomePage(driver, wait);
+        BaseTest.getDriver().get("https://practicetestautomation.com/");
+        HomePage home = new HomePage(BaseTest.getDriver(), wait);
         home.clickPracticeButton();
         return home.clickTestLoginLink();
     }

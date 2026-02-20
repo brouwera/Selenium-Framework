@@ -14,17 +14,25 @@ public class SuccessfulLoginPage extends BasePage {
         super(driver, wait);
     }
 
-    @Step("Check if success message is displayed")
+    // ============================
+    // Assertions / Visibility Checks
+    // ============================
+
+    @Step("Verify success message is displayed on Successful Login Page")
     public boolean isSuccessMessageDisplayed() {
         return isVisible(successMessage);
     }
 
-    @Step("Check if Logout button is displayed")
+    @Step("Verify Logout button is displayed on Successful Login Page")
     public boolean isLogoutButtonDisplayed() {
         return isVisible(logoutButton);
     }
 
-    @Step("Click Logout button")
+    // ============================
+    // Actions
+    // ============================
+
+    @Step("Click Logout button to return to Login Page")
     public LoginPage clickLogoutButton() {
         click(logoutButton);
         return new LoginPage(driver, wait);
