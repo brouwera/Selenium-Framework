@@ -7,40 +7,27 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class HomePage extends BasePage {
 
-    // Locators
-    private final By practiceButton = By.xpath("//a[contains(text(),'Practice')]");
-    private final By testLoginLink = By.xpath("//a[contains(text(),'Test Login Page')]");
-    private final By testInputsLink = By.xpath("//a[contains(text(),'Test Inputs Page')]");
-    private final By testAlertsLink = By.xpath("//a[contains(text(),'Test Alerts Page')]");
+    // ============================
+    // Locators (Match Actual Practice Page)
+    // ============================
+
+    private final By testLoginLink = By.linkText("Test Login Page");
+
+    // ============================
+    // Constructor
+    // ============================
 
     public HomePage(WebDriver driver, WebDriverWait wait) {
         super(driver, wait);
     }
 
     // ============================
-    // Actions with Allure Steps
+    // Navigation Actions
     // ============================
-
-    @Step("Click 'Practice' button on Home Page")
-    public void clickPracticeButton() {
-        click(practiceButton);
-    }
 
     @Step("Navigate to Test Login Page")
     public LoginPage clickTestLoginLink() {
         click(testLoginLink);
         return new LoginPage(driver, wait);
-    }
-
-    @Step("Navigate to Test Inputs Page")
-    public InputsPage clickTestInputsLink() {
-        click(testInputsLink);
-        return new InputsPage(driver, wait);
-    }
-
-    @Step("Navigate to Test Alerts Page")
-    public AlertsPage clickTestAlertsLink() {
-        click(testAlertsLink);
-        return new AlertsPage(driver, wait);
     }
 }

@@ -14,7 +14,8 @@ public class BaseTest {
     private static ThreadLocal<WebDriver> driver = new ThreadLocal<>();
     protected WebDriverWait wait;
 
-    protected String baseUrl = "https://practicetestautomation.com/practice-test-login/";
+    // Start directly on the Practice page (correct for this site)
+    protected String baseUrl = "https://practicetestautomation.com/practice/";
 
     @BeforeMethod
     public void setUp() {
@@ -27,13 +28,17 @@ public class BaseTest {
 
         wait = new WebDriverWait(getDriver(), Duration.ofSeconds(10));
 
-        // Recommended: always start from a known URL
+        // Always start from a known URL
         getDriver().get(baseUrl);
+
+        // Optional: ensure page is fully loaded
+        try {
+            Thread.sleep(500); // small buffer to avoid race conditions
+        } catch (InterruptedException ignored) {}
     }
 
     @AfterMethod
     public void tearDown() {
-
         if (getDriver() != null) {
             getDriver().quit();
             driver.remove();
@@ -44,7 +49,6 @@ public class BaseTest {
         return driver.get();
     }
 
-    // Optional but recommended
     public WebDriverWait getWait() {
         return wait;
     }

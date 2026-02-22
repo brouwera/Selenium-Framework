@@ -509,6 +509,136 @@ Day 11 was all about tightening the foundation — removing legacy code, moderni
 - Completed a full Maven + TestNG + Allure run (all tests passed)
 - Committed and pushed all new framework components
 
+# Selenium Test Automation Framework
+A clean, maintainable, and professional Selenium + TestNG automation framework built for the Practice Test Automation site.
+
+---
+
+## 📌 Current Scope (Aligned With the Real UI)
+
+This framework is intentionally focused on the **actual, existing modules** available on:
+
+https://practicetestautomation.com/practice/
+
+
+As of February 2026, the Practice page contains only:
+
+- **Test Login Page**
+- **Test Exceptions** (coming soon)
+- **Test Table** (coming soon)
+
+The following modules have been **removed from the site** and are no longer part of this framework:
+
+- Test Inputs
+- Test Alerts
+
+This keeps the project clean, realistic, and aligned with the real application under test.
+
+---
+
+## ✅ Completed Features
+
+### **✔ Login Automation**
+- Page Object Model (POM) design
+- Data‑driven testing using CSV (`loginData.csv`)
+- Positive and negative login scenarios
+- Full navigation flow validation
+- Clean BasePage utilities
+- Thread‑safe WebDriver setup (ThreadLocal)
+- Explicit waits for stability
+- Allure‑ready step annotations
+
+### **✔ Framework Cleanup (Day 13)**
+- Removed Inputs and Alerts modules
+- Removed dead navigation and unused locators
+- Cleaned `HomePage.java` to match the real UI
+- Updated `testng.xml` to remove deleted tests
+- Full suite runs green with `mvn clean test`
+- TestListener integrated for lifecycle logging
+
+---
+
+## 📁 Project Structure
+
+```
+src
+└── test
+├── java
+│   ├── base
+│   │   └── BaseTest.java
+│   ├── pages
+│   │   ├── BasePage.java
+│   │   ├── HomePage.java
+│   │   ├── LoginPage.java
+│   │   └── SuccessfulLoginPage.java
+│   ├── tests
+│   │   └── LoginTest.java
+│   ├── dataproviders
+│   │   └── LoginDataProvider.java
+│   ├── listeners
+│   │   └── TestListener.java
+│   └── utils
+│       ├── CSVUtils.java
+│       └── CsvParsingException.java
+└── resources
+└── testdata
+└── loginData.csv
+```
+
+
+---
+
+## 🚧 Upcoming Enhancements (Planned)
+
+### **Exceptions Module**
+- Page object
+- Test coverage
+- Error handling validation
+
+### **Table Module**
+- Table parsing utilities
+- Sorting/filtering validation
+- Data extraction tests
+
+### **Framework Enhancements**
+- Allure screenshots on failure
+- ConfigManager for environment handling
+- `.env` support for secrets
+- Multi‑environment execution
+- README badges and visuals
+
+---
+
+## 🏁 How to Run
+
+Run the full suite:
+
+mvn clean test
+
+Run a specific test:
+
+mvn -Dtest=LoginTest test
+
+
+---
+
+## 🎯 Goal of This Framework
+
+This project is built to demonstrate:
+
+- Senior‑level automation design
+- Clean architecture
+- Maintainability
+- Real‑world alignment
+- Professional reporting
+- Data‑driven testing
+- Thoughtful scope management
+
+No “practice for the sake of practice.”  
+Only real, meaningful automation.
+
+---
+
 👤 Author
 Adam Brouwer  
 QA Analyst / SDET in training

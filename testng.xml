@@ -9,7 +9,10 @@
 
     <test name="UI Tests">
         <classes>
+
+            <!-- Login Tests -->
             <class name="tests.LoginTest"/>
+
         </classes>
     </test>
 

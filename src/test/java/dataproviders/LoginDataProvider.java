@@ -3,21 +3,16 @@ package dataproviders;
 import org.testng.annotations.DataProvider;
 import utils.CSVUtils;
 
-import java.util.List;
-
 public class LoginDataProvider {
 
     @DataProvider(name = "loginData")
     public Object[][] loginData() {
-        String filePath = "src/test/resources/testdata/loginData.csv";
-        List<String[]> records = CSVUtils.readCSV(filePath);
 
-        Object[][] data = new Object[records.size()][3];
+        // Load from classpath: src/test/resources/testData/loginData.csv
+        Object[][] data = CSVUtils.readCsvAsDataProvider("testData/loginData.csv");
 
-        for (int i = 0; i < records.size(); i++) {
-            data[i][0] = records.get(i)[0]; // username
-            data[i][1] = records.get(i)[1]; // password
-            data[i][2] = records.get(i)[2]; // expectedResult
+        if (data.length == 0) {
+            throw new RuntimeException("loginData.csv returned no rows. Please verify the file is not empty.");
         }
 
         return data;
