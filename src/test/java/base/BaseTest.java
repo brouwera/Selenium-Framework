@@ -40,6 +40,7 @@ public class BaseTest {
         int explicitWait = ConfigManager.getExplicitWait();
         wait.set(new WebDriverWait(webDriver, Duration.ofSeconds(explicitWait)));
 
+        // Load the correct Practice Test Automation base URL
         webDriver.get(ConfigManager.getBaseUrl());
     }
 

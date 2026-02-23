@@ -12,7 +12,16 @@ public class SuccessfulLoginPage extends BasePage {
     // Constructor
     // ============================================================
     public SuccessfulLoginPage() {
-        super(); // ThreadLocal driver + wait
+        super();
+    }
+
+    // ============================================================
+    // Page Identity
+    // ============================================================
+
+    @Step("Verify Successful Login Page is loaded")
+    public boolean isPageLoaded() {
+        return isDisplayed(successMessage) && isDisplayed(logoutButton);
     }
 
     // ============================================================

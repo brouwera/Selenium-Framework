@@ -17,7 +17,7 @@ public class LoginPage extends BasePage {
     // Constructor
     // ============================================================
     public LoginPage() {
-        super(); // ThreadLocal driver + wait
+        super();
     }
 
     // ============================================================

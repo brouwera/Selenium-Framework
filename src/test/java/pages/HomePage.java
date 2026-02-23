@@ -14,7 +14,18 @@ public class HomePage extends BasePage {
     // Constructor
     // ============================================================
     public HomePage() {
-        super(); // ThreadLocal driver + wait
+        super();
+    }
+
+    // ============================================================
+    // Page Load
+    // ============================================================
+
+    @Step("Open Practice Home Page")
+    public HomePage open() {
+        driver.get("https://practice.expandtesting.com/");
+        waitForPageLoad();
+        return this;
     }
 
     // ============================================================
