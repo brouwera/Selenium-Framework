@@ -1,564 +1,100 @@
-# Selenium Framework – Practice Test Automation (Login Tests)
-
-A clean, modular, and scalable Selenium + TestNG automation framework built as part of a structured 60‑day QA Automation Upskill Plan.  
-This project demonstrates professional Page Object Model (POM) design, explicit waits, stable test execution, and clean test organization.
+# Selenium Test Automation Framework
+A clean, maintainable, and professional Selenium + TestNG automation framework built for the **Practice Test Automation** site as part of a structured 60‑day QA Automation Upskill Plan.
 
 ---
 
-## 🚀 Project Overview
+# 📛 Badges
+![Java](https://img.shields.io/badge/Java-17-blue)  
+![Selenium](https://img.shields.io/badge/Selenium-4.18-brightgreen)  
+![TestNG](https://img.shields.io/badge/TestNG-7.10-orange)  
+![Allure](https://img.shields.io/badge/Allure-2.13.9-purple)  
+![Build](https://img.shields.io/badge/Build-Passing-brightgreen)  
+![License](https://img.shields.io/badge/License-MIT-lightgrey)
+
+---
+
+# 📚 Table of Contents
+1. [Project Overview](#-project-overview)
+2. [Current Scope](#-current-scope-aligned-with-the-real-ui)
+3. [Key Features](#-completed-features)
+4. [Project Structure](#-project-structure)
+5. [How to Run Locally](#-how-to-run)
+6. [How to Run in CI](#-how-to-run-in-ci)
+7. [Day-by-Day Progress Log](#-day-by-day-progress-log)
+8. [Upcoming Enhancements](#-upcoming-enhancements-planned)
+9. [Author](#-author)
+
+---
+
+# 🚀 Project Overview
 
 This framework automates the login functionality of:
 
 **https://practicetestautomation.com/practice-test-login/**
 
-It includes:
+It demonstrates:
 
-- A reusable **BaseTest** class for WebDriver lifecycle management
-- A **LoginPage** and **HomePage** built using the Page Object Model
-- Full use of **explicit waits** for stability
-- A suite of **positive, negative, and UI behavior tests**
-- Clean, readable, and maintainable code suitable for real‑world SDET work
+- Clean Page Object Model (POM) architecture
+- Explicit waits for stability
+- Thread‑safe WebDriver setup
+- Data‑driven testing
+- Allure reporting
+- Multi‑browser execution (Chrome, Edge, Firefox)
+- CI/CD readiness
 
-All tests currently pass with **zero failures**.
-
----
-
-## 🧱 Project Structure
-```
-src
-└── test
-├── java
-│    ├── base
-│    │     └── BaseTest.java
-│    ├── pages
-│    │     ├── LoginPage.java
-│    │     └── HomePage.java
-│    └── tests
-│          └── LoginTest.java
-└── resources
-```
----
-
-## 🧩 Key Features
-
-### ✔ Page Object Model (POM)
-Each page encapsulates:
-
-- Locators
-- Actions
-- Explicit waits
-- Page‑specific behavior
-
-This keeps tests clean and readable.
+All tests currently pass with **zero failures** across all supported browsers.
 
 ---
 
-### ✔ Explicit Waits Everywhere They Matter
+# 📌 Current Scope (Aligned With the Real UI)
 
-All element interactions use:
-
-```
-wait.until(ExpectedConditions.visibilityOfElementLocated(...));
-wait.until(ExpectedConditions.elementToBeClickable(...));
-This eliminates flakiness and ensures stable execution.
-```
----
-✔ Clean Test Lifecycle
----
-BaseTest handles:
-
-WebDriver setup
-
-Window management
-
-WebDriverWait initialization
-
-Navigation
-
-Cleanup
-
-Every test inherits this behavior.
-
-✔ Full Test Coverage for Login Page
----
-
-Positive Test
----
-Valid login with correct credentials
-
-Negative Tests
----
-Invalid username
-
-Invalid password
-
-Empty fields
-
-Error message validation
-
-UI Behavior Test
----
-Password masking
-
-Error message visibility when clicking Login with empty fields
-
-🧪 Running the Tests From IntelliJ:
----
-Right‑click the tests package
-
-Select Run 'LoginTest'
-
-Or via Maven:
-
-mvn test
-All tests should pass.
-
-📸 Sample Output
----
-```
-===============================================
-Default Suite
-Total tests run: 6, Passes: 6, Failures: 0, Skips: 0
-===============================================
-```
-🔧 Tools & Technologies
-
-Java 17
-
-Selenium 4
-
-TestNG
-
-ChromeDriver
-
-Page Object Model (POM)
-
-Explicit Waits (WebDriverWait + ExpectedConditions)
-
-📚 Next Steps (Future Enhancements)
----
-Add a BasePage class for shared utilities
-
-Introduce WaitUtils for reusable wait logic
-
-Add logging
-
-Add reporting (Allure or Extent)
-
-Expand test coverage to additional pages
-
-Add cross‑browser support
-
----
-
-📅 Day 3 — First Working Selenium + TestNG Login Automation
----
-Overview
----
-Day 3 marked the first major functional milestone:
-I successfully built and executed working Selenium + TestNG login tests using direct WebDriver interactions.
-
-This established the foundation for the framework.
-
-🏗️ What I Built
----
-Created the initial BaseTest class
-
-Wrote the first LoginTest using raw Selenium commands
-
-Validated:
-
-Browser launches correctly
-
-Elements can be located
-
-Login workflow executes end‑to‑end
-
-Assertions work as expected
-
-🧪 Test Coverage Achieved
----
-Successful login with valid credentials
-
-Error message validation for invalid username/password
-
-This proved the environment, dependencies, and WebDriver setup were all functioning correctly.
-
----
-
-📅 Day 5 — Explicit Waits + Stability Improvements
----
-Overview
----
-Day 5 focused on stability and reliability.
-I replaced all direct element interactions with explicit waits, eliminating timing issues and improving test consistency.
-
-🏗️ What I Improved
----
-Added WebDriverWait to BaseTest
-
-Replaced all findElement() calls with:
-```
-wait.until(ExpectedConditions.visibilityOfElementLocated(...));
-```
-Ensured elements are:
-
-Visible before interacting
-
-Clickable before clicking
-
-Present before retrieving text
-
-📈 Why This Matters
----
-Explicit waits dramatically reduce flakiness and are a core best practice in real automation frameworks.
-This upgrade made the tests stable, repeatable, and production‑ready.
-
----
-
-📅 Day 7 — Page Object Model (POM) Implementation
----
-Overview
----
-Day 7 introduced the Page Object Model (POM), transforming the framework from simple scripts into a scalable, maintainable automation architecture.
-
-🏗️ What I Built
----
-Added Page Object Classes
-
-Created a new pages package and added:
-
-LoginPage.java
-
-HomePage.java
-
-Each Page Object now contains:
-
-Private, stable locators
-
-Explicit waits for all interactions
-
-Clean, action‑based methods
-
-No assertions or test logic
-
-Updated BaseTest for Cleaner Setup
----
-Disabled implicit waits
-
-Centralized WebDriver and WebDriverWait creation
-
-Ensured consistent navigation before each test
-
-Improved teardown logic
-
-Rewrote Login Tests Using POM
----
-Tests now:
----
-Contain no locators
-
-Contain no Selenium logic
-
-Read like user workflows
-
-Focus only on assertions
-
-This is a major step toward a professional SDET‑level framework.
-
-🧪 Test Coverage Achieved Today
----
-Positive Tests
----
-
-Valid login
-
-Password masking
-
-Negative Tests
----
-
-Invalid username
-
-Invalid password
-
-Empty fields
-
-UI Behavior Tests
----
-
-Error message appears when clicking Login with empty fields
-
-📈 Why This Matters
----
-Implementing POM provides:
----
-
-Cleaner test code
-
-Centralized UI logic
-
-Easier maintenance when UI changes
-
-Reusable page actions
-
-Better scalability for future test suites
-
-This is the point where the framework starts looking like something used on an actual QA automation team.
-
-### Day 8 – Multi‑Page Navigation & Full Login Workflow Test
-- Added HomePage, LoginPage, and SuccessfulLoginPage with full POM structure
-- Implemented a complete navigation flow test using TestNG
-- Added professional comments across all Page Objects and BaseTest
-- Improved readability, maintainability, and clarity of the framework
-
-### 📌 Day 9 Update — Framework Stability, Assertions, and Allure Integration
-✅ Major Achievements
-Day 9 was all about strengthening the reliability, clarity, and professionalism of the automation framework. Today’s work focused on stabilizing the test suite, improving assertion structure, and ensuring the entire system runs cleanly from end to end.
-
-🔹 1. Added AssertionHelper.java
-
-A centralized assertion utility was introduced to improve readability and consistency across tests.
-
-Key features:
-
-verifyEquals, verifyTrue, verifyFalse, verifyNotNull
-
-UI‑specific helpers like verifyElementDisplayed and verifyTextContains
-
-Clean, reusable, and TestNG‑aligned
-
-🔹 2. Completed and validated all Page Objects
-
-All Page Objects now include:
-
-Explicit waits
-
-Clean locators
-
-Allure @Step annotations
-
-Missing methods added (isErrorMessageVisible(), getPageTitle(), getCurrentUrl())
-
-Pages validated:
-
-LoginPage
-
-SuccessfulLoginPage
-
-HomePage
-
-🔹 3. Added and configured TestNG Listener
-
-Implemented TestListener.java to capture:
-
-Automatic screenshots on failure
-
-Allure attachments
-
-Clean lifecycle integration
-
-🔹 4. Cleaned up pom.xml
-
-Removed the unnecessary AspectJ plugin that was causing build failures.
-Framework now uses a clean, modern Selenium/TestNG/Allure setup.
-
-🔹 5. Fixed navigation flow in tests
-
-All Login tests now correctly call:
-
-java
-login.open(baseUrl);
-This resolved all TimeoutExceptions and stabilized the suite.
-
-🔹 6. Achieved a full green test run
-
-All 7 tests passed successfully:
-
-Code
-Tests run: 7, Failures: 0, Errors: 0, Skipped: 0
-BUILD SUCCESS
-This confirms:
-
-Page Objects are stable
-
-Test flows are correct
-
-Waits are reliable
-
-Listener is working
-
-Framework is production‑ready
-
-🔹 7. Cleaned and standardized the repository
-
-   As part of stabilizing the framework, I also cleaned up the project structure:
-
-Added a proper .gitignore to exclude build artifacts, IDE files, and Allure output
-
-Removed previously tracked IntelliJ and Maven-generated files
-
-Ensured only source code, configuration, and documentation remain under version control
-
-This keeps the repository clean, lightweight, and professional for future development and CI/CD integration.
-
-
-### 🚀 What This Means
-Day 9 marks the moment the framework became fully operational.
-This is the point where many engineers finally feel their automation project “click” — and you hit it cleanly.
-
-Your foundation is now strong enough to expand into:
-
-Allure reporting polish
-
-BasePage abstraction
-
-Reusable wait helpers
-
-Additional test suites
-
-CI/CD integration
-
-### 📅 Day 10 — Expanding Test Coverage with Flow-Based Scenarios
-
-Today’s focus was on writing new end‑to‑end functional tests using the existing Page Object Model and TestNG framework. No new architecture was added — instead, the goal was to validate that the framework scales cleanly as new test scenarios are introduced.
-
-### 🔍 What I Completed
-
-Added two new flow-based TestNG tests in LoginFlowTest.java:
-
-Navigation Login Flow: Home → Practice → Login → Successful Login
-
-Logout Flow: Login → Logout → Return to Login Page
-
-Reused existing Page Objects (HomePage, LoginPage, SuccessfulLoginPage) to ensure framework consistency.
-
-Updated Page Objects with missing helper methods:
-
-LoginPage.isLoginButtonDisplayed()
-
-SuccessfulLoginPage.clickLogoutButton()
-
-Enhanced AssertionHelper with standardized assertTrue, assertFalse, and other assertion methods for cleaner, more maintainable validations.
-
-Confirmed full suite execution: 8 tests passing, no failures.
-
-Allure annotations (@Epic, @Feature, @Story, @Step) now provide clear reporting structure.
-
-### 🧠 Key Takeaways
-
-The framework is now validated for multi‑page workflows, not just single‑page interactions.
-
-Page Objects remain clean, reusable, and scalable.
-
-AssertionHelper centralization improves readability and consistency across tests.
-
-Allure reporting is now more structured and enterprise‑ready.
-
-### 📈 Outcome
-
-The framework successfully handled new test scenarios without requiring architectural changes — a strong indicator of good design. This completes Day 10 with a fully passing suite and a more robust test coverage footprint.
-
-### Day 11 Update — Login Module Refactor + Framework Stabilization
-### 🔧 Refactored Login Module
-Removed outdated LoginFlowTest and consolidated logic into a modernized LoginTest
-
-Updated navigation flow to start from the homepage for stability
-
-Ensured all interactions use BasePage explicit wait utilities
-
-Improved readability and maintainability across all login‑related classes
-
-### 📄 Page Object Improvements
-Updated HomePage, LoginPage, and SuccessfulLoginPage to align with the new framework structure
-
-Added Allure steps for clearer reporting
-
-Ensured all locators and actions follow clean POM standards
-
-### 🧪 Inputs Module Added
-Implemented InputsPage with stable locators and explicit waits
-
-Added InputsTest to validate input behavior and navigation
-
-Expanded overall test coverage beyond login workflows
-
-### 📊 Data‑Driven Testing
-Added LoginDataProvider and loginData.csv
-
-Centralized positive and negative login scenarios
-
-Improved scalability for future test expansion
-
-### 🧱 Framework Stability
-Updated BaseTest and TestListener for consistency
-
-Cleaned up test suite structure
-
-Achieved a full green run using mvn clean test
-
-Pushed a clean, professional commit to GitHub
-
-Day 11 was all about tightening the foundation — removing legacy code, modernizing the Login module, and ensuring the framework is stable and scalable for the next modules.
-
-## Day 12 – Alerts Testing + Full Framework Validation
-
-- Implemented AlertsPage and AlertsTest
-- Added Allure categories.json and environment.properties
-- Validated BaseTest, TestListener, AssertionHelper, and all Page Objects
-- Completed a full Maven + TestNG + Allure run (all tests passed)
-- Committed and pushed all new framework components
-
-# Selenium Test Automation Framework
-A clean, maintainable, and professional Selenium + TestNG automation framework built for the Practice Test Automation site.
-
----
-
-## 📌 Current Scope (Aligned With the Real UI)
-
-This framework is intentionally focused on the **actual, existing modules** available on:
-
-https://practicetestautomation.com/practice/
-
-
-As of February 2026, the Practice page contains only:
+The Practice page currently includes:
 
 - **Test Login Page**
 - **Test Exceptions** (coming soon)
 - **Test Table** (coming soon)
 
-The following modules have been **removed from the site** and are no longer part of this framework:
+Removed modules (no longer present on the site):
 
 - Test Inputs
 - Test Alerts
 
-This keeps the project clean, realistic, and aligned with the real application under test.
+This keeps the framework aligned with the real application under test.
 
 ---
 
-## ✅ Completed Features
+# ✅ Completed Features
 
-### **✔ Login Automation**
-- Page Object Model (POM) design
-- Data‑driven testing using CSV (`loginData.csv`)
-- Positive and negative login scenarios
-- Full navigation flow validation
-- Clean BasePage utilities
-- Thread‑safe WebDriver setup (ThreadLocal)
-- Explicit waits for stability
-- Allure‑ready step annotations
+### ✔ Login Automation
+- Full POM structure
+- Positive + negative login tests
+- Data‑driven testing via CSV
+- Navigation flow validation
+- Explicit waits everywhere
+- ThreadLocal WebDriver
+- Allure step annotations
 
-### **✔ Framework Cleanup (Day 13)**
-- Removed Inputs and Alerts modules
-- Removed dead navigation and unused locators
-- Cleaned `HomePage.java` to match the real UI
-- Updated `testng.xml` to remove deleted tests
-- Full suite runs green with `mvn clean test`
-- TestListener integrated for lifecycle logging
+### ✔ Framework Cleanup (Day 13)
+- Removed deprecated modules
+- Cleaned HomePage to match real UI
+- Updated testng.xml
+- Full green suite with `mvn clean test`
+- TestListener integrated
+
+### ✔ Multi‑Browser Support (Day 14)
+- Chrome via WebDriverManager
+- Edge via manual driver path (offline‑safe)
+- Firefox via manual GeckoDriver path
+- ConfigManager now controls all driver paths
+- Fully portable + CI‑ready
 
 ---
 
-## 📁 Project Structure
+# 📁 Project Structure
+
+
+
+---
 
 ```
 src
@@ -584,62 +120,227 @@ src
 └── testdata
 └── loginData.csv
 ```
+---
 
 
 ---
 
-## 🚧 Upcoming Enhancements (Planned)
+# 🏁 How to Run
 
-### **Exceptions Module**
-- Page object
-- Test coverage
-- Error handling validation
-
-### **Table Module**
-- Table parsing utilities
-- Sorting/filtering validation
-- Data extraction tests
-
-### **Framework Enhancements**
-- Allure screenshots on failure
-- ConfigManager for environment handling
-- `.env` support for secrets
-- Multi‑environment execution
-- README badges and visuals
-
----
-
-## 🏁 How to Run
-
-Run the full suite:
+### Run full suite:
 
 mvn clean test
 
-Run a specific test:
+### Run a specific test:
 
 mvn -Dtest=LoginTest test
 
+### Override browser:
+
+mvn clean test -Dbrowser=edge
+
+mvn clean test -Dbrowser=firefox
+
+mvn clean test -Dbrowser=chrome
+
+
+### Run headless:
+
+mvn clean test -Dheadless=true
+
 
 ---
 
-## 🎯 Goal of This Framework
+# 🏗️ How to Run in CI
 
-This project is built to demonstrate:
+This framework is fully CI‑ready and supports:
 
-- Senior‑level automation design
-- Clean architecture
-- Maintainability
-- Real‑world alignment
-- Professional reporting
-- Data‑driven testing
-- Thoughtful scope management
+- Multi‑browser execution
+- Headless mode
+- Environment‑driven configuration
+- Allure reporting
 
-No “practice for the sake of practice.”  
-Only real, meaningful automation.
+### Basic CI command:
 
 ---
 
-👤 Author
-Adam Brouwer  
-QA Analyst / SDET in training
+mvn clean test -Denv=local -Dbrowser=chrome -Dheadless=true
+
+
+### Example: GitHub Actions workflow
+
+```yaml
+name: Run Selenium Tests
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Run Tests
+        run: mvn clean test -Denv=local -Dbrowser=chrome -Dheadless=true
+
+      - name: Generate Allure Report
+        run: mvn allure:aggregate
+```
+
+### Example: GitHub Actions workflow
+
+```yaml
+name: Run Selenium Tests
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Run Tests
+        run: mvn clean test -Denv=local -Dbrowser=chrome -Dheadless=true
+
+      - name: Generate Allure Report
+        run: mvn allure:aggregate
+```
+
+### 📅 Day-by-Day Progress Log
+
+### Day 3 — First Working Selenium + TestNG Login Automation
+Built initial BaseTest
+
+Created first LoginTest
+
+Validated environment + WebDriver setup
+
+### Day 5 — Explicit Waits + Stability
+
+Added WebDriverWait
+
+Replaced all direct interactions with explicit waits
+
+Eliminated flakiness
+
+### Day 7 — Page Object Model (POM)
+
+Added LoginPage + HomePage
+
+Clean locators + explicit waits
+
+Tests rewritten to use POM
+
+### Day 8 — Multi‑Page Navigation
+
+Added SuccessfulLoginPage
+
+Added full login flow test
+
+Improved readability + maintainability
+
+### Day 9 — Assertions + Allure + Stability
+
+Added AssertionHelper
+
+Added TestListener
+
+Cleaned pom.xml
+
+Achieved full green run
+
+### Day 10 — Flow-Based Scenarios
+
+Added navigation + logout flow tests
+
+Added missing helper methods
+
+Improved Allure structure
+
+### Day 11 — Login Module Refactor
+
+Removed legacy tests
+
+Updated Page Objects
+
+Added Inputs module (later removed)
+
+Achieved full green suite
+
+### Day 12 — Alerts Testing + Full Validation
+
+Added Alerts module (later removed)
+
+Validated entire framework
+
+Added Allure environment metadata
+
+### Day 13 — Framework Cleanup
+
+Removed Inputs + Alerts
+
+Cleaned navigation
+
+Updated HomePage
+
+Full green run
+
+### Day 14 — Multi‑Browser + ConfigManager Upgrade
+
+Added Edge + Firefox support
+
+Added manual driver paths
+
+Updated ConfigManager
+
+Framework now fully portable + CI‑ready
+
+### 🚧 Upcoming Enhancements (Planned)
+
+### Exceptions Module
+
+Page object
+
+Error handling tests
+
+### Table Module
+
+Table parsing utilities
+
+Sorting/filtering tests
+
+### Framework Enhancements
+
+Allure screenshots on failure
+
+.env support for secrets
+
+Multi‑environment execution
+
+README visuals + architecture diagram
+
+---
+
+👤 Author: 
+Adam Brouwer    
+QA Analyst / SDET in training  
 Building a full automation framework as part of a structured 60‑day upskilling plan.

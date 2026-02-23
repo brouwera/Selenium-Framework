@@ -5,9 +5,9 @@ import org.testng.Assert;
 
 public class AssertionHelper {
 
-    // ============================
+    // ============================================================
     // Basic Assertions
-    // ============================
+    // ============================================================
 
     public static void assertEquals(String actual, String expected, String message) {
         Assert.assertEquals(actual, expected, message);
@@ -25,19 +25,23 @@ public class AssertionHelper {
         Assert.assertNotNull(obj, message);
     }
 
-    // ============================
+    // ============================================================
     // UI-Specific Assertions
-    // ============================
+    // ============================================================
 
     public static void assertElementDisplayed(WebElement element, String message) {
+        Assert.assertNotNull(element, "Element reference is null: " + message);
         Assert.assertTrue(element.isDisplayed(), message);
     }
 
     public static void assertTextContains(String actual, String expectedSubstring, String message) {
-        Assert.assertTrue(actual.contains(expectedSubstring), message);
+        Assert.assertNotNull(actual, "Actual text is null: " + message);
+        Assert.assertTrue(actual.contains(expectedSubstring),
+                message + " | Expected substring: '" + expectedSubstring + "' | Actual: '" + actual + "'");
     }
 
     public static void assertTextMatches(String actual, String expected, String message) {
+        Assert.assertNotNull(actual, "Actual text is null: " + message);
         Assert.assertEquals(actual.trim(), expected.trim(), message);
     }
 }

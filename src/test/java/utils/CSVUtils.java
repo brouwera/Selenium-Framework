@@ -5,11 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class CSVUtils {
 
@@ -19,15 +15,17 @@ public class CSVUtils {
         // Utility class - prevent instantiation
     }
 
-    // -------------------------------
+    // ============================================================
     // Public API
-    // -------------------------------
+    // ============================================================
+
     public static List<Map<String, String>> readCsvAsListOfMaps(String resourcePath) {
         return readCsvAsListOfMaps(resourcePath, DEFAULT_DELIMITER);
     }
 
     public static List<Map<String, String>> readCsvAsListOfMaps(String resourcePath, String delimiter) {
         List<String[]> rows = readCsvRaw(resourcePath, delimiter);
+
         if (rows.isEmpty()) {
             return Collections.emptyList();
         }
@@ -70,11 +68,13 @@ public class CSVUtils {
         return result;
     }
 
-    // -------------------------------
-    // Internal helpers
-    // -------------------------------
+    // ============================================================
+    // Internal Helpers
+    // ============================================================
+
     private static List<String[]> readCsvRaw(String resourcePath, String delimiter) {
         InputStream inputStream = getResourceAsStream(resourcePath);
+
         if (inputStream == null) {
             throw new CsvParsingException("CSV resource not found on classpath: " + resourcePath);
         }
@@ -96,11 +96,11 @@ public class CSVUtils {
 
                 String[] tokens = line.split(delimiter, -1);
 
+                // Always add the row — header or data
+                rows.add(tokens);
+
                 if (isFirstLine) {
-                    rows.add(tokens);
                     isFirstLine = false;
-                } else {
-                    rows.add(tokens);
                 }
             }
 

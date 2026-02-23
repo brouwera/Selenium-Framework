@@ -7,11 +7,21 @@
   {
     "name": "Timeouts",
     "matchedStatuses": ["failed"],
-    "messageRegex": ".*Timeout.*"
+    "messageRegex": ".*(Timeout|Timed out|Wait.*expired).*"
   },
   {
     "name": "Element Not Found",
     "matchedStatuses": ["failed"],
-    "messageRegex": ".*NoSuchElementException.*"
+    "messageRegex": ".*(NoSuchElementException|ElementNotInteractableException).*"
+  },
+  {
+    "name": "Stale Element Reference",
+    "matchedStatuses": ["failed"],
+    "messageRegex": ".*StaleElementReferenceException.*"
+  },
+  {
+    "name": "WebDriver Errors",
+    "matchedStatuses": ["failed"],
+    "messageRegex": ".*WebDriverException.*"
   }
 ]

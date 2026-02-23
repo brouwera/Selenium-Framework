@@ -5,14 +5,18 @@ import utils.CSVUtils;
 
 public class LoginDataProvider {
 
+    private static final String LOGIN_DATA_PATH = "testData/loginData.csv";
+
     @DataProvider(name = "loginData")
     public Object[][] loginData() {
 
-        // Load from classpath: src/test/resources/testData/loginData.csv
-        Object[][] data = CSVUtils.readCsvAsDataProvider("testData/loginData.csv");
+        Object[][] data = CSVUtils.readCsvAsDataProvider(LOGIN_DATA_PATH);
 
         if (data.length == 0) {
-            throw new RuntimeException("loginData.csv returned no rows. Please verify the file is not empty.");
+            throw new RuntimeException(
+                    "CSV file '" + LOGIN_DATA_PATH + "' returned no rows. " +
+                            "Please verify the file is not empty or incorrectly formatted."
+            );
         }
 
         return data;

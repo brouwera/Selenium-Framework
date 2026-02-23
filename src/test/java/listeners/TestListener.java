@@ -9,9 +9,14 @@ import org.openqa.selenium.WebDriver;
 import org.testng.ITestContext;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
+
 import java.nio.charset.StandardCharsets;
 
 public class TestListener implements ITestListener {
+
+    // ============================================================
+    // Suite Lifecycle
+    // ============================================================
 
     @Override
     public void onStart(ITestContext context) {
@@ -23,36 +28,49 @@ public class TestListener implements ITestListener {
         System.out.println("=== TEST SUITE FINISHED: " + context.getName() + " ===");
     }
 
+    // ============================================================
+    // Test Lifecycle
+    // ============================================================
+
     @Override
     public void onTestStart(ITestResult result) {
-        System.out.println("=== STARTING TEST: " + result.getMethod().getMethodName() + " ===");
-        Allure.step("Starting test: " + result.getMethod().getMethodName());
+        String name = result.getMethod().getMethodName();
+        System.out.println("=== STARTING TEST: " + name + " ===");
+        Allure.step("Starting test: " + name);
     }
 
     @Override
     public void onTestSuccess(ITestResult result) {
-        System.out.println("=== TEST PASSED: " + result.getMethod().getMethodName() + " ===");
-        Allure.step("Test passed: " + result.getMethod().getMethodName());
+        String name = result.getMethod().getMethodName();
+        System.out.println("=== TEST PASSED: " + name + " ===");
+        Allure.step("Test passed: " + name);
     }
 
     @Override
     public void onTestFailure(ITestResult result) {
-        System.out.println("=== TEST FAILED: " + result.getMethod().getMethodName() + " ===");
-        WebDriver driver = BaseTest.getDriver(); if (driver != null) {
-            saveScreenshot(driver); savePageSource(driver);
+        String name = result.getMethod().getMethodName();
+        System.out.println("=== TEST FAILED: " + name + " ===");
+
+        WebDriver driver = BaseTest.getDriver();
+        if (driver != null) {
+            saveScreenshot(driver);
+            savePageSource(driver);
         }
+
         saveFailureMessage(result.getThrowable());
     }
 
     @Override
     public void onTestSkipped(ITestResult result) {
-        System.out.println("=== TEST SKIPPED: " + result.getMethod().getMethodName() + " ===");
-        Allure.step("Test skipped: " + result.getMethod().getMethodName());
+        String name = result.getMethod().getMethodName();
+        System.out.println("=== TEST SKIPPED: " + name + " ===");
+        Allure.step("Test skipped: " + name);
     }
 
-    // -----------------------------
+    // ============================================================
     // Allure Attachments
-    // -----------------------------
+    // ============================================================
+
     @Attachment(value = "Screenshot on Failure", type = "image/png")
     public byte[] saveScreenshot(WebDriver driver) {
         return ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
