@@ -23,7 +23,7 @@ A clean, maintainable, and professional Selenium + TestNG automation framework b
 # 📚 Table of Contents
 1. [Project Overview](#-project-overview)
 2. [Current Scope](#-current-scope-aligned-with-the-real-ui)
-3. [Key Features](#-completed-features)
+3. [Features at a Glance](#-completed-features)
 4. [Project Structure](#-project-structure)
 5. [How to Run Locally](#-how-to-run)
 6. [How to Run in CI](#-how-to-run-in-ci)
@@ -316,94 +316,90 @@ This framework is fully CI‑ready and supports:
 
 mvn clean test -Denv=local -Dbrowser=chrome -Dheadless=true
 
+---
+
 ### 📅 Day-by-Day Progress Log
 
 ### Day 3 — First Working Selenium + TestNG Login Automation
-Built initial BaseTest
 
-Created first LoginTest
-
-Validated environment + WebDriver setup
+- Built initial BaseTest
+- Created first LoginTest
+- Validated environment + WebDriver setup
 
 ### Day 5 — Explicit Waits + Stability
 
-Added WebDriverWait
-
-Replaced all direct interactions with explicit waits
-
-Eliminated flakiness
+- Added WebDriverWait
+- Replaced all direct interactions with explicit waits
+- Eliminated flakiness
 
 ### Day 7 — Page Object Model (POM)
 
-Added LoginPage + HomePage
-
-Clean locators + explicit waits
-
-Tests rewritten to use POM
+- Added LoginPage + HomePage
+- Clean locators + explicit waits
+- Tests rewritten to use POM
 
 ### Day 8 — Multi‑Page Navigation
 
-Added SuccessfulLoginPage
-
-Added full login flow test
-
-Improved readability + maintainability
+- Added SuccessfulLoginPage
+- Added full login flow test
+- Improved readability + maintainability
 
 ### Day 9 — Assertions + Allure + Stability
 
-Added AssertionHelper
-
-Added TestListener
-
-Cleaned pom.xml
-
-Achieved full green run
+- Added AssertionHelper
+- Added TestListener
+- Cleaned pom.xml
+- Achieved full green run
 
 ### Day 10 — Flow-Based Scenarios
 
-Added navigation + logout flow tests
-
-Added missing helper methods
-
-Improved Allure structure
+- Added navigation + logout flow tests
+- Added missing helper methods
+- Improved Allure structure
 
 ### Day 11 — Login Module Refactor
 
-Removed legacy tests
-
-Updated Page Objects
-
-Added Inputs module (later removed)
-
-Achieved full green suite
+- Removed legacy tests
+- Updated Page Objects
+- Added Inputs module (later removed)
+- Achieved full green suite
 
 ### Day 12 — Alerts Testing + Full Validation
 
-Added Alerts module (later removed)
-
-Validated entire framework
-
-Added Allure environment metadata
+- Added Alerts module (later removed)
+- Validated entire framework
+- Added Allure environment metadata
 
 ### Day 13 — Framework Cleanup
 
-Removed Inputs + Alerts
-
-Cleaned navigation
-
-Updated HomePage
-
-Full green run
+- Removed Inputs + Alerts
+- Cleaned navigation
+- Updated HomePage
+- Full green run
 
 ### Day 14 — Multi‑Browser + ConfigManager Upgrade
 
-Added Edge + Firefox support
+- Added Edge + Firefox support
+- Added manual driver paths
+- Updated ConfigManager
+- Framework now fully portable + CI‑ready
 
-Added manual driver paths
+### Day 15 — README Enhancements + Architecture Planning
 
-Updated ConfigManager
+Updated README.md with major improvements:
 
-Framework now fully portable + CI‑ready
+- Added Allure Report screenshot section
+- Added “Why This Framework Matters” engineering justification
+- Added “Features at a Glance” visual grid
+- Added Multi‑Environment Architecture diagram (planned design)
+- Added Roadmap with GitHub‑style checkboxes
+- Added Contributing and License sections
+- Cleaned formatting, spacing, and section flow
+- Ensured screenshot and diagrams render correctly on GitHub
+
+This completes the documentation milestone for Day 15 and prepares the framework for upcoming multi‑environment and stability enhancements.
+
+---
 
 ### 🚧 Upcoming Enhancements (Planned)
 
