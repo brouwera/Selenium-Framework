@@ -62,9 +62,25 @@ public class BaseTest {
             case "chrome":
                 WebDriverManager.chromedriver().setup();
                 ChromeOptions chromeOptions = new ChromeOptions();
-                chromeOptions.addArguments("--start-maximized");
-                if (headless) chromeOptions.addArguments("--headless=new");
+
+                // Detect if running in CI (GitHub Actions sets CI=true)
+                boolean isCI = System.getenv("CI") != null;
+
+                if (isCI) {
+                    chromeOptions.addArguments("--headless=new");
+                    chromeOptions.addArguments("--disable-gpu");
+                    chromeOptions.addArguments("--no-sandbox");
+                    chromeOptions.addArguments("--disable-dev-shm-usage");
+                    chromeOptions.addArguments("--window-size=1920,1080");
+                } else {
+                    chromeOptions.addArguments("--start-maximized");
+                    if (headless) {
+                        chromeOptions.addArguments("--headless=new");
+                    }
+                }
+
                 return new ChromeDriver(chromeOptions);
+
 
             case "edge":
                 System.setProperty("webdriver.edge.driver", ConfigManager.getEdgeDriverPath());
