@@ -20,13 +20,21 @@ public class BaseTest {
     private static final ThreadLocal<WebDriver> driver = new ThreadLocal<>();
     private static final ThreadLocal<WebDriverWait> wait = new ThreadLocal<>();
 
-    public static WebDriver getDriver() {
+    // ============================================================
+    // Instance-based getters (fixes IntelliJ warning)
+    // ============================================================
+
+    public WebDriver getDriver() {
         return driver.get();
     }
 
-    public static WebDriverWait getWait() {
+    public WebDriverWait getWait() {
         return wait.get();
     }
+
+    // ============================================================
+    // Test Lifecycle
+    // ============================================================
 
     @BeforeMethod(alwaysRun = true)
     public void setUp() {
@@ -40,7 +48,7 @@ public class BaseTest {
         int explicitWait = ConfigManager.getExplicitWait();
         wait.set(new WebDriverWait(webDriver, Duration.ofSeconds(explicitWait)));
 
-        // Load the correct Practice Test Automation base URL
+        // Navigate to environment-specific base URL
         webDriver.get(ConfigManager.getBaseUrl());
     }
 
@@ -55,6 +63,10 @@ public class BaseTest {
         wait.remove();
     }
 
+    // ============================================================
+    // Driver Factory
+    // ============================================================
+
     private WebDriver createDriver(String browser, boolean headless) {
 
         switch (browser.toLowerCase()) {
@@ -63,7 +75,6 @@ public class BaseTest {
                 WebDriverManager.chromedriver().setup();
                 ChromeOptions chromeOptions = new ChromeOptions();
 
-                // Detect if running in CI (GitHub Actions sets CI=true)
                 boolean isCI = System.getenv("CI") != null;
 
                 if (isCI) {
@@ -80,7 +91,6 @@ public class BaseTest {
                 }
 
                 return new ChromeDriver(chromeOptions);
-
 
             case "edge":
                 System.setProperty("webdriver.edge.driver", ConfigManager.getEdgeDriverPath());

@@ -12,12 +12,12 @@ public class BasePage {
     protected WebDriverWait wait;
 
     // ============================================================
-    // Constructor (ThreadLocal-safe)
+    // Constructor (Instance-based, ThreadLocal-safe)
     // ============================================================
 
-    public BasePage() {
-        this.driver = BaseTest.getDriver();
-        this.wait = BaseTest.getWait();
+    public BasePage(BaseTest test) {
+        this.driver = test.getDriver();
+        this.wait = test.getWait();
     }
 
     // ============================================================
@@ -30,7 +30,7 @@ public class BasePage {
     }
 
     // ============================================================
-    // Screenshot Helper (used by Listener or Page Objects)
+    // Screenshot Helper
     // ============================================================
 
     protected byte[] takeScreenshot() {

@@ -1,9 +1,12 @@
 package pages;
 
+import base.BaseTest;
 import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 
 public class HomePage extends BasePage {
+
+    private final BaseTest test;
 
     // ============================================================
     // Locators (Match Actual Practice Page)
@@ -13,8 +16,9 @@ public class HomePage extends BasePage {
     // ============================================================
     // Constructor
     // ============================================================
-    public HomePage() {
-        super();
+    public HomePage(BaseTest test) {
+        super(test);
+        this.test = test;
     }
 
     // ============================================================
@@ -35,6 +39,6 @@ public class HomePage extends BasePage {
     @Step("Navigate to Test Login Page")
     public LoginPage clickTestLoginLink() {
         click(testLoginLink);
-        return new LoginPage();
+        return new LoginPage(test);
     }
 }

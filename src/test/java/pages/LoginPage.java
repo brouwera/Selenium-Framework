@@ -1,9 +1,20 @@
 package pages;
 
+import base.BaseTest;
 import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 
 public class LoginPage extends BasePage {
+
+    private final BaseTest test;
+
+    // ============================================================
+    // Constructor
+    // ============================================================
+    public LoginPage(BaseTest test) {
+        super(test);
+        this.test = test;
+    }
 
     // ============================================================
     // Locators
@@ -12,13 +23,6 @@ public class LoginPage extends BasePage {
     private final By passwordField = By.id("password");
     private final By submitButton = By.id("submit");
     private final By errorMessage = By.id("error");
-
-    // ============================================================
-    // Constructor
-    // ============================================================
-    public LoginPage() {
-        super();
-    }
 
     // ============================================================
     // Individual Actions
@@ -39,7 +43,7 @@ public class LoginPage extends BasePage {
     @Step("Click Login button")
     public SuccessfulLoginPage clickLoginButton() {
         click(submitButton);
-        return new SuccessfulLoginPage();
+        return new SuccessfulLoginPage(test);
     }
 
     // ============================================================

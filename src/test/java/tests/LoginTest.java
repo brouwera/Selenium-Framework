@@ -22,7 +22,7 @@ public class LoginTest extends BaseTest {
     // ============================================================
 
     private LoginPage navigateToLoginPage() {
-        return new HomePage().clickTestLoginLink();
+        return new HomePage(this).clickTestLoginLink();
     }
 
     // ============================================================

@@ -1,5 +1,8 @@
 package config;
 
+import exceptions.FrameworkInitializationException;
+import io.github.cdimascio.dotenv.Dotenv;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -8,24 +11,59 @@ public class ConfigManager {
 
     private static final Properties properties = new Properties();
     private static final String CONFIG_FILE = "config.properties";
+    private static Dotenv dotenv;
 
     static {
+        loadDotEnv();
         loadProperties();
     }
+
+    // ============================================================
+    // Load .env file
+    // ============================================================
+
+    private static void loadDotEnv() {
+        try {
+            dotenv = Dotenv.configure()
+                    .ignoreIfMissing()     // Allows repo to run even if .env isn't present
+                    .load();
+        } catch (Exception e) {
+            throw new FrameworkInitializationException("Failed to load .env file.", e);
+        }
+    }
+
+    // ============================================================
+    // Load config.properties
+    // ============================================================
 
     private static void loadProperties() {
         try (InputStream input = ConfigManager.class.getClassLoader().getResourceAsStream(CONFIG_FILE)) {
             if (input == null) {
-                throw new RuntimeException("Unable to find " + CONFIG_FILE + " on classpath.");
+                throw new FrameworkInitializationException("Unable to find " + CONFIG_FILE + " on classpath.");
             }
             properties.load(input);
         } catch (IOException e) {
-            throw new RuntimeException("Failed to load " + CONFIG_FILE, e);
+            throw new FrameworkInitializationException("Failed to load " + CONFIG_FILE, e);
         }
     }
 
+    // ============================================================
+    // Unified Getter (Order: System → .env → config.properties)
+    // ============================================================
+
     private static String get(String key) {
-        return System.getProperty(key, properties.getProperty(key));
+        // 1. System property override
+        if (System.getProperty(key) != null) {
+            return System.getProperty(key);
+        }
+
+        // 2. .env override
+        if (dotenv != null && dotenv.get(key) != null) {
+            return dotenv.get(key);
+        }
+
+        // 3. config.properties fallback
+        return properties.getProperty(key);
     }
 
     // ============================================================
@@ -33,12 +71,22 @@ public class ConfigManager {
     // ============================================================
 
     public static String getEnvironment() {
-        return get("env").toLowerCase();
+        String env = get("env");
+        if (env == null) {
+            throw new FrameworkInitializationException("Environment (env) is not set in .env or config.properties.");
+        }
+        return env.toLowerCase();
     }
 
     public static String getBaseUrl() {
         String env = getEnvironment();
-        return get(env + ".base.url");
+        String url = get(env + ".base.url");
+
+        if (url == null) {
+            throw new FrameworkInitializationException("Base URL for environment '" + env + "' is missing.");
+        }
+
+        return url;
     }
 
     // ============================================================
@@ -46,7 +94,8 @@ public class ConfigManager {
     // ============================================================
 
     public static String getBrowser() {
-        return get("browser").toLowerCase();
+        String browser = get("browser");
+        return browser != null ? browser.toLowerCase() : "chrome";
     }
 
     public static boolean isHeadless() {
@@ -66,7 +115,19 @@ public class ConfigManager {
     }
 
     // ============================================================
-    // Driver Paths
+    // Credentials (Optional)
+    // ============================================================
+
+    public static String getUsername() {
+        return get("username");
+    }
+
+    public static String getPassword() {
+        return get("password");
+    }
+
+    // ============================================================
+    // Driver Paths (Optional)
     // ============================================================
 
     public static String getEdgeDriverPath() {

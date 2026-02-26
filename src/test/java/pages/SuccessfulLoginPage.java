@@ -1,9 +1,12 @@
 package pages;
 
+import base.BaseTest;
 import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 
 public class SuccessfulLoginPage extends BasePage {
+
+    private final BaseTest test;
 
     private final By successMessage = By.xpath("//h1[contains(text(),'Logged In Successfully')]");
     private final By logoutButton = By.xpath("//a[contains(text(),'Log out')]");
@@ -11,8 +14,9 @@ public class SuccessfulLoginPage extends BasePage {
     // ============================================================
     // Constructor
     // ============================================================
-    public SuccessfulLoginPage() {
-        super();
+    public SuccessfulLoginPage(BaseTest test) {
+        super(test);
+        this.test = test;
     }
 
     // ============================================================
@@ -45,6 +49,6 @@ public class SuccessfulLoginPage extends BasePage {
     @Step("Click Logout button to return to Login Page")
     public LoginPage clickLogoutButton() {
         click(logoutButton);
-        return new LoginPage();
+        return new LoginPage(test);
     }
 }

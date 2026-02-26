@@ -300,6 +300,15 @@ mvn clean test -Dbrowser=chrome
 
 mvn clean test -Dheadless=true
 
+### **Execution Methods Overview**
+
+| Execution Method | Command | Description |
+|------------------|---------|-------------|
+| **Maven (Surefire + TestNG Suite)** | `mvn clean test` | Executes the entire suite using `testng.xml`, applies listeners, parallel execution, and generates Allure results. |
+| **TestNG Suite (IDE Run)** | Right‑click `testng.xml` → Run | Runs the suite directly from the IDE with all listeners and parallel settings applied. |
+| **Single Test Class** | Run test class in IDE | Useful for debugging or validating a specific module without running the full suite. |
+| **Single Test Method** | Run method in IDE | Fastest way to isolate and debug a specific scenario. |
+| **Allure Report** | `allure serve target/allure-results` | Generates and opens a full Allure report with steps, attachments, retries, and labels. |
 
 ---
 
@@ -398,6 +407,36 @@ Updated README.md with major improvements:
 - Ensured screenshot and diagrams render correctly on GitHub
 
 This completes the documentation milestone for Day 15 and prepares the framework for upcoming multi‑environment and stability enhancements.
+
+### **Day 16 — Parallel Execution + TestNG Suite Integration**
+Today’s focus was on scaling the framework for real‑world execution patterns. I introduced a dedicated `testng.xml` suite file and configured Maven Surefire to run the suite directly. This allowed the framework to support parallel execution, listener registration, and structured test grouping.
+
+**Key Achievements**
+- Added `testng.xml` with suite, test, and listener configuration
+- Enabled parallel execution (`parallel="methods"`, `thread-count=2`)
+- Verified stable parallel runs across all Login tests
+- Ensured Allure reporting works seamlessly with suite‑based execution
+- Cleaned up test grouping (`smoke`, `regression`) for CI‑ready organization
+
+**Outcome:**  
+The framework now executes tests in parallel with clean reporting, predictable structure, and full listener support — a major step toward CI/CD readiness.
+
+---
+
+### **Day 17 — Retry Logic, Listener Architecture, and Stability Validation**
+Today I implemented a professional‑grade retry mechanism using TestNG’s `IRetryAnalyzer` and `IAnnotationTransformer`. This included wiring a custom `RetryListener` and integrating flaky‑test labeling into Allure.
+
+After validating the architecture, I removed the intentional failure and restored the suite to full stability.
+
+**Key Achievements**
+- Added `RetryAnalyzer` and `RetryListener` for controlled retry logic
+- Integrated flaky‑test labeling and retry steps into Allure
+- Ensured listeners load correctly through `testng.xml`
+- Restored parallel execution after validation
+- Achieved a fully stable, 100% passing suite with clean Allure reporting
+
+**Outcome:**  
+Retry logic is now part of the framework’s architecture — available when needed, invisible when not. The suite runs cleanly in parallel with zero flakiness and full reporting fidelity.
 
 ---
 

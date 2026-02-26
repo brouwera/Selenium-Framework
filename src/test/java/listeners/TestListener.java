@@ -49,7 +49,7 @@ public class TestListener implements ITestListener {
         System.out.println("=== TEST PASSED: " + name + " ===");
         Allure.step("Test passed: " + name);
 
-        WebDriver driver = BaseTest.getDriver();
+        WebDriver driver = getDriverFromResult(result);
         if (driver != null) {
             saveSuccessScreenshot(driver);
         }
@@ -60,7 +60,7 @@ public class TestListener implements ITestListener {
         String name = result.getMethod().getMethodName();
         System.out.println("=== TEST FAILED: " + name + " ===");
 
-        WebDriver driver = BaseTest.getDriver();
+        WebDriver driver = getDriverFromResult(result);
 
         if (driver != null) {
             saveFailureScreenshot(driver);
@@ -77,6 +77,18 @@ public class TestListener implements ITestListener {
         String name = result.getMethod().getMethodName();
         System.out.println("=== TEST SKIPPED: " + name + " ===");
         Allure.step("Test skipped: " + name);
+    }
+
+    // ============================================================
+    // WebDriver Retrieval (Optional Enhancement)
+    // ============================================================
+
+    private WebDriver getDriverFromResult(ITestResult result) {
+        Object instance = result.getInstance();
+        if (instance instanceof BaseTest) {
+            return ((BaseTest) instance).getDriver();
+        }
+        return null;
     }
 
     // ============================================================
