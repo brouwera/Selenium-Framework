@@ -92,6 +92,45 @@ public class BasePage {
     }
 
     // ============================================================
+    // NEW: Clear Helper
+    // ============================================================
+
+    protected void clear(By locator) {
+        waitForVisibility(locator);
+        driver.findElement(locator).clear();
+    }
+
+    // ============================================================
+    // NEW: Attribute Helper
+    // ============================================================
+
+    protected String getAttribute(By locator, String attribute) {
+        waitForVisibility(locator);
+        return driver.findElement(locator).getAttribute(attribute);
+    }
+
+    // ============================================================
+    // NEW: DOM Presence Helper
+    // ============================================================
+
+    protected boolean isElementPresent(By locator) {
+        try {
+            driver.findElement(locator);
+            return true;
+        } catch (NoSuchElementException e) {
+            return false;
+        }
+    }
+
+    // ============================================================
+    // NEW: Raw Click (no waits, used for exception tests)
+    // ============================================================
+
+    protected void rawClick(By locator) {
+        driver.findElement(locator).click();
+    }
+
+    // ============================================================
     // JavaScript Helpers
     // ============================================================
 

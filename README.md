@@ -495,6 +495,25 @@ The Exceptions module is now fully integrated, stable, and production‑ready. T
 
 ---
 
+### **Day 19 — Exceptions Module Enhancements + Framework Consistency Upgrades**
+Today’s work focused on elevating the Exceptions module from “functionally complete” to “architecturally consistent” with the rest of the framework. This meant aligning all Page Object interactions with the BasePage API, expanding BasePage with missing universal helpers, and refining the exception‑simulation test to behave exactly as Selenium does in real‑world scenarios.
+
+A key part of today’s work was ensuring that the framework could intentionally reproduce Selenium exceptions *without* compromising the safety and consistency of normal interactions. To achieve this, a new `rawClick()` method was added to BasePage, allowing the framework to bypass wait conditions only when explicitly required for exception testing.
+
+**Key Achievements**
+- Added three foundational helpers to `BasePage` (`clear`, `getAttribute`, `isElementPresent`) to ensure full consistency across all Page Objects
+- Introduced `rawClick()` to safely simulate Selenium exceptions without affecting standard click behavior
+- Updated `ExceptionsPage` to use the new helpers and expose a clean `clickInvisibleSaveButton()` method for controlled exception testing
+- Updated `ExceptionsTest` to rely solely on Page Object methods, maintaining proper encapsulation and avoiding protected BasePage calls
+- Validated all five exception scenarios with accurate Selenium behavior, including the corrected `ElementNotInteractableException` test
+- Executed the full suite with **100% passing tests** and verified clean Allure reporting
+- Confirmed Allure report generation via both Maven (`allure:aggregate`) and CLI (`allure serve target/allure-results`)
+
+**Outcome:**  
+The Exceptions module is now fully aligned with the framework’s architecture, using consistent BasePage utilities and clean Page Object abstractions. Exception simulation is accurate, intentional, and isolated, while normal test flows remain safe and stable. With all enhancements complete, the framework now demonstrates production‑grade consistency, clarity, and maintainability across every module.
+
+---
+
 ### 🚧 Upcoming Enhancements (Planned)
 
 ### Table Module

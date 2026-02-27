@@ -40,7 +40,7 @@ public class ExceptionsPage extends BasePage {
     @Step("Click Add button")
     public ExceptionsPage clickAddButton() {
         click(addButton);
-        waitForVisibility(row2Input); // Row 2 appears after ~5 seconds
+        waitForVisibility(row2Input);
         return this;
     }
 
@@ -76,7 +76,7 @@ public class ExceptionsPage extends BasePage {
     @Step("Clear Row 1 input")
     public ExceptionsPage clearRow1Input() {
         waitForVisibility(row1Input);
-        driver.findElement(row1Input).clear();
+        clear(row1Input);
         return this;
     }
 
@@ -90,16 +90,41 @@ public class ExceptionsPage extends BasePage {
     @Step("Get value from Row 1 input")
     public String getRow1InputValue() {
         waitForVisibility(row1Input);
-        return driver.findElement(row1Input).getAttribute("value");
+        return getAttribute(row1Input, "value");
+    }
+
+    @Step("Check if Row 1 input is enabled")
+    public boolean isRow1InputEnabled() {
+        return driver.findElement(row1Input).isEnabled();
     }
 
     // ============================================================
-    // Visibility Checks
+    // Special Case: Invisible Save Button (Exception Test)
+    // ============================================================
+
+    @Step("Click invisible Save button (expected to throw ElementNotInteractableException)")
+    public ExceptionsPage clickInvisibleSaveButton() {
+        rawClick(By.name("Save")); // bypasses waitForClickable
+        return this;
+    }
+
+    // ============================================================
+    // Visibility & DOM Checks
     // ============================================================
 
     @Step("Check if instructions text is displayed")
     public boolean isInstructionsDisplayed() {
         return isElementVisible(instructionsText);
+    }
+
+    @Step("Check if instructions element is present in DOM")
+    public boolean isInstructionsPresentInDOM() {
+        return isElementPresent(instructionsText);
+    }
+
+    @Step("Wait for instructions text to disappear from DOM")
+    public boolean waitForInstructionsToDisappear() {
+        return wait.until(ExpectedConditions.invisibilityOfElementLocated(instructionsText));
     }
 
     @Step("Get confirmation message")

@@ -3,6 +3,7 @@ package tests;
 import base.BaseTest;
 import helpers.AssertionHelper;
 import io.qameta.allure.*;
+import org.openqa.selenium.ElementNotInteractableException;
 import org.testng.annotations.Test;
 import pages.ExceptionsPage;
 import pages.HomePage;
@@ -27,11 +28,8 @@ public class ExceptionsTest extends BaseTest {
     @Description("Verify that clicking Add eventually reveals Row 2 input field.")
     @Test
     public void testRow2AppearsAfterDelay() {
-
         ExceptionsPage page = navigateToExceptionsPage();
-
-        page.clickAddButton(); // waits internally for Row 2
-
+        page.clickAddButton();
         AssertionHelper.assertTrue(
                 page.isRow2InputVisible(),
                 "Row 2 input should be visible after clicking Add"
@@ -46,31 +44,46 @@ public class ExceptionsTest extends BaseTest {
     @Description("Verify that saving text in Row 2 works and avoids clicking invisible Save in Row 1.")
     @Test
     public void testSaveTextRow2() {
-
         ExceptionsPage page = navigateToExceptionsPage();
 
         page.clickAddButton()
                 .enterTextRow2("Adam Test")
                 .clickRow2Save();
 
-        String message = page.getConfirmationMessage();
-
         AssertionHelper.assertEquals(
-                message,
+                page.getConfirmationMessage(),
                 "Row 2 was saved",
                 "Confirmation message should match"
         );
+    }
+
+    @Story("Demonstrate ElementNotInteractableException")
+    @Description("Intentionally click the invisible Save button to show the exception behavior.")
+    @Test(expectedExceptions = ElementNotInteractableException.class)
+    public void testInvisibleSaveThrowsException() {
+        ExceptionsPage page = navigateToExceptionsPage();
+        page.clickInvisibleSaveButton();   // <-- FIXED: uses public wrapper
     }
 
     // ============================================================
     // Test Case 3: InvalidElementStateException (Row 1 disabled)
     // ============================================================
 
+    @Story("Row 1 disabled state")
+    @Description("Verify Row 1 is disabled before clicking Edit.")
+    @Test
+    public void testRow1IsDisabledInitially() {
+        ExceptionsPage page = navigateToExceptionsPage();
+        AssertionHelper.assertFalse(
+                page.isRow1InputEnabled(),
+                "Row 1 input should be disabled initially"
+        );
+    }
+
     @Story("Edit Row 1 input")
     @Description("Verify that editing Row 1 requires clicking Edit first.")
     @Test
     public void testEditRow1() {
-
         ExceptionsPage page = navigateToExceptionsPage();
 
         page.clickRow1Edit()
@@ -92,7 +105,6 @@ public class ExceptionsTest extends BaseTest {
     @Description("Verify that instructions text disappears after clicking Add.")
     @Test
     public void testInstructionsDisappear() {
-
         ExceptionsPage page = navigateToExceptionsPage();
 
         AssertionHelper.assertTrue(
@@ -100,11 +112,25 @@ public class ExceptionsTest extends BaseTest {
                 "Instructions should be visible initially"
         );
 
-        page.clickAddButton(); // instructions removed from DOM
+        page.clickAddButton();
 
         AssertionHelper.assertFalse(
                 page.isInstructionsDisplayed(),
                 "Instructions should disappear after clicking Add"
+        );
+    }
+
+    @Story("Instructions removed from DOM")
+    @Description("Verify instructions element is removed from DOM after clicking Add.")
+    @Test
+    public void testInstructionsRemovedFromDOM() {
+        ExceptionsPage page = navigateToExceptionsPage();
+
+        page.clickAddButton();
+
+        AssertionHelper.assertFalse(
+                page.isInstructionsPresentInDOM(),
+                "Instructions element should be removed from DOM"
         );
     }
 
@@ -116,7 +142,6 @@ public class ExceptionsTest extends BaseTest {
     @Description("Verify that a 3-second wait fails because Row 2 appears after ~5 seconds.")
     @Test
     public void testShortTimeoutFails() {
-
         ExceptionsPage page = navigateToExceptionsPage();
 
         boolean appeared = page.waitForRow2InputShortTimeout();
