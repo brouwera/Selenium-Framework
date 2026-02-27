@@ -203,12 +203,32 @@ This framework mirrors the structure and practices used in enterprise QA automat
 
 ---
 
+## 📄 Data‑Driven Testing (CSV‑Powered)
+
+This framework uses CSV files to drive login scenarios through TestNG DataProviders. Test logic stays clean and focused while the data lives in a simple, editable file.
+
+### How it works
+- `loginData.csv` stores all username/password combinations and expected outcomes.
+- `CSVUtils` loads the file and converts each row into a map of key/value pairs.
+- `LoginDataProvider` feeds each row into the test as an individual execution.
+- `LoginTest` validates the login flow using the supplied data.
+
+### Example CSV snippet
+```csv
+username,password,expectedResult
+student,Password123,success
+student,WrongPassword,failure
+wrongUser,Password123,failure
+```
+
+---
+
 # 📌 Current Scope (Aligned With the Real UI)
 
 The Practice page currently includes:
 
 - **Test Login Page**
-- **Test Exceptions** (coming soon)
+- **Test Exceptions**
 - **Test Table** (coming soon)
 
 Removed modules (no longer present on the site):
@@ -252,27 +272,46 @@ This keeps the framework aligned with the real application under test.
 ```
 src
 └── test
-    ├── java
-    │   ├── base
-    │   │   └── BaseTest.java
-    │   ├── pages
-    │   │   ├── BasePage.java
-    │   │   ├── HomePage.java
-    │   │   ├── LoginPage.java
-    │   │   └── SuccessfulLoginPage.java
-    │   ├── tests
-    │   │   └── LoginTest.java
-    │   ├── dataproviders
-    │   │   └── LoginDataProvider.java
-    │   ├── listeners
-    │   │   └── TestListener.java
-    │   └── utils
-    │       ├── CSVUtils.java
-    │       └── CsvParsingException.java
-    └── resources
-        └── testData
-            └── loginData.csv
-
+├── java
+│   ├── base
+│   │   └── BaseTest.java
+│   ├── config
+│   │   └── ConfigManager.java
+│   ├── dataproviders
+│   │   └── LoginDataProvider.java
+│   ├── exceptions
+│   │   ├── ElementNotFoundException.java
+│   │   ├── FrameworkInitializationException.java
+│   │   ├── InvalidTestDataException.java
+│   │   ├── PageNavigationException.java
+│   ├── helpers
+│   │   └── AssertionHelper.java
+│   ├── listeners
+│   │   ├── RetryAnalyzer.java
+│   │   ├── RetryListener.java
+│   │   └── TestListener.java
+│   ├── pages
+│   │   ├── BasePage.java
+│   │   ├── ExceptionsPage.java
+│   │   ├── HomePage.java
+│   │   ├── LoginPage.java
+│   │   └── SuccessfulLoginPage.java
+│   ├── tests
+│   │   ├── ExceptionsTest.java
+│   │   └── LoginTest.java
+│   └── utils
+│       ├── CsvParsingException.java
+│       └── CSVUtils.java
+└── resources
+├── testData
+│   └── loginData.csv
+├── categories.json
+├── config.properties
+├── environment.properties
+allure-report-example.png
+pom.xml
+README.md
+testng.xml
 ```
 
 ---
@@ -440,28 +479,32 @@ Retry logic is now part of the framework’s architecture — available when nee
 
 ---
 
+### **Day 18 — Exceptions Module + Full Framework Polish**
+Today’s focus was on expanding the framework beyond login testing by implementing the full Exceptions module and validating it end‑to‑end. This included building a complete Page Object, creating five exception‑focused test cases, and performing a full consistency sweep across the entire project.
+
+**Key Achievements**
+- Added `ExceptionsPage` with full support for delayed elements, dynamic DOM changes, disabled inputs, and short‑timeout behavior
+- Implemented `ExceptionsTest` with five real‑world exception scenarios: NoSuchElementException, ElementNotInteractableException, InvalidElementStateException, StaleElementReferenceException, and TimeoutException
+- Ensured all interactions use explicit waits and Allure step annotations for clarity and reporting
+- Performed a full framework polish to align formatting, naming, comments, and structure across all modules
+- Executed the entire suite (8 Login tests + 5 Exceptions tests) with **100% passing results** and no flakiness
+- Updated README with a dedicated CSV‑Driven Testing section to document the data layer of the framework
+
+**Outcome:**  
+The Exceptions module is now fully integrated, stable, and production‑ready. The framework has grown from a single‑module login suite into a multi‑module automation project with clean architecture, consistent style, and complete documentation.
+
+---
+
 ### 🚧 Upcoming Enhancements (Planned)
 
-### Exceptions Module
-
-Page object
-
-Error handling tests
-
 ### Table Module
-
-Table parsing utilities
-
+Table parsing utilities  
 Sorting/filtering tests
 
 ### Framework Enhancements
-
-Allure screenshots on failure
-
-.env support for secrets
-
-Multi‑environment execution
-
+Allure screenshots on failure  
+.env support for secrets  
+Multi‑environment execution  
 README visuals + architecture diagram
 
 ---
@@ -471,45 +514,28 @@ README visuals + architecture diagram
 A clear view of what’s coming next for this framework:
 
 ### Core Enhancements
-
-- [ ] Exceptions module (page object + validation tests)
-
+- [x] Exceptions module (page object + validation tests)
 - [ ] Table module (table parsing utilities + sorting/filtering tests)
-
 - [ ] Allure screenshots on failure
-
 - [ ] Multi‑environment execution (local, qa, stage)
-
 - [ ] .env support for secrets and environment variables
 
 ### Architecture & Stability
-
 - [ ] Retry logic for flaky CI environments
-
 - [ ] Logging improvements (SLF4J or Log4j2)
-
 - [ ] Parallel execution support
-
 - [ ] Enhanced ConfigManager with typed properties
 
 ### CI/CD & Reporting
-
 - [ ] Allure history tracking in CI
-
 - [ ] Allure categories.json for failure grouping
-
 - [ ] Upload Allure report as a GitHub Pages artifact
-
 - [ ] Add CI matrix for multi‑browser runs
 
 ### Documentation & Developer Experience
-
 - [ ] Add demo GIF of test execution
-
 - [ ] Add Contributing guidelines
-
 - [ ] Add full API documentation for utilities
-
 - [ ] Add architecture diagram for multi‑environment setup
 
 ---

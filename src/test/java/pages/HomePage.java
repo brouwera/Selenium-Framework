@@ -9,13 +9,16 @@ public class HomePage extends BasePage {
     private final BaseTest test;
 
     // ============================================================
-    // Locators (Match Actual Practice Page)
+    // Locators (Match Practice Page)
     // ============================================================
+
     private final By testLoginLink = By.linkText("Test Login Page");
+    private final By testExceptionsLink = By.linkText("Test Exceptions");
 
     // ============================================================
     // Constructor
     // ============================================================
+
     public HomePage(BaseTest test) {
         super(test);
         this.test = test;
@@ -27,18 +30,42 @@ public class HomePage extends BasePage {
 
     @Step("Open Practice Home Page")
     public HomePage open() {
-        driver.get("https://practice.expandtesting.com/");
+        driver.get("https://practicetestautomation.com/practice/");
         waitForPageLoad();
         return this;
     }
 
     // ============================================================
-    // Navigation Actions
+    // Direct Navigation Helpers
     // ============================================================
 
-    @Step("Navigate to Test Login Page")
+    @Step("Navigate to Login Page")
+    public LoginPage goToLoginPage() {
+        open();
+        click(testLoginLink);
+        return new LoginPage(test);
+    }
+
+    @Step("Navigate to Exceptions Page")
+    public ExceptionsPage goToExceptionsPage() {
+        open();
+        click(testExceptionsLink);
+        return new ExceptionsPage(test);
+    }
+
+    // ============================================================
+    // Raw Click Actions
+    // ============================================================
+
+    @Step("Click Test Login Page link")
     public LoginPage clickTestLoginLink() {
         click(testLoginLink);
         return new LoginPage(test);
+    }
+
+    @Step("Click Test Exceptions link")
+    public ExceptionsPage clickTestExceptionsLink() {
+        click(testExceptionsLink);
+        return new ExceptionsPage(test);
     }
 }

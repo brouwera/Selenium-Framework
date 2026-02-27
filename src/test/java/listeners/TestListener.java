@@ -80,7 +80,7 @@ public class TestListener implements ITestListener {
     }
 
     // ============================================================
-    // WebDriver Retrieval (Optional Enhancement)
+    // WebDriver Retrieval
     // ============================================================
 
     private WebDriver getDriverFromResult(ITestResult result) {

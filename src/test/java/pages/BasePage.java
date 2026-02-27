@@ -6,22 +6,26 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.time.Duration;
+
 public class BasePage {
 
     protected WebDriver driver;
     protected WebDriverWait wait;
+    protected WebDriverWait shortWait; // 3-second wait for TimeoutException tests
 
     // ============================================================
-    // Constructor (Instance-based, ThreadLocal-safe)
+    // Constructor (ThreadLocal-safe)
     // ============================================================
 
     public BasePage(BaseTest test) {
         this.driver = test.getDriver();
         this.wait = test.getWait();
+        this.shortWait = new WebDriverWait(driver, Duration.ofSeconds(3));
     }
 
     // ============================================================
-    // Allure Step Logging
+    // Allure Logging
     // ============================================================
 
     @Step("{message}")
@@ -38,7 +42,7 @@ public class BasePage {
     }
 
     // ============================================================
-    // Core Wait Helpers
+    // Wait Helpers
     // ============================================================
 
     protected WebElement waitForVisibility(By locator) {
@@ -117,7 +121,7 @@ public class BasePage {
     }
 
     // ============================================================
-    // Page Load Helper
+    // Page Load Helpers
     // ============================================================
 
     protected void waitForPageLoad() {
@@ -137,5 +141,17 @@ public class BasePage {
     protected void waitForUrlContains(String partialUrl) {
         log("Waiting for URL to contain: " + partialUrl);
         wait.until(ExpectedConditions.urlContains(partialUrl));
+    }
+
+    // ============================================================
+    // Visibility Helpers (Dynamic Elements)
+    // ============================================================
+
+    protected boolean isElementVisible(By locator) {
+        try {
+            return driver.findElement(locator).isDisplayed();
+        } catch (NoSuchElementException | StaleElementReferenceException e) {
+            return false;
+        }
     }
 }

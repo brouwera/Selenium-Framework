@@ -36,8 +36,10 @@ public class AssertionHelper {
 
     public static void assertTextContains(String actual, String expectedSubstring, String message) {
         Assert.assertNotNull(actual, "Actual text is null: " + message);
-        Assert.assertTrue(actual.contains(expectedSubstring),
-                message + " | Expected substring: '" + expectedSubstring + "' | Actual: '" + actual + "'");
+        Assert.assertTrue(
+                actual.contains(expectedSubstring),
+                message + " | Expected substring: '" + expectedSubstring + "' | Actual: '" + actual + "'"
+        );
     }
 
     public static void assertTextMatches(String actual, String expected, String message) {

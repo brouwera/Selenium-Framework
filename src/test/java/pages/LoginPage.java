@@ -11,6 +11,7 @@ public class LoginPage extends BasePage {
     // ============================================================
     // Constructor
     // ============================================================
+
     public LoginPage(BaseTest test) {
         super(test);
         this.test = test;
@@ -19,6 +20,7 @@ public class LoginPage extends BasePage {
     // ============================================================
     // Locators
     // ============================================================
+
     private final By usernameField = By.id("username");
     private final By passwordField = By.id("password");
     private final By submitButton = By.id("submit");
@@ -58,7 +60,7 @@ public class LoginPage extends BasePage {
     }
 
     // ============================================================
-    // Assertions / Visibility Checks
+    // Visibility Checks
     // ============================================================
 
     @Step("Verify Login button is displayed")

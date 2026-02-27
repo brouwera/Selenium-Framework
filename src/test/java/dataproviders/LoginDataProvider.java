@@ -7,6 +7,10 @@ public class LoginDataProvider {
 
     private static final String LOGIN_DATA_PATH = "testData/loginData.csv";
 
+    // ============================================================
+    // Data Provider
+    // ============================================================
+
     @DataProvider(name = "loginData")
     public Object[][] loginData() {
 
@@ -15,7 +19,7 @@ public class LoginDataProvider {
         if (data.length == 0) {
             throw new RuntimeException(
                     "CSV file '" + LOGIN_DATA_PATH + "' returned no rows. " +
-                            "Please verify the file is not empty or incorrectly formatted."
+                            "Verify that the file is not empty and is correctly formatted."
             );
         }
 

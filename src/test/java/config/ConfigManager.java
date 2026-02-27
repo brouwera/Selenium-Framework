@@ -13,19 +13,23 @@ public class ConfigManager {
     private static final String CONFIG_FILE = "config.properties";
     private static Dotenv dotenv;
 
+    // ============================================================
+    // Static Initialization (Load .env + config.properties)
+    // ============================================================
+
     static {
         loadDotEnv();
         loadProperties();
     }
 
     // ============================================================
-    // Load .env file
+    // Load .env File (Optional)
     // ============================================================
 
     private static void loadDotEnv() {
         try {
             dotenv = Dotenv.configure()
-                    .ignoreIfMissing()     // Allows repo to run even if .env isn't present
+                    .ignoreIfMissing() // Allows repo to run even if .env isn't present
                     .load();
         } catch (Exception e) {
             throw new FrameworkInitializationException("Failed to load .env file.", e);
@@ -38,10 +42,15 @@ public class ConfigManager {
 
     private static void loadProperties() {
         try (InputStream input = ConfigManager.class.getClassLoader().getResourceAsStream(CONFIG_FILE)) {
+
             if (input == null) {
-                throw new FrameworkInitializationException("Unable to find " + CONFIG_FILE + " on classpath.");
+                throw new FrameworkInitializationException(
+                        "Unable to find " + CONFIG_FILE + " on classpath."
+                );
             }
+
             properties.load(input);
+
         } catch (IOException e) {
             throw new FrameworkInitializationException("Failed to load " + CONFIG_FILE, e);
         }
@@ -52,14 +61,19 @@ public class ConfigManager {
     // ============================================================
 
     private static String get(String key) {
+
         // 1. System property override
-        if (System.getProperty(key) != null) {
-            return System.getProperty(key);
+        String systemValue = System.getProperty(key);
+        if (systemValue != null) {
+            return systemValue;
         }
 
         // 2. .env override
-        if (dotenv != null && dotenv.get(key) != null) {
-            return dotenv.get(key);
+        if (dotenv != null) {
+            String envValue = dotenv.get(key);
+            if (envValue != null) {
+                return envValue;
+            }
         }
 
         // 3. config.properties fallback
@@ -73,7 +87,9 @@ public class ConfigManager {
     public static String getEnvironment() {
         String env = get("env");
         if (env == null) {
-            throw new FrameworkInitializationException("Environment (env) is not set in .env or config.properties.");
+            throw new FrameworkInitializationException(
+                    "Environment (env) is not set in .env or config.properties."
+            );
         }
         return env.toLowerCase();
     }
@@ -83,7 +99,9 @@ public class ConfigManager {
         String url = get(env + ".base.url");
 
         if (url == null) {
-            throw new FrameworkInitializationException("Base URL for environment '" + env + "' is missing.");
+            throw new FrameworkInitializationException(
+                    "Base URL for environment '" + env + "' is missing."
+            );
         }
 
         return url;

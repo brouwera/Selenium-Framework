@@ -85,7 +85,6 @@ public class CSVUtils {
                 new InputStreamReader(inputStream, StandardCharsets.UTF_8))) {
 
             String line;
-            boolean isFirstLine = true;
 
             while ((line = reader.readLine()) != null) {
                 line = stripBom(line).trim();
@@ -95,13 +94,7 @@ public class CSVUtils {
                 }
 
                 String[] tokens = line.split(delimiter, -1);
-
-                // Always add the row — header or data
                 rows.add(tokens);
-
-                if (isFirstLine) {
-                    isFirstLine = false;
-                }
             }
 
         } catch (IOException e) {

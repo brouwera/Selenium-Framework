@@ -17,11 +17,15 @@ import java.time.Duration;
 
 public class BaseTest {
 
+    // ============================================================
+    // ThreadLocal WebDriver + Wait (Parallel Execution Safe)
+    // ============================================================
+
     private static final ThreadLocal<WebDriver> driver = new ThreadLocal<>();
     private static final ThreadLocal<WebDriverWait> wait = new ThreadLocal<>();
 
     // ============================================================
-    // Instance-based getters (fixes IntelliJ warning)
+    // Accessors (Instance-Based for Page Object Constructors)
     // ============================================================
 
     public WebDriver getDriver() {
@@ -48,7 +52,6 @@ public class BaseTest {
         int explicitWait = ConfigManager.getExplicitWait();
         wait.set(new WebDriverWait(webDriver, Duration.ofSeconds(explicitWait)));
 
-        // Navigate to environment-specific base URL
         webDriver.get(ConfigManager.getBaseUrl());
     }
 

@@ -8,9 +8,17 @@ import java.lang.reflect.Method;
 
 public class RetryListener implements IAnnotationTransformer {
 
+    // ============================================================
+    // Constructor
+    // ============================================================
+
     public RetryListener() {
         System.out.println("RetryListener initialized");
     }
+
+    // ============================================================
+    // Annotation Transformation
+    // ============================================================
 
     @Override
     public void transform(

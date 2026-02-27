@@ -8,12 +8,17 @@ public class SuccessfulLoginPage extends BasePage {
 
     private final BaseTest test;
 
+    // ============================================================
+    // Locators
+    // ============================================================
+
     private final By successMessage = By.xpath("//h1[contains(text(),'Logged In Successfully')]");
     private final By logoutButton = By.xpath("//a[contains(text(),'Log out')]");
 
     // ============================================================
     // Constructor
     // ============================================================
+
     public SuccessfulLoginPage(BaseTest test) {
         super(test);
         this.test = test;
@@ -29,15 +34,15 @@ public class SuccessfulLoginPage extends BasePage {
     }
 
     // ============================================================
-    // Assertions / Visibility Checks
+    // Visibility Checks
     // ============================================================
 
-    @Step("Verify success message is displayed on Successful Login Page")
+    @Step("Verify success message is displayed")
     public boolean isSuccessMessageDisplayed() {
         return isDisplayed(successMessage);
     }
 
-    @Step("Verify Logout button is displayed on Successful Login Page")
+    @Step("Verify Logout button is displayed")
     public boolean isLogoutButtonDisplayed() {
         return isDisplayed(logoutButton);
     }
@@ -46,7 +51,7 @@ public class SuccessfulLoginPage extends BasePage {
     // Actions
     // ============================================================
 
-    @Step("Click Logout button to return to Login Page")
+    @Step("Click Logout button")
     public LoginPage clickLogoutButton() {
         click(logoutButton);
         return new LoginPage(test);
