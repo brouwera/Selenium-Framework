@@ -3,20 +3,26 @@ package listeners;
 import base.BaseTest;
 import io.qameta.allure.Allure;
 import io.qameta.allure.Attachment;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
-import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.*;
 import org.openqa.selenium.logging.LogEntry;
 import org.openqa.selenium.logging.LogType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.testng.ITestContext;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class TestListener implements ITestListener {
+
+    private static final Logger logger = LoggerFactory.getLogger(TestListener.class);
+    private static final String LOG_DIR = "logs";
 
     // ============================================================
     // Suite Lifecycle
@@ -24,12 +30,18 @@ public class TestListener implements ITestListener {
 
     @Override
     public void onStart(ITestContext context) {
-        System.out.println("=== TEST SUITE STARTED: " + context.getName() + " ===");
+        MDC.put("testName", "SUITE");
+        logger.info("=== TEST SUITE STARTED: {} ===", context.getName());
+        MDC.remove("testName");
+
+        createLogDirectory();
     }
 
     @Override
     public void onFinish(ITestContext context) {
-        System.out.println("=== TEST SUITE FINISHED: " + context.getName() + " ===");
+        MDC.put("testName", "SUITE");
+        logger.info("=== TEST SUITE FINISHED: {} ===", context.getName());
+        MDC.remove("testName");
     }
 
     // ============================================================
@@ -38,30 +50,39 @@ public class TestListener implements ITestListener {
 
     @Override
     public void onTestStart(ITestResult result) {
-        String name = result.getMethod().getMethodName();
-        System.out.println("=== STARTING TEST: " + name + " ===");
-        Allure.step("Starting test: " + name);
+        String fullName = getFullTestName(result);
+        MDC.put("testName", fullName);
+
+        logger.info("=== STARTING TEST: {} ===", fullName);
+        Allure.step("Starting test: " + fullName);
     }
 
     @Override
     public void onTestSuccess(ITestResult result) {
-        String name = result.getMethod().getMethodName();
-        System.out.println("=== TEST PASSED: " + name + " ===");
-        Allure.step("Test passed: " + name);
+        String fullName = getFullTestName(result);
+        MDC.put("testName", fullName);
 
-        WebDriver driver = getDriverFromResult(result);
+        logger.info("=== TEST PASSED: {} ===", fullName);
+        Allure.step("Test passed: " + fullName);
+
+        WebDriver driver = getDriver(result);
         if (driver != null) {
             saveSuccessScreenshot(driver);
         }
+
+        attachPerTestLog(result);
+
+        MDC.remove("testName");
     }
 
     @Override
     public void onTestFailure(ITestResult result) {
-        String name = result.getMethod().getMethodName();
-        System.out.println("=== TEST FAILED: " + name + " ===");
+        String fullName = getFullTestName(result);
+        MDC.put("testName", fullName);
 
-        WebDriver driver = getDriverFromResult(result);
+        logger.error("=== TEST FAILED: {} ===", fullName);
 
+        WebDriver driver = getDriver(result);
         if (driver != null) {
             saveFailureScreenshot(driver);
             savePageSource(driver);
@@ -69,26 +90,69 @@ public class TestListener implements ITestListener {
         }
 
         saveFailureMessage(result.getThrowable());
-        Allure.step("Failure captured for test: " + name);
+        attachPerTestLog(result);
+
+        Allure.step("Failure captured for test: " + fullName);
+
+        MDC.remove("testName");
     }
 
     @Override
     public void onTestSkipped(ITestResult result) {
-        String name = result.getMethod().getMethodName();
-        System.out.println("=== TEST SKIPPED: " + name + " ===");
-        Allure.step("Test skipped: " + name);
+        String fullName = getFullTestName(result);
+        MDC.put("testName", fullName);
+
+        logger.warn("=== TEST SKIPPED: {} ===", fullName);
+        Allure.step("Test skipped: " + fullName);
+
+        attachPerTestLog(result);
+
+        MDC.remove("testName");
     }
 
     // ============================================================
     // WebDriver Retrieval
     // ============================================================
 
-    private WebDriver getDriverFromResult(ITestResult result) {
+    private WebDriver getDriver(ITestResult result) {
         Object instance = result.getInstance();
-        if (instance instanceof BaseTest) {
-            return ((BaseTest) instance).getDriver();
+        return (instance instanceof BaseTest) ? ((BaseTest) instance).getDriver() : null;
+    }
+
+    // ============================================================
+    // Per-Test Log Handling
+    // ============================================================
+
+    private String getFullTestName(ITestResult result) {
+        String className = result.getTestClass().getRealClass().getSimpleName();
+        String methodName = result.getMethod().getMethodName();
+        return className + "." + methodName;
+    }
+
+    private Path getPerTestLogPath(ITestResult result) {
+        return Paths.get(LOG_DIR, getFullTestName(result) + ".log");
+    }
+
+    @Attachment(value = "Test Log", type = "text/plain")
+    private byte[] attachLogFile(Path path) {
+        try {
+            return Files.readAllBytes(path);
+        } catch (IOException e) {
+            return ("Unable to attach log file: " + e.getMessage()).getBytes();
         }
-        return null;
+    }
+
+    private void attachPerTestLog(ITestResult result) {
+        Path logPath = getPerTestLogPath(result);
+        if (Files.exists(logPath)) {
+            attachLogFile(logPath);
+        }
+    }
+
+    private void createLogDirectory() {
+        try {
+            Files.createDirectories(Paths.get(LOG_DIR));
+        } catch (IOException ignored) {}
     }
 
     // ============================================================

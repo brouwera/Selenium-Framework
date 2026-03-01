@@ -10,9 +10,12 @@ import org.openqa.selenium.edge.EdgeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.slf4j.MDC;
+import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
+import java.lang.reflect.Method;
 import java.time.Duration;
 
 public class BaseTest {
@@ -20,14 +23,12 @@ public class BaseTest {
     // ============================================================
     // ThreadLocal WebDriver + Wait (Parallel Execution Safe)
     // ============================================================
-
     private static final ThreadLocal<WebDriver> driver = new ThreadLocal<>();
     private static final ThreadLocal<WebDriverWait> wait = new ThreadLocal<>();
 
     // ============================================================
     // Accessors (Instance-Based for Page Object Constructors)
     // ============================================================
-
     public WebDriver getDriver() {
         return driver.get();
     }
@@ -37,11 +38,14 @@ public class BaseTest {
     }
 
     // ============================================================
-    // Test Lifecycle
+    // Test Lifecycle (MDC Only — Logging handled by TestListener)
     // ============================================================
-
     @BeforeMethod(alwaysRun = true)
-    public void setUp() {
+    public void setUp(Method method) {
+
+        // Set MDC for the entire test method
+        String testName = this.getClass().getSimpleName() + "." + method.getName();
+        MDC.put("testName", testName);
 
         String browser = ConfigManager.getBrowser();
         boolean headless = ConfigManager.isHeadless();
@@ -56,7 +60,8 @@ public class BaseTest {
     }
 
     @AfterMethod(alwaysRun = true)
-    public void tearDown() {
+    public void tearDown(Method method, ITestResult result) {
+
         WebDriver webDriver = driver.get();
         if (webDriver != null) {
             webDriver.quit();
@@ -64,12 +69,14 @@ public class BaseTest {
 
         driver.remove();
         wait.remove();
+
+        // Clear MDC after test completes
+        MDC.remove("testName");
     }
 
     // ============================================================
     // Driver Factory
     // ============================================================
-
     private WebDriver createDriver(String browser, boolean headless) {
 
         switch (browser.toLowerCase()) {

@@ -1,0 +1,63 @@
+<configuration>
+
+    <property name="LOG_DIR" value="logs" />
+
+    <!-- ========================= -->
+    <!-- Console Output            -->
+    <!-- ========================= -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>
+                %d{HH:mm:ss.SSS} %-5level [%thread] [%X{testName}] %logger{36} - %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <!-- ========================= -->
+    <!-- Framework Rolling Log     -->
+    <!-- ========================= -->
+    <appender name="FRAMEWORK" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_DIR}/framework.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${LOG_DIR}/framework.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>7</maxHistory>
+        </rollingPolicy>
+        <encoder>
+            <pattern>
+                %d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] [%X{testName}] %logger{36} - %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <!-- ========================= -->
+    <!-- Per-Test Log Files        -->
+    <!-- ========================= -->
+    <appender name="PER_TEST" class="ch.qos.logback.classic.sift.SiftingAppender">
+        <discriminator class="ch.qos.logback.classic.sift.MDCBasedDiscriminator">
+            <key>testName</key>
+            <defaultValue>unknown-test</defaultValue>
+        </discriminator>
+
+        <sift>
+            <appender name="FILE-${testName}" class="ch.qos.logback.core.FileAppender">
+                <file>${LOG_DIR}/${testName}.log</file>
+                <append>false</append>
+                <encoder>
+                    <pattern>
+                        %d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] [%X{testName}] %logger{36} - %msg%n
+                    </pattern>
+                </encoder>
+            </appender>
+        </sift>
+    </appender>
+
+    <!-- ========================= -->
+    <!-- Root Logger               -->
+    <!-- ========================= -->
+    <root level="info">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="FRAMEWORK" />
+        <appender-ref ref="PER_TEST" />
+    </root>
+
+</configuration>

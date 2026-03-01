@@ -116,6 +116,132 @@ flowchart TD
     LT --> Utils    
 ```
 
+---
+
+# 📝 Logging Architecture
+
+This framework includes a production‑grade logging system built with **SLF4J + Logback**, designed for clarity, debuggability, and parallel execution. It uses **Mapped Diagnostic Context (MDC)** and a **SiftingAppender** to generate clean, isolated logs for every test method.
+
+---
+
+## 🔹 Key Capabilities
+
+- Per‑test log files automatically created in `/logs/<TestName>.log`
+- MDC tagging ensures every log line is associated with the correct test
+- Thread‑safe logging for parallel TestNG execution
+- Action‑level logging from every Page Object method
+- Lifecycle logging from TestListener (start, pass, fail, skip)
+- Allure attachments for screenshots, page source, browser logs, and per‑test logs
+- Rolling `framework.log` capturing global framework activity
+
+---
+
+## 🔹 How MDC Works
+
+Each test method receives a unique MDC value:
+
+```
+LoginTest.loginDataDrivenTest
+ExceptionsTest.testEditRow1
+```
+
+This is set in `BaseTest`:
+
+```java
+String testName = this.getClass().getSimpleName() + "." + method.getName();
+MDC.put("testName", testName);
+```
+
+Because MDC is thread‑local, parallel tests never mix logs.
+
+Every log line includes the MDC tag:
+
+```
+21:34:53.651 INFO  [TestNG-test-All Tests-1] [LoginTest.loginDataDrivenTest] pages.HomePage - Clicking element...
+```
+
+---
+
+## 🔹 Per‑Test Log Files (SiftingAppender)
+
+Logback’s `SiftingAppender` automatically routes logs into separate files based on MDC:
+
+```
+logs/LoginTest.loginDataDrivenTest.log
+logs/ExceptionsTest.testEditRow1.log
+```
+
+This makes debugging extremely fast—each test has a clean, isolated log.
+
+---
+
+## 🔹 TestListener Integration
+
+`TestListener` handles:
+
+- Test start/end logging
+- Pass/fail/skip events
+- Screenshot attachments
+- Page source attachments
+- Browser console logs
+- Per‑test log file attachments
+
+All lifecycle logs flow through Logback (no `System.out.println`), ensuring MDC is always applied.
+
+Example lifecycle log:
+
+```
+[LoginTest.userCanLogoutAfterSuccessfulLogin] listeners.TestListener - === TEST PASSED ===
+```
+
+---
+
+## 🔹 Page Object Action Logging
+
+Every BasePage action logs:
+
+- The page class
+- The locator
+- The action performed
+- The MDC test name
+
+Example:
+
+```
+[LoginTest.loginDataDrivenTest] pages.LoginPage - Typing 'student' into element: By.id: username
+```
+
+This produces a readable, step‑by‑step execution trace for every test.
+
+---
+
+## 🔹 Framework Log (Rolling File)
+
+A global `framework.log` captures:
+
+- Driver setup
+- Navigation
+- Environment configuration
+- High‑level framework events
+
+This file rolls daily and keeps 7 days of history.
+
+---
+
+## 🔹 Why This Matters
+
+This logging system demonstrates:
+
+- Senior‑level automation architecture
+- Parallel‑safe design
+- Real‑world debugging practices
+- Clean separation of concerns
+- CI/CD readiness
+- Recruiter‑friendly clarity
+
+It mirrors the logging approach used in enterprise QA automation frameworks.
+
+
 # 🔄 CI Pipeline Architecture
 
 ```mermaid
@@ -511,6 +637,28 @@ A key part of today’s work was ensuring that the framework could intentionally
 
 **Outcome:**  
 The Exceptions module is now fully aligned with the framework’s architecture, using consistent BasePage utilities and clean Page Object abstractions. Exception simulation is accurate, intentional, and isolated, while normal test flows remain safe and stable. With all enhancements complete, the framework now demonstrates production‑grade consistency, clarity, and maintainability across every module.
+
+---
+
+### **Day 20 — Professional Logging Layer (SLF4J + Logback + MDC + Per‑Test Logs)**
+
+Today’s milestone focused on implementing a production‑grade logging system that mirrors the architecture used in real enterprise automation frameworks. The goal was to create a logging layer that is clean, parallel‑safe, test‑scoped, and fully integrated with Allure reporting. This required coordinated updates across `BaseTest`, `BasePage`, `TestListener`, and a new `logback-test.xml` configuration.
+
+**Key Achievements**
+- Added a complete SLF4J + Logback logging layer with consistent formatting and patterns
+- Implemented MDC (Mapped Diagnostic Context) to tag every log line with the active test name
+- Added a SiftingAppender to automatically generate per‑test log files in `/logs/<TestName>.log`
+- Updated `BaseTest` to set and clear MDC for each test method, ensuring thread‑safe parallel execution
+- Removed legacy lifecycle logging from BaseTest so TestListener fully owns test lifecycle events
+- Updated `TestListener` to use SLF4J instead of `System.out.println`, ensuring MDC is applied everywhere
+- Integrated per‑test log files as Allure attachments for complete debugging visibility
+- Ensured all Page Object actions log through BasePage with consistent, readable formatting
+- Validated parallel execution—each test now produces clean, isolated logs with no cross‑thread contamination
+- Confirmed that `framework.log` rolls daily and captures global framework activity
+- Executed the full suite with 100% passing tests and verified that every log line includes the correct MDC tag
+
+**Outcome:**  
+The framework now includes a senior‑level, enterprise‑grade logging system that supports parallel execution, clean debugging, and rich Allure reporting. Every test produces its own dedicated log file, lifecycle events are consistently captured, and the entire logging architecture is now aligned with real‑world automation engineering standards.
 
 ---
 
