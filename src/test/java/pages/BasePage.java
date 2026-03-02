@@ -4,11 +4,13 @@ import base.BaseTest;
 import io.qameta.allure.Step;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
+import java.util.List;
 
 public class BasePage {
 
@@ -100,6 +102,51 @@ public class BasePage {
             log.warn("Element NOT displayed: {}", locator);
             return false;
         }
+    }
+
+    // ============================================================
+    // Dropdown Helper
+    // ============================================================
+    protected void selectByVisibleText(By locator, String text) {
+        log.info("Selecting '{}' from dropdown: {}", text, locator);
+        logStep("Selecting '" + text + "' from dropdown: " + locator);
+        WebElement element = waitForVisibility(locator);
+        new Select(element).selectByVisibleText(text);
+    }
+
+    // ============================================================
+    // Checkbox Helper
+    // ============================================================
+    protected void setCheckbox(By locator, boolean checked) {
+        log.info("Setting checkbox {} to {}", locator, checked);
+        WebElement element = waitForVisibility(locator);
+
+        boolean isSelected = element.isSelected();
+        if (isSelected != checked) {
+            element.click();
+        }
+    }
+
+    // ============================================================
+    // Multiple Elements Helper
+    // ============================================================
+    protected List<WebElement> findElements(By locator) {
+        log.info("Finding elements: {}", locator);
+        return driver.findElements(locator);
+    }
+
+    // ============================================================
+    // Navigation Helper
+    // ============================================================
+    protected void navigateTo(String relativeUrl) {
+        String base = "https://practicetestautomation.com";
+        String fullUrl = base + relativeUrl;
+
+        log.info("Navigating to URL: {}", fullUrl);
+        logStep("Navigating to: " + fullUrl);
+
+        driver.get(fullUrl);
+        waitForPageLoad();
     }
 
     // ============================================================

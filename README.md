@@ -660,6 +660,40 @@ Today’s milestone focused on implementing a production‑grade logging system 
 **Outcome:**  
 The framework now includes a senior‑level, enterprise‑grade logging system that supports parallel execution, clean debugging, and rich Allure reporting. Every test produces its own dedicated log file, lifecycle events are consistently captured, and the entire logging architecture is now aligned with real‑world automation engineering standards.
 
+### **Day 21 — Table Module: Dynamic UI, Custom Dropdowns, and Full Data Validation**
+
+Today’s milestone expanded the framework with a complete Table module, covering dynamic filtering, sorting, and data‑driven validation against a live HTML table. This required building a robust `TablePage` with support for custom dropdown widgets, asynchronous UI updates, and dynamic DOM behavior. The work also included stabilizing the module under parallel execution and Maven Surefire.
+
+**Key Achievements**
+- Implemented a full `TablePage` with clean locators for language filters, level checkboxes, custom dropdowns, and sorting controls
+- Added `TableTest` with eight real‑world scenarios: language filtering, level filtering, minimum enrollments, combined filters, no‑results state, reset behavior, and sorting by multiple columns
+- Built a generic table‑parsing utility with support for semantic column extraction (`data-col` attributes)
+- Added safe parsing logic to ignore placeholder/empty rows created during UI transitions
+- Implemented custom wait conditions to synchronize with asynchronous table updates
+- Validated the entire module under Maven (`mvn clean test`) with **100% passing tests**
+- Ensured full Allure integration with step‑level reporting and clean parallel execution
+
+**Outcome:**  
+The Table module is now fully integrated and production‑ready. It demonstrates advanced Selenium capabilities—custom dropdown handling, dynamic waits, DOM‑driven parsing, and multi‑filter validation—while maintaining the framework’s architectural consistency and stability.
+
+---
+
+### **Day 22 — Table Module Stabilization + Full Maven Validation**
+
+Today focused on elevating the Table module from “functionally complete” to “enterprise‑stable.” This required refining synchronization logic, improving DOM‑aware parsing, and ensuring the module behaved consistently across IntelliJ, Maven Surefire, and parallel TestNG execution.
+
+**Key Achievements**
+- Added robust empty‑row filtering to prevent `NumberFormatException` during async table updates
+- Strengthened `waitForTableToUpdate()` and `waitForLanguageToBe()` to guarantee DOM stability before assertions
+- Finalized custom dropdown handling for the Min Enrollments filter (`#enrollDropdown`)
+- Ensured all table interactions use BasePage helpers for consistent logging and Allure step reporting
+- Validated the entire framework (Login + Exceptions + Table) under `mvn clean test` with **100% passing tests**
+- Confirmed parallel execution stability across all modules
+- Verified clean Allure reporting with accurate step traces, logs, and attachments
+
+**Outcome:**  
+The Table module is now fully hardened for CI/CD execution. With all synchronization, parsing, and interaction logic stabilized, the framework delivers consistent, deterministic results across environments. This completes the multi‑module expansion phase and sets the stage for Day 23’s new modules and Day 24’s Allure dashboard + CI integration work.
+
 ---
 
 ### 🚧 Upcoming Enhancements (Planned)

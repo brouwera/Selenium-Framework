@@ -14,6 +14,7 @@ public class HomePage extends BasePage {
 
     private final By testLoginLink = By.linkText("Test Login Page");
     private final By testExceptionsLink = By.linkText("Test Exceptions");
+    private final By testTableLink = By.linkText("Test Table");
 
     // ============================================================
     // Constructor
@@ -53,6 +54,13 @@ public class HomePage extends BasePage {
         return new ExceptionsPage(test);
     }
 
+    @Step("Navigate to Table Page")
+    public TablePage goToTablePage() {
+        open();
+        click(testTableLink);
+        return new TablePage(test);
+    }
+
     // ============================================================
     // Raw Click Actions
     // ============================================================
@@ -67,5 +75,11 @@ public class HomePage extends BasePage {
     public ExceptionsPage clickTestExceptionsLink() {
         click(testExceptionsLink);
         return new ExceptionsPage(test);
+    }
+
+    @Step("Click Test Table link")
+    public TablePage clickTestTableLink() {
+        click(testTableLink);
+        return new TablePage(test);
     }
 }
