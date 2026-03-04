@@ -2,7 +2,7 @@ package base;
 
 import config.ConfigManager;
 import io.github.bonigarcia.wdm.WebDriverManager;
-import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeDriver;
@@ -10,15 +10,25 @@ import org.openqa.selenium.edge.EdgeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
+import java.io.File;
 import java.lang.reflect.Method;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.Duration;
 
 public class BaseTest {
+
+    // ============================================================
+    // Logger
+    // ============================================================
+    private static final Logger log = LoggerFactory.getLogger(BaseTest.class);
 
     // ============================================================
     // ThreadLocal WebDriver + Wait (Parallel Execution Safe)
@@ -43,47 +53,98 @@ public class BaseTest {
     @BeforeMethod(alwaysRun = true)
     public void setUp(Method method) {
 
-        // MDC: Attach test name for logging
         String testName = this.getClass().getSimpleName() + "." + method.getName();
         MDC.put("testName", testName);
 
-        // Browser configuration
+        log.info("===== STARTING TEST: {} =====", testName);
+
         String browser = ConfigManager.getBrowser();
         boolean headless = ConfigManager.isHeadless();
+        int explicitWait = ConfigManager.getExplicitWait();
 
-        // Create driver
+        log.info("Browser: {}", browser);
+        log.info("Headless: {}", headless);
+        log.info("Explicit Wait: {} seconds", explicitWait);
+
         WebDriver webDriver = createDriver(browser, headless);
         driver.set(webDriver);
 
-        // Explicit wait
-        int explicitWait = ConfigManager.getExplicitWait();
         wait.set(new WebDriverWait(webDriver, Duration.ofSeconds(explicitWait)));
     }
 
     @AfterMethod(alwaysRun = true)
     public void tearDown(Method method, ITestResult result) {
 
-        WebDriver webDriver = driver.get();
+        String testName = MDC.get("testName");
 
+        if (result.getStatus() == ITestResult.FAILURE) {
+            log.error("===== TEST FAILED: {} =====", testName);
+            attachScreenshot(testName);
+            attachLogFile(testName);
+        } else if (result.getStatus() == ITestResult.SUCCESS) {
+            log.info("===== TEST PASSED: {} =====", testName);
+        } else {
+            log.warn("===== TEST SKIPPED: {} =====", testName);
+        }
+
+        WebDriver webDriver = driver.get();
         if (webDriver != null) {
             try {
+                log.info("Closing browser for test: {}", testName);
                 webDriver.quit();
-            } catch (Exception ignored) {
-                // Avoid teardown failures masking test results
+            } catch (Exception e) {
+                log.error("Error during driver.quit() for test {}", testName, e);
             }
         }
 
         driver.remove();
         wait.remove();
 
-        // Clear MDC
         MDC.remove("testName");
+    }
+
+    // ============================================================
+    // Screenshot Capture
+    // ============================================================
+    private void attachScreenshot(String testName) {
+        try {
+            WebDriver webDriver = driver.get();
+            if (webDriver == null) return;
+
+            byte[] screenshot = ((TakesScreenshot) webDriver).getScreenshotAs(OutputType.BYTES);
+
+            Path screenshotPath = Path.of("logs", testName + "-screenshot.png");
+            Files.write(screenshotPath, screenshot);
+
+            log.info("Screenshot saved: {}", screenshotPath.toAbsolutePath());
+
+        } catch (Exception e) {
+            log.error("Failed to capture screenshot for {}", testName, e);
+        }
+    }
+
+    // ============================================================
+    // Log Attachment (for Allure tomorrow)
+    // ============================================================
+    private void attachLogFile(String testName) {
+        try {
+            File logFile = new File("logs/" + testName + ".log");
+            if (logFile.exists()) {
+                log.info("Log file available for attachment: {}", logFile.getAbsolutePath());
+            } else {
+                log.warn("No per-test log file found for {}", testName);
+            }
+        } catch (Exception e) {
+            log.error("Failed to process log file for {}", testName, e);
+        }
     }
 
     // ============================================================
     // Driver Factory
     // ============================================================
     private WebDriver createDriver(String browser, boolean headless) {
+
+        log.info("Creating WebDriver instance for browser: {}", browser);
 
         switch (browser.toLowerCase()) {
 
@@ -94,16 +155,12 @@ public class BaseTest {
                 boolean isCI = System.getenv("CI") != null;
 
                 if (isCI) {
-                    chromeOptions.addArguments("--headless=new");
-                    chromeOptions.addArguments("--disable-gpu");
-                    chromeOptions.addArguments("--no-sandbox");
-                    chromeOptions.addArguments("--disable-dev-shm-usage");
-                    chromeOptions.addArguments("--window-size=1920,1080");
+                    log.info("Running in CI mode → enabling CI Chrome flags");
+                    chromeOptions.addArguments("--headless=new", "--disable-gpu", "--no-sandbox",
+                            "--disable-dev-shm-usage", "--window-size=1920,1080");
                 } else {
                     chromeOptions.addArguments("--start-maximized");
-                    if (headless) {
-                        chromeOptions.addArguments("--headless=new");
-                    }
+                    if (headless) chromeOptions.addArguments("--headless=new");
                 }
 
                 return new ChromeDriver(chromeOptions);

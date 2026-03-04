@@ -1,29 +1,31 @@
 package config;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import exceptions.FrameworkInitializationException;
 import io.github.cdimascio.dotenv.Dotenv;
 
-import java.io.IOException;
 import java.io.InputStream;
-import java.util.Properties;
 
 public final class ConfigManager {
 
     // ============================================================
     // Fields
     // ============================================================
-    private static final Properties properties = new Properties();
-    private static final String CONFIG_FILE = "config.properties";
-    private static Dotenv dotenv;
+    private static final String CONFIG_FILE = "config.json";
+    private static JsonNode rootNode;          // Entire JSON tree
+    private static JsonNode envNode;           // Selected environment block
+    private static Dotenv dotenv;              // .env overrides
 
     private ConfigManager() {}
 
     // ============================================================
-    // Static Initialization (Load .env + config.properties)
+    // Static Initialization (Load .env + JSON config)
     // ============================================================
     static {
         loadDotEnv();
-        loadProperties();
+        loadJsonConfig();
+        selectEnvironmentBlock();
     }
 
     // ============================================================
@@ -40,9 +42,9 @@ public final class ConfigManager {
     }
 
     // ============================================================
-    // Load config.properties
+    // Load config.json
     // ============================================================
-    private static void loadProperties() {
+    private static void loadJsonConfig() {
         try (InputStream input = ConfigManager.class.getClassLoader().getResourceAsStream(CONFIG_FILE)) {
 
             if (input == null) {
@@ -51,17 +53,32 @@ public final class ConfigManager {
                 );
             }
 
-            properties.load(input);
+            ObjectMapper mapper = new ObjectMapper();
+            rootNode = mapper.readTree(input);
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             throw new FrameworkInitializationException("Failed to load " + CONFIG_FILE, e);
         }
     }
 
     // ============================================================
-    // Unified Getter (Order: System → .env → config.properties)
+    // Select Environment Block
     // ============================================================
-    private static String get(String key) {
+    private static void selectEnvironmentBlock() {
+        String env = getEnvironment(); // local, stage, prod
+
+        envNode = rootNode.get(env);
+        if (envNode == null) {
+            throw new FrameworkInitializationException(
+                    "Environment block '" + env + "' not found in " + CONFIG_FILE
+            );
+        }
+    }
+
+    // ============================================================
+    // Unified Getter (Order: System → .env → JSON)
+    // ============================================================
+    private static String getOverride(String key) {
 
         // 1. System property override
         String systemValue = System.getProperty(key);
@@ -77,105 +94,116 @@ public final class ConfigManager {
             }
         }
 
-        // 3. config.properties fallback
-        return properties.getProperty(key);
+        return null; // No override found
     }
 
-    private static String getRequired(String key) {
-        String value = get(key);
-        if (value == null) {
+    private static String getJsonString(String jsonKey) {
+        JsonNode node = envNode.get(jsonKey);
+        if (node == null || node.isNull()) {
             throw new FrameworkInitializationException(
-                    "Required configuration key '" + key + "' is missing."
+                    "Missing required JSON key: " + jsonKey
             );
         }
-        return value;
+        return node.asText();
     }
 
-    private static int getRequiredInt(String key) {
-        String value = getRequired(key);
-        try {
-            return Integer.parseInt(value);
-        } catch (NumberFormatException e) {
+    private static int getJsonInt(JsonNode parent, String key) {
+        JsonNode node = parent.get(key);
+        if (node == null || !node.isInt()) {
             throw new FrameworkInitializationException(
-                    "Configuration key '" + key + "' must be an integer. Found: " + value, e
+                    "Missing or invalid integer key: " + key
             );
         }
+        return node.asInt();
     }
 
     // ============================================================
     // Environment Handling
     // ============================================================
     public static String getEnvironment() {
-        return getRequired("env").toLowerCase();
+        String override = getOverride("env");
+        if (override != null) return override.toLowerCase();
+
+        // Default to "local" if not provided
+        return "local";
     }
 
     // ============================================================
-    // Base URLs (Option C)
+    // Base URLs
     // ============================================================
-
-    /**
-     * Base URL for PracticeTestAutomation.com
-     * Uses env-based keys: local.base.url, stage.base.url, prod.base.url
-     */
     public static String getPracticeBaseUrl() {
-        String env = getEnvironment(); // local, stage, prod
-        String key = env + ".base.url";
-        return getRequired(key);
+        String override = getOverride("practiceBaseUrl");
+        return override != null ? override : getJsonString("practiceBaseUrl");
     }
 
-    /**
-     * Base URL for The-Internet Herokuapp
-     */
     public static String getHerokuBaseUrl() {
-        return getRequired("heroku.base.url");
+        String override = getOverride("herokuBaseUrl");
+        return override != null ? override : getJsonString("herokuBaseUrl");
     }
 
     // ============================================================
     // Browser Settings
     // ============================================================
     public static String getBrowser() {
-        String browser = get("browser");
-        return browser != null ? browser.toLowerCase() : "chrome";
+        String override = getOverride("browser");
+        return override != null ? override.toLowerCase() : getJsonString("browser").toLowerCase();
     }
 
     public static boolean isHeadless() {
-        return Boolean.parseBoolean(get("headless"));
+        String override = getOverride("headless");
+        if (override != null) return Boolean.parseBoolean(override);
+
+        return envNode.get("headless").asBoolean();
     }
 
     // ============================================================
     // Timeout Settings
     // ============================================================
     public static int getExplicitWait() {
-        return getRequiredInt("explicit.wait");
+        String override = getOverride("explicit.wait");
+        if (override != null) return Integer.parseInt(override);
+
+        return getJsonInt(envNode.get("timeouts"), "explicit");
     }
 
     public static int getPageLoadTimeout() {
-        return getRequiredInt("page.load.timeout");
+        String override = getOverride("page.load.timeout");
+        if (override != null) return Integer.parseInt(override);
+
+        return getJsonInt(envNode.get("timeouts"), "pageLoad");
     }
 
     public static int getShortWait() {
-        return getRequiredInt("short.wait");
+        String override = getOverride("short.wait");
+        if (override != null) return Integer.parseInt(override);
+
+        return getJsonInt(envNode.get("timeouts"), "short");
     }
 
     // ============================================================
-    // Credentials (Optional)
-    // ============================================================
-    public static String getUsername() {
-        return get("username");
-    }
-
-    public static String getPassword() {
-        return get("password");
-    }
-
-    // ============================================================
-    // Driver Paths (Optional)
+    // Driver Paths
     // ============================================================
     public static String getEdgeDriverPath() {
-        return get("edge.driver.path");
+        String override = getOverride("edge.driver.path");
+        return override != null ? override : getJsonStringFromGroup("drivers", "edge");
     }
 
     public static String getGeckoDriverPath() {
-        return get("gecko.driver.path");
+        String override = getOverride("gecko.driver.path");
+        return override != null ? override : getJsonStringFromGroup("drivers", "gecko");
+    }
+
+    private static String getJsonStringFromGroup(String group, String key) {
+        JsonNode groupNode = envNode.get(group);
+        if (groupNode == null) {
+            throw new FrameworkInitializationException("Missing group: " + group);
+        }
+
+        JsonNode valueNode = groupNode.get(key);
+        if (valueNode == null) {
+            throw new FrameworkInitializationException("Missing key in group '" + group + "': " + key);
+        }
+
+        return valueNode.asText();
     }
 }

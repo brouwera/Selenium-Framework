@@ -743,6 +743,30 @@ The framework is now fully stable across all modules—Login, Exceptions, Table,
 
 ---
 
+### **Day 24 — Allure Dashboard Integration + Multi‑Environment Config + Framework Stabilization**
+
+Today’s milestone focused on upgrading the framework’s configuration architecture, integrating a modern JSON‑based ConfigManager, and validating the entire suite under the new system. This included replacing the legacy `config.properties` file, implementing environment‑aware navigation, and ensuring all modules remained stable after the migration. The day ended with a full Maven run showing **29/29 passing tests**, clean Allure reporting, and a fully modernized configuration layer.
+
+#### **Key Achievements**
+- Replaced legacy `config.properties` with a production‑grade `config.json` stored in `src/main/resources`
+- Implemented a new JSON‑based `ConfigManager` using Jackson with support for:
+  - `local`, `stage`, and `prod` environment blocks
+  - System property overrides
+  - `.env` overrides
+  - Cached JSON tree for fast lookups
+- Updated BaseTest and BasePage to use the new configuration system without requiring any code changes
+- Removed the old `.properties` file and validated the framework under the new architecture
+- Executed the full suite (`mvn clean test`) with **100% passing tests** and verified:
+  - Allure report generation
+  - Parallel execution stability
+  - Clean logging and per‑test artifacts
+- Finalized the resource structure by moving `categories.json` and `config.json` into `src/main/resources` for a unified configuration layout
+
+#### **Outcome**
+The framework now uses a modern, scalable, environment‑aware configuration system that aligns with enterprise automation standards. With the JSON migration complete and the suite fully stable, the project is ready for the Day 25–30 enhancement sprint that will polish the architecture before expanding into new test modules.
+
+---
+
 ### 🚧 Upcoming Enhancements (Planned)
 
 ### Table Module

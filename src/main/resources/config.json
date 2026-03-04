@@ -1,0 +1,47 @@
+{
+  "local": {
+    "practiceBaseUrl": "https://practicetestautomation.com/practice/",
+    "herokuBaseUrl": "https://the-internet.herokuapp.com/",
+    "browser": "chrome",
+    "headless": false,
+    "timeouts": {
+      "explicit": 10,
+      "pageLoad": 30,
+      "short": 3
+    },
+    "drivers": {
+      "edge": "D:\\\\Automation Tools\\\\EdgeDriver\\\\msedgedriver.exe",
+      "gecko": "D:\\\\Automation Tools\\\\GeckoDriver\\\\geckodriver.exe"
+    }
+  },
+  "stage": {
+    "practiceBaseUrl": "https://practicetestautomation.com/practice/",
+    "herokuBaseUrl": "https://the-internet.herokuapp.com/",
+    "browser": "chrome",
+    "headless": false,
+    "timeouts": {
+      "explicit": 10,
+      "pageLoad": 30,
+      "short": 3
+    },
+    "drivers": {
+      "edge": "D:\\\\Automation Tools\\\\EdgeDriver\\\\msedgedriver.exe",
+      "gecko": "D:\\\\Automation Tools\\\\GeckoDriver\\\\geckodriver.exe"
+    }
+  },
+  "prod": {
+    "practiceBaseUrl": "https://practicetestautomation.com/practice/",
+    "herokuBaseUrl": "https://the-internet.herokuapp.com/",
+    "browser": "chrome",
+    "headless": false,
+    "timeouts": {
+      "explicit": 10,
+      "pageLoad": 30,
+      "short": 3
+    },
+    "drivers": {
+      "edge": "D:\\\\Automation Tools\\\\EdgeDriver\\\\msedgedriver.exe",
+      "gecko": "D:\\\\Automation Tools\\\\GeckoDriver\\\\geckodriver.exe"
+    }
+  }
+}
