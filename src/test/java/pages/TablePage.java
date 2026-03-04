@@ -4,21 +4,12 @@ import base.BaseTest;
 import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 
-import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class TablePage extends BasePage {
-
-    private final BaseTest test;
-
-    public TablePage(BaseTest test) {
-        super(test);
-        this.test = test;
-    }
 
     // ============================================================
     // Locators
@@ -46,27 +37,34 @@ public class TablePage extends BasePage {
     // Reset button
     private final By resetButton = By.id("resetFilters");
 
-    // Table rows (data rows only)
+    // Table rows
     private final By tableRows = By.cssSelector("tbody tr");
 
     // No results message
     private final By noResultsMessage = By.id("noData");
 
+    // First language cell (used for language wait)
+    private final By firstLanguageCell = By.cssSelector("tbody tr td[data-col='language']");
+
+    // ============================================================
+    // Constructor
+    // ============================================================
+    public TablePage(BaseTest test) {
+        super(test);
+    }
+
     // ============================================================
     // Navigation
     // ============================================================
-
     @Step("Open Test Table page")
     public TablePage open() {
-        navigateTo("/practice-test-table/");
-        waitForTableToUpdate();
+        navigateToPractice("test-tables/");
         return this;
     }
 
     // ============================================================
     // Filter Interactions
     // ============================================================
-
     @Step("Select Language: {language}")
     public TablePage selectLanguage(String language) {
         switch (language.toLowerCase()) {
@@ -109,13 +107,8 @@ public class TablePage extends BasePage {
 
     @Step("Select Min Enrollments: {value}")
     public TablePage setMinEnrollments(String value) {
-
-        // Open dropdown
         click(minEnrollDropdownButton);
-
-        // Click option
         click(minEnrollOption(value));
-
         waitForTableToUpdate();
         return this;
     }
@@ -137,7 +130,6 @@ public class TablePage extends BasePage {
     // ============================================================
     // Visibility Checks
     // ============================================================
-
     @Step("Check if 'No matching courses' message is visible")
     public boolean isNoResultsMessageVisible() {
         return isDisplayed(noResultsMessage);
@@ -151,7 +143,6 @@ public class TablePage extends BasePage {
     // ============================================================
     // Table Parsing Utilities
     // ============================================================
-
     @Step("Get all visible table rows")
     public List<WebElement> getVisibleRows() {
         return findElements(tableRows);
@@ -164,12 +155,10 @@ public class TablePage extends BasePage {
         for (WebElement row : getVisibleRows()) {
             WebElement cell = row.findElement(By.cssSelector("td[data-col='" + colName + "']"));
             String text = cell.getText().trim();
-
-            if (!text.isEmpty()) {  // ignore empty rows
+            if (!text.isEmpty()) {
                 values.add(text);
             }
         }
-
         return values;
     }
 
@@ -180,12 +169,10 @@ public class TablePage extends BasePage {
         for (WebElement row : getVisibleRows()) {
             WebElement cell = row.findElement(By.cssSelector("td[data-col='" + colName + "']"));
             String text = cell.getText().trim();
-
-            if (!text.isEmpty()) {  // ignore empty rows
+            if (!text.isEmpty()) {
                 values.add(parseEnrollment(text));
             }
         }
-
         return values;
     }
 
@@ -202,7 +189,6 @@ public class TablePage extends BasePage {
     // ============================================================
     // Sorting Helpers
     // ============================================================
-
     @Step("Check if numeric list is sorted ascending")
     public boolean isSortedAscending(List<Integer> values) {
         List<Integer> sorted = new ArrayList<>(values);
@@ -220,11 +206,10 @@ public class TablePage extends BasePage {
     // ============================================================
     // Helper: Parse Enrollment Numbers
     // ============================================================
-
     @Step("Parse enrollment value: {text}")
     public int parseEnrollment(String text) {
         if (text == null || text.trim().isEmpty()) {
-            return 0;  // ignore empty rows
+            return 0;
         }
         return Integer.parseInt(text.replace(",", "").trim());
     }
@@ -232,20 +217,14 @@ public class TablePage extends BasePage {
     // ============================================================
     // Table Refresh Waits
     // ============================================================
-
     private void waitForTableToUpdate() {
-        wait.withTimeout(Duration.ofSeconds(5)).until(driver -> {
-            List<WebElement> rows = driver.findElements(By.cssSelector("tbody tr"));
-            return rows.size() > 0;
-        });
+        waitUntil(driver -> driver.findElements(tableRows).size() > 0);
     }
 
     private void waitForLanguageToBe(String expected) {
-        wait.withTimeout(Duration.ofSeconds(5)).until(driver -> {
-            WebElement firstCell = driver.findElement(
-                    By.cssSelector("tbody tr td[data-col='language']")
-            );
-            return firstCell.getText().trim().equalsIgnoreCase(expected);
+        waitUntil(driver -> {
+            WebElement cell = driver.findElement(firstLanguageCell);
+            return cell.getText().trim().equalsIgnoreCase(expected);
         });
     }
 }

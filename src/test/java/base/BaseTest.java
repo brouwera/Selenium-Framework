@@ -27,7 +27,7 @@ public class BaseTest {
     private static final ThreadLocal<WebDriverWait> wait = new ThreadLocal<>();
 
     // ============================================================
-    // Accessors (Instance-Based for Page Object Constructors)
+    // Accessors (Used by BasePage)
     // ============================================================
     public WebDriver getDriver() {
         return driver.get();
@@ -38,39 +38,45 @@ public class BaseTest {
     }
 
     // ============================================================
-    // Test Lifecycle (MDC Only — Logging handled by TestListener)
+    // Test Lifecycle
     // ============================================================
     @BeforeMethod(alwaysRun = true)
     public void setUp(Method method) {
 
-        // Set MDC for the entire test method
+        // MDC: Attach test name for logging
         String testName = this.getClass().getSimpleName() + "." + method.getName();
         MDC.put("testName", testName);
 
+        // Browser configuration
         String browser = ConfigManager.getBrowser();
         boolean headless = ConfigManager.isHeadless();
 
+        // Create driver
         WebDriver webDriver = createDriver(browser, headless);
         driver.set(webDriver);
 
+        // Explicit wait
         int explicitWait = ConfigManager.getExplicitWait();
         wait.set(new WebDriverWait(webDriver, Duration.ofSeconds(explicitWait)));
-
-        webDriver.get(ConfigManager.getBaseUrl());
     }
 
     @AfterMethod(alwaysRun = true)
     public void tearDown(Method method, ITestResult result) {
 
         WebDriver webDriver = driver.get();
+
         if (webDriver != null) {
-            webDriver.quit();
+            try {
+                webDriver.quit();
+            } catch (Exception ignored) {
+                // Avoid teardown failures masking test results
+            }
         }
 
         driver.remove();
         wait.remove();
 
-        // Clear MDC after test completes
+        // Clear MDC
         MDC.remove("testName");
     }
 

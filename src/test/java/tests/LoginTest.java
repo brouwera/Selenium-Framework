@@ -18,17 +18,17 @@ import java.util.Map;
 public class LoginTest extends BaseTest {
 
     // ============================================================
-    // Navigation Helper
+    // Navigation Helpers
     // ============================================================
-
     private LoginPage navigateToLoginPage() {
-        return new HomePage(this).clickTestLoginLink();
+        return new HomePage(this)
+                .open()
+                .goToLoginPage();
     }
 
     // ============================================================
     // Data-Driven Login Test
     // ============================================================
-
     @Story("Data-driven login validation")
     @Test(
             groups = {"regression"},
@@ -72,7 +72,6 @@ public class LoginTest extends BaseTest {
     // ============================================================
     // Positive Flow Tests
     // ============================================================
-
     @Story("User can log in through navigation flow")
     @Test(
             groups = {"smoke"},

@@ -1,19 +1,27 @@
 package pages;
 
 import base.BaseTest;
+import config.ConfigManager;
 import io.qameta.allure.Step;
 import org.openqa.selenium.*;
-import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.Select;
-import org.openqa.selenium.support.ui.WebDriverWait;
+import org.openqa.selenium.support.ui.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.function.Function;
 
 public class BasePage {
 
+    // ============================================================
+    // Test Context (Required for Page → Page navigation)
+    // ============================================================
+    protected final BaseTest test;
+
+    // ============================================================
+    // Driver + Waits
+    // ============================================================
     protected WebDriver driver;
     protected WebDriverWait wait;
     protected WebDriverWait shortWait; // 3-second wait for TimeoutException tests
@@ -27,6 +35,7 @@ public class BasePage {
     // Constructor (ThreadLocal-safe)
     // ============================================================
     public BasePage(BaseTest test) {
+        this.test = test;
         this.driver = test.getDriver();
         this.wait = test.getWait();
         this.shortWait = new WebDriverWait(driver, Duration.ofSeconds(3));
@@ -70,6 +79,10 @@ public class BasePage {
         wait.until(ExpectedConditions.elementToBeClickable(locator));
     }
 
+    protected void waitUntil(Function<WebDriver, Boolean> condition) {
+        wait.until(condition);
+    }
+
     // ============================================================
     // Core Actions
     // ============================================================
@@ -88,6 +101,17 @@ public class BasePage {
         element.sendKeys(text);
     }
 
+    @Step("Type into element without clearing: {locator}")
+    protected void typeWithoutClearing(By locator, String text) {
+        log.info("Typing WITHOUT clearing into element: {}", locator);
+        logStep("Typing WITHOUT clearing into: " + locator + " → " + text);
+        WebElement element = waitForVisibility(locator);
+        element.sendKeys(text);
+    }
+
+    // ============================================================
+    // Text Helpers
+    // ============================================================
     protected String getText(By locator) {
         log.info("Getting text from element: {}", locator);
         logStep("Getting text from: " + locator);
@@ -136,16 +160,36 @@ public class BasePage {
     }
 
     // ============================================================
-    // Navigation Helper
+    // Navigation Helpers (Option C)
     // ============================================================
-    protected void navigateTo(String relativeUrl) {
-        String base = "https://practicetestautomation.com";
-        String fullUrl = base + relativeUrl;
 
-        log.info("Navigating to URL: {}", fullUrl);
-        logStep("Navigating to: " + fullUrl);
+    protected void navigateToPractice(String relativeUrl) {
+        String base = ConfigManager.getPracticeBaseUrl();
+        String fullUrl = base + relativeUrl.replaceFirst("^/", "");
+
+        log.info("Navigating to Practice URL: {}", fullUrl);
+        logStep("Navigating to Practice URL: " + fullUrl);
 
         driver.get(fullUrl);
+        waitForPageLoad();
+    }
+
+    protected void navigateToHeroku(String relativeUrl) {
+        String base = ConfigManager.getHerokuBaseUrl();
+        String fullUrl = base + relativeUrl.replaceFirst("^/", "");
+
+        log.info("Navigating to Heroku URL: {}", fullUrl);
+        logStep("Navigating to Heroku URL: " + fullUrl);
+
+        driver.get(fullUrl);
+        waitForPageLoad();
+    }
+
+    // Absolute URL (still useful)
+    protected void navigateToAbsoluteUrl(String url) {
+        log.info("Navigating to absolute URL: {}", url);
+        logStep("Navigating to: " + url);
+        driver.get(url);
         waitForPageLoad();
     }
 
@@ -255,5 +299,18 @@ public class BasePage {
             log.warn("Element NOT visible: {}", locator);
             return false;
         }
+    }
+
+    // ============================================================
+    // Frame Helpers
+    // ============================================================
+    protected void switchToFrame(By locator) {
+        log.info("Switching to frame: {}", locator);
+        driver.switchTo().frame(driver.findElement(locator));
+    }
+
+    protected void switchToDefault() {
+        log.info("Switching to default content");
+        driver.switchTo().defaultContent();
     }
 }

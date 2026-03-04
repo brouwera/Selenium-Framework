@@ -16,6 +16,8 @@
             <class name="tests.LoginTest"/>
             <class name="tests.ExceptionsTest"/>
             <class name="tests.TableTest"/>
+            <class name="tests.FramesTest"/>
+            <class name="tests.DynamicControlsTest"/>
         </classes>
     </test>
 

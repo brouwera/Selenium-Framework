@@ -7,13 +7,14 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-public class CSVUtils {
+public final class CSVUtils {
 
+    // ============================================================
+    // Constants
+    // ============================================================
     private static final String DEFAULT_DELIMITER = ",";
 
-    private CSVUtils() {
-        // Utility class - prevent instantiation
-    }
+    private CSVUtils() {}
 
     // ============================================================
     // Public API
@@ -24,6 +25,10 @@ public class CSVUtils {
     }
 
     public static List<Map<String, String>> readCsvAsListOfMaps(String resourcePath, String delimiter) {
+        if (delimiter == null) {
+            delimiter = DEFAULT_DELIMITER;
+        }
+
         List<String[]> rows = readCsvRaw(resourcePath, delimiter);
 
         if (rows.isEmpty()) {
@@ -41,7 +46,8 @@ public class CSVUtils {
 
             Map<String, String> rowMap = new LinkedHashMap<>();
             for (int j = 0; j < headers.length; j++) {
-                rowMap.put(headers[j].trim(), row[j].trim());
+                String value = row[j] != null ? row[j].trim() : "";
+                rowMap.put(headers[j].trim(), value);
             }
             result.add(rowMap);
         }
@@ -90,7 +96,7 @@ public class CSVUtils {
                 line = stripBom(line).trim();
 
                 if (line.isEmpty()) {
-                    continue; // skip empty lines
+                    continue;
                 }
 
                 String[] tokens = line.split(delimiter, -1);

@@ -2,6 +2,10 @@ package exceptions;
 
 public class PageNavigationException extends RuntimeException {
 
+    // ============================================================
+    // Constructors
+    // ============================================================
+
     public PageNavigationException(String message) {
         super(message);
     }

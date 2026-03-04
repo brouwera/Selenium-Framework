@@ -16,14 +16,18 @@ import java.util.List;
 @Feature("Course Table Filtering and Sorting")
 public class TableTest extends BaseTest {
 
+    // ============================================================
+    // Navigation Helper
+    // ============================================================
     private TablePage navigateToTablePage() {
-        return new HomePage(this).clickTestTableLink();
+        return new HomePage(this)
+                .open()
+                .goToTablePage();
     }
 
     // ============================================================
     // Test Case 1: Language filter → Java
     // ============================================================
-
     @Story("Filter by Language: Java")
     @Test(groups = {"regression"}, description = "Verify that selecting Language = Java shows only Java courses")
     public void filterByLanguageJava() {
@@ -42,7 +46,6 @@ public class TableTest extends BaseTest {
     // ============================================================
     // Test Case 2: Level filter → Beginner only
     // ============================================================
-
     @Story("Filter by Level: Beginner")
     @Test(groups = {"regression"}, description = "Verify that only Beginner courses are visible when Intermediate and Advanced are unchecked")
     public void filterByLevelBeginner() {
@@ -62,7 +65,6 @@ public class TableTest extends BaseTest {
     // ============================================================
     // Test Case 3: Min enrollments → 10,000+
     // ============================================================
-
     @Story("Filter by Min Enrollments: 10,000+")
     @Test(groups = {"regression"}, description = "Verify that all visible courses have enrollments >= 10,000")
     public void filterByMinEnrollments() {
@@ -81,7 +83,6 @@ public class TableTest extends BaseTest {
     // ============================================================
     // Test Case 4: Combined filters → Python + Beginner + 10,000+
     // ============================================================
-
     @Story("Combined Filters: Python + Beginner + 10,000+")
     @Test(groups = {"regression"}, description = "Verify combined filtering logic for Language, Level, and Min Enrollments")
     public void combinedFilters() {
@@ -115,7 +116,6 @@ public class TableTest extends BaseTest {
     // ============================================================
     // Test Case 5: No results state
     // ============================================================
-
     @Story("No Results State")
     @Test(groups = {"regression"}, description = "Verify that no results message appears when filters yield no matches")
     public void noResultsState() {
@@ -135,7 +135,6 @@ public class TableTest extends BaseTest {
     // ============================================================
     // Test Case 6: Reset button visibility and behavior
     // ============================================================
-
     @Story("Reset Button Behavior")
     @Test(groups = {"regression"}, description = "Verify Reset button visibility and that it restores default filter values")
     public void resetButtonBehavior() {
@@ -166,7 +165,6 @@ public class TableTest extends BaseTest {
     // ============================================================
     // Test Case 7: Sort by Enrollments (ascending, numeric)
     // ============================================================
-
     @Story("Sort by Enrollments (Ascending)")
     @Test(groups = {"regression"}, description = "Verify numeric sorting of enrollments in ascending order")
     public void sortByEnrollmentsAscending() {
@@ -185,7 +183,6 @@ public class TableTest extends BaseTest {
     // ============================================================
     // Test Case 8: Sort by Course Name (alphabetical)
     // ============================================================
-
     @Story("Sort by Course Name (A→Z)")
     @Test(groups = {"regression"}, description = "Verify alphabetical sorting of course names")
     public void sortByCourseName() {

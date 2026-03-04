@@ -15,21 +15,22 @@ public class ExceptionsTest extends BaseTest {
     // ============================================================
     // Navigation Helper
     // ============================================================
-
     private ExceptionsPage navigateToExceptionsPage() {
-        return new HomePage(this).clickTestExceptionsLink();
+        return new HomePage(this)
+                .open()
+                .goToExceptionsPage();
     }
 
     // ============================================================
     // Test Case 1: NoSuchElementException (Row 2 appears late)
     // ============================================================
-
     @Story("Row 2 appears after delay")
     @Description("Verify that clicking Add eventually reveals Row 2 input field.")
     @Test
     public void testRow2AppearsAfterDelay() {
         ExceptionsPage page = navigateToExceptionsPage();
         page.clickAddButton();
+
         AssertionHelper.assertTrue(
                 page.isRow2InputVisible(),
                 "Row 2 input should be visible after clicking Add"
@@ -39,7 +40,6 @@ public class ExceptionsTest extends BaseTest {
     // ============================================================
     // Test Case 2: ElementNotInteractableException (Invisible Save)
     // ============================================================
-
     @Story("Save text in Row 2")
     @Description("Verify that saving text in Row 2 works and avoids clicking invisible Save in Row 1.")
     @Test
@@ -62,18 +62,18 @@ public class ExceptionsTest extends BaseTest {
     @Test(expectedExceptions = ElementNotInteractableException.class)
     public void testInvisibleSaveThrowsException() {
         ExceptionsPage page = navigateToExceptionsPage();
-        page.clickInvisibleSaveButton();   // <-- FIXED: uses public wrapper
+        page.clickInvisibleSaveButton();
     }
 
     // ============================================================
     // Test Case 3: InvalidElementStateException (Row 1 disabled)
     // ============================================================
-
     @Story("Row 1 disabled state")
     @Description("Verify Row 1 is disabled before clicking Edit.")
     @Test
     public void testRow1IsDisabledInitially() {
         ExceptionsPage page = navigateToExceptionsPage();
+
         AssertionHelper.assertFalse(
                 page.isRow1InputEnabled(),
                 "Row 1 input should be disabled initially"
@@ -100,7 +100,6 @@ public class ExceptionsTest extends BaseTest {
     // ============================================================
     // Test Case 4: StaleElementReferenceException
     // ============================================================
-
     @Story("Instructions disappear after Add")
     @Description("Verify that instructions text disappears after clicking Add.")
     @Test
@@ -137,7 +136,6 @@ public class ExceptionsTest extends BaseTest {
     // ============================================================
     // Test Case 5: TimeoutException
     // ============================================================
-
     @Story("Short timeout causes failure")
     @Description("Verify that a 3-second wait fails because Row 2 appears after ~5 seconds.")
     @Test

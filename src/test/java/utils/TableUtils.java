@@ -12,9 +12,7 @@ import java.util.List;
  */
 public final class TableUtils {
 
-    private TableUtils() {
-        // Utility class - prevent instantiation
-    }
+    private TableUtils() {}
 
     // ============================================================
     // Numeric Parsing
@@ -22,14 +20,25 @@ public final class TableUtils {
 
     @Step("Parse enrollment value: {text}")
     public static int parseEnrollment(String text) {
-        if (text == null || text.isEmpty()) {
+        if (text == null || text.trim().isEmpty()) {
             return 0;
         }
-        return Integer.parseInt(text.replace(",", "").trim());
+
+        try {
+            return Integer.parseInt(text.replace(",", "").trim());
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException(
+                    "Unable to parse enrollment value: '" + text + "'", e
+            );
+        }
     }
 
     @Step("Parse list of enrollment values")
     public static List<Integer> parseEnrollmentList(List<String> values) {
+        if (values == null) {
+            return Collections.emptyList();
+        }
+
         List<Integer> parsed = new ArrayList<>();
         for (String value : values) {
             parsed.add(parseEnrollment(value));
@@ -43,6 +52,10 @@ public final class TableUtils {
 
     @Step("Check if numeric list is sorted ascending")
     public static boolean isSortedAscending(List<Integer> values) {
+        if (values == null || values.isEmpty()) {
+            return true;
+        }
+
         List<Integer> sorted = new ArrayList<>(values);
         Collections.sort(sorted);
         return sorted.equals(values);
@@ -50,6 +63,10 @@ public final class TableUtils {
 
     @Step("Check if string list is sorted alphabetically (A→Z)")
     public static boolean isSortedAlphabetically(List<String> values) {
+        if (values == null || values.isEmpty()) {
+            return true;
+        }
+
         List<String> sorted = new ArrayList<>(values);
         sorted.sort(String.CASE_INSENSITIVE_ORDER);
         return sorted.equals(values);
@@ -61,6 +78,10 @@ public final class TableUtils {
 
     @Step("Filter values by minimum enrollment: {min}")
     public static List<Integer> filterByMinEnrollment(List<Integer> values, int min) {
+        if (values == null) {
+            return Collections.emptyList();
+        }
+
         List<Integer> filtered = new ArrayList<>();
         for (int value : values) {
             if (value >= min) {
@@ -72,9 +93,13 @@ public final class TableUtils {
 
     @Step("Filter strings by keyword: {keyword}")
     public static List<String> filterByKeyword(List<String> values, String keyword) {
+        if (values == null || keyword == null) {
+            return Collections.emptyList();
+        }
+
         List<String> filtered = new ArrayList<>();
         for (String value : values) {
-            if (value.toLowerCase().contains(keyword.toLowerCase())) {
+            if (value != null && value.toLowerCase().contains(keyword.toLowerCase())) {
                 filtered.add(value);
             }
         }
@@ -87,8 +112,12 @@ public final class TableUtils {
 
     @Step("Check if all values equal expected: {expected}")
     public static boolean allEqual(List<String> values, String expected) {
+        if (values == null || expected == null) {
+            return false;
+        }
+
         for (String value : values) {
-            if (!value.equalsIgnoreCase(expected)) {
+            if (value == null || !value.trim().equalsIgnoreCase(expected.trim())) {
                 return false;
             }
         }
@@ -97,6 +126,10 @@ public final class TableUtils {
 
     @Step("Check if all numeric values >= {min}")
     public static boolean allGreaterOrEqual(List<Integer> values, int min) {
+        if (values == null) {
+            return false;
+        }
+
         for (int value : values) {
             if (value < min) {
                 return false;

@@ -6,30 +6,38 @@ import org.openqa.selenium.By;
 
 public class LoginPage extends BasePage {
 
-    private final BaseTest test;
-
-    // ============================================================
-    // Constructor
-    // ============================================================
-
-    public LoginPage(BaseTest test) {
-        super(test);
-        this.test = test;
-    }
-
     // ============================================================
     // Locators
     // ============================================================
-
     private final By usernameField = By.id("username");
     private final By passwordField = By.id("password");
     private final By submitButton = By.id("submit");
     private final By errorMessage = By.id("error");
 
     // ============================================================
+    // Constructor
+    // ============================================================
+    public LoginPage(BaseTest test) {
+        super(test);
+    }
+
+    // ============================================================
+    // Page Load
+    // ============================================================
+    @Step("Open Login Page")
+    public LoginPage open() {
+        navigateToPractice("test-login/");
+        return this;
+    }
+
+    @Step("Verify Login Page is loaded")
+    public boolean isPageLoaded() {
+        return isDisplayed(usernameField) && isDisplayed(submitButton);
+    }
+
+    // ============================================================
     // Individual Actions
     // ============================================================
-
     @Step("Enter username: {username}")
     public LoginPage enterUsername(String username) {
         type(usernameField, username);
@@ -49,9 +57,8 @@ public class LoginPage extends BasePage {
     }
 
     // ============================================================
-    // Composite Action
+    // Composite Actions
     // ============================================================
-
     @Step("Log in as user: {username}")
     public SuccessfulLoginPage login(String username, String password) {
         return enterUsername(username)
@@ -62,8 +69,7 @@ public class LoginPage extends BasePage {
     // ============================================================
     // Visibility Checks
     // ============================================================
-
-    @Step("Verify Login button is displayed")
+    @Step("Check if Login button is displayed")
     public boolean isLoginButtonDisplayed() {
         return isDisplayed(submitButton);
     }

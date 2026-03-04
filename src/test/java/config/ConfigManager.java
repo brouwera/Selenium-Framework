@@ -7,16 +7,20 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-public class ConfigManager {
+public final class ConfigManager {
 
+    // ============================================================
+    // Fields
+    // ============================================================
     private static final Properties properties = new Properties();
     private static final String CONFIG_FILE = "config.properties";
     private static Dotenv dotenv;
 
+    private ConfigManager() {}
+
     // ============================================================
     // Static Initialization (Load .env + config.properties)
     // ============================================================
-
     static {
         loadDotEnv();
         loadProperties();
@@ -25,11 +29,10 @@ public class ConfigManager {
     // ============================================================
     // Load .env File (Optional)
     // ============================================================
-
     private static void loadDotEnv() {
         try {
             dotenv = Dotenv.configure()
-                    .ignoreIfMissing() // Allows repo to run even if .env isn't present
+                    .ignoreIfMissing()
                     .load();
         } catch (Exception e) {
             throw new FrameworkInitializationException("Failed to load .env file.", e);
@@ -39,7 +42,6 @@ public class ConfigManager {
     // ============================================================
     // Load config.properties
     // ============================================================
-
     private static void loadProperties() {
         try (InputStream input = ConfigManager.class.getClassLoader().getResourceAsStream(CONFIG_FILE)) {
 
@@ -59,7 +61,6 @@ public class ConfigManager {
     // ============================================================
     // Unified Getter (Order: System → .env → config.properties)
     // ============================================================
-
     private static String get(String key) {
 
         // 1. System property override
@@ -80,37 +81,58 @@ public class ConfigManager {
         return properties.getProperty(key);
     }
 
+    private static String getRequired(String key) {
+        String value = get(key);
+        if (value == null) {
+            throw new FrameworkInitializationException(
+                    "Required configuration key '" + key + "' is missing."
+            );
+        }
+        return value;
+    }
+
+    private static int getRequiredInt(String key) {
+        String value = getRequired(key);
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            throw new FrameworkInitializationException(
+                    "Configuration key '" + key + "' must be an integer. Found: " + value, e
+            );
+        }
+    }
+
     // ============================================================
     // Environment Handling
     // ============================================================
-
     public static String getEnvironment() {
-        String env = get("env");
-        if (env == null) {
-            throw new FrameworkInitializationException(
-                    "Environment (env) is not set in .env or config.properties."
-            );
-        }
-        return env.toLowerCase();
+        return getRequired("env").toLowerCase();
     }
 
-    public static String getBaseUrl() {
-        String env = getEnvironment();
-        String url = get(env + ".base.url");
+    // ============================================================
+    // Base URLs (Option C)
+    // ============================================================
 
-        if (url == null) {
-            throw new FrameworkInitializationException(
-                    "Base URL for environment '" + env + "' is missing."
-            );
-        }
+    /**
+     * Base URL for PracticeTestAutomation.com
+     * Uses env-based keys: local.base.url, stage.base.url, prod.base.url
+     */
+    public static String getPracticeBaseUrl() {
+        String env = getEnvironment(); // local, stage, prod
+        String key = env + ".base.url";
+        return getRequired(key);
+    }
 
-        return url;
+    /**
+     * Base URL for The-Internet Herokuapp
+     */
+    public static String getHerokuBaseUrl() {
+        return getRequired("heroku.base.url");
     }
 
     // ============================================================
     // Browser Settings
     // ============================================================
-
     public static String getBrowser() {
         String browser = get("browser");
         return browser != null ? browser.toLowerCase() : "chrome";
@@ -123,19 +145,21 @@ public class ConfigManager {
     // ============================================================
     // Timeout Settings
     // ============================================================
-
     public static int getExplicitWait() {
-        return Integer.parseInt(get("explicit.wait"));
+        return getRequiredInt("explicit.wait");
     }
 
     public static int getPageLoadTimeout() {
-        return Integer.parseInt(get("page.load.timeout"));
+        return getRequiredInt("page.load.timeout");
+    }
+
+    public static int getShortWait() {
+        return getRequiredInt("short.wait");
     }
 
     // ============================================================
     // Credentials (Optional)
     // ============================================================
-
     public static String getUsername() {
         return get("username");
     }
@@ -147,7 +171,6 @@ public class ConfigManager {
     // ============================================================
     // Driver Paths (Optional)
     // ============================================================
-
     public static String getEdgeDriverPath() {
         return get("edge.driver.path");
     }

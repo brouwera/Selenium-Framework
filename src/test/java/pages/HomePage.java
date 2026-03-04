@@ -6,12 +6,9 @@ import org.openqa.selenium.By;
 
 public class HomePage extends BasePage {
 
-    private final BaseTest test;
-
     // ============================================================
-    // Locators (Match Practice Page)
+    // Locators (Practice Page)
     // ============================================================
-
     private final By testLoginLink = By.linkText("Test Login Page");
     private final By testExceptionsLink = By.linkText("Test Exceptions");
     private final By testTableLink = By.linkText("Test Table");
@@ -19,66 +16,36 @@ public class HomePage extends BasePage {
     // ============================================================
     // Constructor
     // ============================================================
-
     public HomePage(BaseTest test) {
         super(test);
-        this.test = test;
     }
 
     // ============================================================
     // Page Load
     // ============================================================
-
     @Step("Open Practice Home Page")
     public HomePage open() {
-        driver.get("https://practicetestautomation.com/practice/");
-        waitForPageLoad();
+        navigateToPractice("");
         return this;
     }
 
     // ============================================================
-    // Direct Navigation Helpers
+    // Navigation Helpers
     // ============================================================
-
     @Step("Navigate to Login Page")
     public LoginPage goToLoginPage() {
-        open();
         click(testLoginLink);
         return new LoginPage(test);
     }
 
     @Step("Navigate to Exceptions Page")
     public ExceptionsPage goToExceptionsPage() {
-        open();
         click(testExceptionsLink);
         return new ExceptionsPage(test);
     }
 
     @Step("Navigate to Table Page")
     public TablePage goToTablePage() {
-        open();
-        click(testTableLink);
-        return new TablePage(test);
-    }
-
-    // ============================================================
-    // Raw Click Actions
-    // ============================================================
-
-    @Step("Click Test Login Page link")
-    public LoginPage clickTestLoginLink() {
-        click(testLoginLink);
-        return new LoginPage(test);
-    }
-
-    @Step("Click Test Exceptions link")
-    public ExceptionsPage clickTestExceptionsLink() {
-        click(testExceptionsLink);
-        return new ExceptionsPage(test);
-    }
-
-    @Step("Click Test Table link")
-    public TablePage clickTestTableLink() {
         click(testTableLink);
         return new TablePage(test);
     }

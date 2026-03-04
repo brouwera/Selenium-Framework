@@ -6,6 +6,10 @@ package utils;
  */
 public class CsvParsingException extends RuntimeException {
 
+    // ============================================================
+    // Constructors
+    // ============================================================
+
     public CsvParsingException(String message) {
         super(message);
     }

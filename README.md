@@ -494,11 +494,15 @@ mvn clean test -Denv=local -Dbrowser=chrome -Dheadless=true
 
 ### 📅 Day-by-Day Progress Log
 
+---
+
 ### Day 3 — First Working Selenium + TestNG Login Automation
 
 - Built initial BaseTest
 - Created first LoginTest
 - Validated environment + WebDriver setup
+
+---
 
 ### Day 5 — Explicit Waits + Stability
 
@@ -506,17 +510,23 @@ mvn clean test -Denv=local -Dbrowser=chrome -Dheadless=true
 - Replaced all direct interactions with explicit waits
 - Eliminated flakiness
 
+---
+
 ### Day 7 — Page Object Model (POM)
 
 - Added LoginPage + HomePage
 - Clean locators + explicit waits
 - Tests rewritten to use POM
 
+---
+
 ### Day 8 — Multi‑Page Navigation
 
 - Added SuccessfulLoginPage
 - Added full login flow test
 - Improved readability + maintainability
+
+---
 
 ### Day 9 — Assertions + Allure + Stability
 
@@ -525,11 +535,15 @@ mvn clean test -Denv=local -Dbrowser=chrome -Dheadless=true
 - Cleaned pom.xml
 - Achieved full green run
 
+---
+
 ### Day 10 — Flow-Based Scenarios
 
 - Added navigation + logout flow tests
 - Added missing helper methods
 - Improved Allure structure
+
+---
 
 ### Day 11 — Login Module Refactor
 
@@ -538,11 +552,15 @@ mvn clean test -Denv=local -Dbrowser=chrome -Dheadless=true
 - Added Inputs module (later removed)
 - Achieved full green suite
 
+---
+
 ### Day 12 — Alerts Testing + Full Validation
 
 - Added Alerts module (later removed)
 - Validated entire framework
 - Added Allure environment metadata
+
+---
 
 ### Day 13 — Framework Cleanup
 
@@ -551,12 +569,16 @@ mvn clean test -Denv=local -Dbrowser=chrome -Dheadless=true
 - Updated HomePage
 - Full green run
 
+---
+
 ### Day 14 — Multi‑Browser + ConfigManager Upgrade
 
 - Added Edge + Firefox support
 - Added manual driver paths
 - Updated ConfigManager
 - Framework now fully portable + CI‑ready
+
+---
 
 ### Day 15 — README Enhancements + Architecture Planning
 
@@ -572,6 +594,8 @@ Updated README.md with major improvements:
 - Ensured screenshot and diagrams render correctly on GitHub
 
 This completes the documentation milestone for Day 15 and prepares the framework for upcoming multi‑environment and stability enhancements.
+
+---
 
 ### **Day 16 — Parallel Execution + TestNG Suite Integration**
 Today’s focus was on scaling the framework for real‑world execution patterns. I introduced a dedicated `testng.xml` suite file and configured Maven Surefire to run the suite directly. This allowed the framework to support parallel execution, listener registration, and structured test grouping.
@@ -693,6 +717,29 @@ Today focused on elevating the Table module from “functionally complete” to 
 
 **Outcome:**  
 The Table module is now fully hardened for CI/CD execution. With all synchronization, parsing, and interaction logic stabilized, the framework delivers consistent, deterministic results across environments. This completes the multi‑module expansion phase and sets the stage for Day 23’s new modules and Day 24’s Allure dashboard + CI integration work.
+
+---
+
+### **Day 23 — Table Module Enhancements + iFrame Stability + Full Suite Green**
+
+Today’s milestone focused on stabilizing the final moving parts of the framework and ensuring every module behaves consistently under real‑world execution conditions. This included hardening the Table module, completing the environment‑based navigation architecture, and implementing a robust solution for the TinyMCE iFrame editor—one of the most complex UI components in the entire project.
+
+The day ended with a full Maven run (`mvn clean test`) showing **29/29 passing tests**, clean Allure reporting, and complete architectural consistency across all Page Objects.
+
+**Key Achievements**
+- Finalized environment‑based URL resolution in `ConfigManager`, enabling clean multi‑environment navigation (`local.base.url`, `stage.base.url`, `prod.base.url`)
+- Updated all Page Objects to use Option‑C navigation for consistent routing across PracticeTestAutomation and Herokuapp modules
+- Implemented a production‑grade TinyMCE iFrame handling strategy:
+    - Closed the read‑only popup safely
+    - Re‑entered the iframe after TinyMCE reloads
+    - Added waits for iframe presence, editor body visibility, and asynchronous text injection
+    - Ensured stable retrieval of the default editor text (“Your content goes here.”)
+- Hardened the Table module with final synchronization and DOM‑stability improvements
+- Validated the entire framework under parallel TestNG execution with **100% passing tests**
+- Confirmed Allure report generation with accurate step traces, logs, and attachments
+
+**Outcome:**  
+The framework is now fully stable across all modules—Login, Exceptions, Table, Frames, and iFrame. With environment‑based navigation complete and the TinyMCE editor fully stabilized, the project has reached a new level of reliability and architectural polish. This completes the final stabilization milestone before moving into Day 24’s Allure dashboard and CI/CD integration work.
 
 ---
 
