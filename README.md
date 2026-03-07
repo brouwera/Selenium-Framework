@@ -817,6 +817,40 @@ The framework now has a modern, scalable driver‑creation architecture and a co
 
 ---
 
+### **Day 27 — Logging Architecture Overhaul, BasePage Step Tracing, and Logback Modernization**
+
+Today’s milestone focused on transforming the framework’s logging system into a clean, structured, and enterprise‑grade observability layer. This required coordinated updates across `BasePage`, `Logback`, and the MDC‑driven per‑test logging pipeline to ensure every interaction, wait, navigation, and frame switch is captured with clarity and precision. The result is a fully modernized logging architecture that produces readable, timestamped, step‑numbered traces across console output, global logs, and per‑test artifacts.
+
+**Key Achievements**
+- Upgraded `BasePage` with a production‑grade step‑logging system:
+  - Added step numbering (`[01]`, `[02]`, …) for narrative‑style execution traces
+  - Added duration tracking for every action (e.g., `(142 ms)`)
+  - Implemented clean locator formatting (`[id=username]`, `[xpath=//button]`)
+  - Unified all interactions under `step()` and `stepReturn()` wrappers
+  - Ensured consistent logging across FIND, CLICK, TYPE, WAIT, JS actions, and frame switching
+- Modernized `logback-test.xml` with a unified, aligned pattern:
+  - Timestamp, log level, thread, MDC test name, logger, and message now align cleanly
+  - Console, global `framework.log`, and per‑test logs now share a single pattern
+  - MDC test names are visible in all logs for parallel execution clarity
+- Validated MDC‑routed per‑test logging:
+  - Each test now produces an isolated `<testName>.log` with step‑level detail
+  - Global `framework.log` captures cross‑test activity for debugging
+  - `test.log` remains a clean lifecycle summary (start/pass/fail)
+- Integrated the new logging system with the artifact pipeline:
+  - Per‑test logs copied into each test’s artifact folder
+  - Global logs included for cross‑test debugging
+  - Step‑numbered BasePage logs now appear in all artifact bundles
+- Performed a full framework validation run confirming:
+  - Clean console output
+  - Correct MDC routing
+  - Accurate step numbering and durations
+  - No regressions in Page Objects or TestListener behavior
+
+**Outcome:**  
+The framework now features a polished, professional logging architecture that mirrors the structure used in enterprise automation systems. With step‑numbered traces, duration metrics, unified patterns, and MDC‑driven per‑test logs, the system provides exceptional clarity during debugging and CI/CD analysis. This completes the observability foundation required for the final Days 28–30 enhancements and positions the framework for long‑term maintainability and recruiter‑ready presentation.
+
+---
+
 ### 🚧 Upcoming Enhancements (Planned)
 
 ### Table Module
