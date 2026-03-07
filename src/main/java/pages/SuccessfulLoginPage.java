@@ -1,8 +1,9 @@
 package pages;
 
-import base.BaseTest;
 import io.qameta.allure.Step;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class SuccessfulLoginPage extends BasePage {
 
@@ -15,8 +16,8 @@ public class SuccessfulLoginPage extends BasePage {
     // ============================================================
     // Constructor
     // ============================================================
-    public SuccessfulLoginPage(BaseTest test) {
-        super(test);
+    public SuccessfulLoginPage(WebDriver driver, WebDriverWait wait) {
+        super(driver, wait);
     }
 
     // ============================================================
@@ -40,12 +41,17 @@ public class SuccessfulLoginPage extends BasePage {
         return isDisplayed(logoutButton);
     }
 
+    @Step("Get success message text")
+    public String getSuccessMessageText() {
+        return getText(successMessage);
+    }
+
     // ============================================================
     // Actions
     // ============================================================
     @Step("Click Logout button")
     public LoginPage clickLogoutButton() {
         click(logoutButton);
-        return new LoginPage(test);
+        return new LoginPage(driver, wait);
     }
 }

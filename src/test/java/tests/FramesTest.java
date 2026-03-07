@@ -15,7 +15,9 @@ public class FramesTest extends BaseTest {
     @Test(description = "Verify text inside all nested frames (left, middle, right, bottom)")
     public void testNestedFrames() {
 
-        FramesPage framesPage = new FramesPage(this).open();
+        FramesPage framesPage = new FramesPage(getDriver(), getWait())
+                .open();
+
         NestedFramesPage nested = framesPage.clickNestedFrames();
 
         AssertionHelper.assertEquals(
@@ -49,7 +51,9 @@ public class FramesTest extends BaseTest {
     @Test(description = "Verify default TinyMCE text is visible inside the iFrame")
     public void testIFrameDefaultText() {
 
-        FramesPage framesPage = new FramesPage(this).open();
+        FramesPage framesPage = new FramesPage(getDriver(), getWait())
+                .open();
+
         IFramePage iframe = framesPage.clickIFrame();
 
         String actual = iframe.getDefaultEditorText();

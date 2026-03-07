@@ -13,7 +13,8 @@ public class DynamicControlsTest extends BaseTest {
     @Test(description = "Verify checkbox can be removed and added back with correct messages")
     public void testRemoveAndAddCheckbox() {
 
-        DynamicControlsPage page = new DynamicControlsPage(this).open();
+        DynamicControlsPage page = new DynamicControlsPage(getDriver(), getWait())
+                .open();
 
         // Remove checkbox
         page.clickRemoveOrAdd()
@@ -54,7 +55,8 @@ public class DynamicControlsTest extends BaseTest {
     @Test(description = "Verify input field can be enabled and disabled with correct messages")
     public void testEnableAndDisableInput() {
 
-        DynamicControlsPage page = new DynamicControlsPage(this).open();
+        DynamicControlsPage page = new DynamicControlsPage(getDriver(), getWait())
+                .open();
 
         // Enable input
         page.clickEnableOrDisable()
@@ -95,7 +97,8 @@ public class DynamicControlsTest extends BaseTest {
     @Test(description = "Verify loading indicator appears and disappears correctly")
     public void testLoadingIndicatorBehavior() {
 
-        DynamicControlsPage page = new DynamicControlsPage(this).open();
+        DynamicControlsPage page = new DynamicControlsPage(getDriver(), getWait())
+                .open();
 
         // Trigger loading
         page.clickRemoveOrAdd();

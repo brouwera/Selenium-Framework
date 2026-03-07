@@ -767,6 +767,56 @@ The framework now uses a modern, scalable, environment‑aware configuration sys
 
 ---
 
+### **Day 25 — Artifact System, Summary Metadata, and Retention Policy**
+
+Today’s milestone focused on building a complete, production‑grade artifact system capable of capturing every test’s logs, screenshots, page source, browser logs, and metadata in a clean, timestamped run directory. This required coordinated updates across `TestListener`, `ArtifactManager`, and the configuration layer to ensure the system worked seamlessly under parallel execution.
+
+**Key Achievements**
+- Implemented a global run‑level artifact directory under `target/artifacts/<timestamp>`
+- Added automatic creation of per‑test artifact folders with full isolation
+- Captured all major artifact types:
+  - Per‑test logs (via SLF4J + MDC)
+  - Screenshots on failure
+  - Page source snapshots
+  - Browser console logs
+  - metadata.json for each test
+- Added run‑level `summary.json` capturing environment, browser, timestamps, and test counts
+- Implemented automatic zipping of the entire run folder (`run.zip`) for CI/CD consumption
+- Added a retention policy that keeps the last **10** runs and deletes older ones
+- Validated the entire artifact pipeline under `mvn clean test` with parallel execution enabled
+
+**Outcome:**  
+The framework now produces a complete, structured, and CI‑ready artifact package for every test run. With run‑level metadata, per‑test isolation, and automatic cleanup, the system mirrors the architecture used in enterprise automation pipelines.
+
+---
+
+### **Day 26 — WebDriverFactory Extraction, BasePage Upgrade, and Timeout Architecture**
+
+Today’s work focused on strengthening the core architecture of the framework by extracting a dedicated `WebDriverFactory`, upgrading `BasePage` with unified interaction helpers, and completing the new timeout system introduced in the JSON‑based ConfigManager. The goal was to modernize driver creation, stabilize interactions, and ensure consistent behavior across all modules.
+
+**Key Achievements**
+- Extracted a full `WebDriverFactory` with support for:
+  - Chrome, Firefox, and Edge
+  - Headless mode
+  - Remote WebDriver (Selenium Grid / cloud providers)
+  - Unified window sizing and CI‑safe flags
+- Added centralized timeout application (page load, script, implicit=0) for all drivers
+- Upgraded `BasePage` with:
+  - Unified `find()` wrapper
+  - Retrying click with JS fallback
+  - Consistent explicit waits
+  - Defensive coding for stale/dynamic elements
+  - Clean SLF4J logging for every interaction
+- Cleaned all Page Objects to remove brittle direct WebDriver calls
+- Updated ConfigManager to support safe defaults for all timeout values
+- Fixed DynamicControls and Exceptions modules to align with the new interaction model
+- Executed a full parallel Maven run with **29/29 passing tests** and clean Allure reporting
+
+**Outcome:**  
+The framework now has a modern, scalable driver‑creation architecture and a consistent, resilient interaction layer. With BasePage unified and WebDriverFactory extracted, the system is stable, maintainable, and ready for the advanced enhancements planned for Days 27–30.
+
+---
+
 ### 🚧 Upcoming Enhancements (Planned)
 
 ### Table Module

@@ -1,9 +1,10 @@
 package pages;
 
-import base.BaseTest;
 import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 import org.openqa.selenium.TimeoutException;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class ExceptionsPage extends BasePage {
 
@@ -26,8 +27,8 @@ public class ExceptionsPage extends BasePage {
     // ============================================================
     // Constructor
     // ============================================================
-    public ExceptionsPage(BaseTest test) {
-        super(test);
+    public ExceptionsPage(WebDriver driver, WebDriverWait wait) {
+        super(driver, wait);
     }
 
     // ============================================================
@@ -35,7 +36,7 @@ public class ExceptionsPage extends BasePage {
     // ============================================================
     @Step("Open Exceptions Page")
     public ExceptionsPage open() {
-        navigateToPractice("test-exceptions/");
+        driver.get("https://practicetestautomation.com/practice-test-exceptions/");
         return this;
     }
 
@@ -56,7 +57,6 @@ public class ExceptionsPage extends BasePage {
 
     @Step("Enter text into Row 2 input: {text}")
     public ExceptionsPage enterTextRow2(String text) {
-        waitForVisibility(row2Input);
         type(row2Input, text);
         return this;
     }
@@ -73,33 +73,30 @@ public class ExceptionsPage extends BasePage {
     @Step("Click Edit button on Row 1")
     public ExceptionsPage clickRow1Edit() {
         click(row1EditButton);
-        waitForClickable(row1Input);
+        waitForVisibility(row1Input);
         return this;
     }
 
     @Step("Clear Row 1 input")
     public ExceptionsPage clearRow1Input() {
-        waitForVisibility(row1Input);
         clear(row1Input);
         return this;
     }
 
     @Step("Enter text into Row 1 input: {text}")
     public ExceptionsPage enterTextRow1(String text) {
-        waitForVisibility(row1Input);
         type(row1Input, text);
         return this;
     }
 
     @Step("Get value from Row 1 input")
     public String getRow1InputValue() {
-        waitForVisibility(row1Input);
         return getAttribute(row1Input, "value");
     }
 
     @Step("Check if Row 1 input is enabled")
     public boolean isRow1InputEnabled() {
-        return driver.findElement(row1Input).isEnabled();
+        return find(row1Input).isEnabled();
     }
 
     // ============================================================
@@ -107,7 +104,8 @@ public class ExceptionsPage extends BasePage {
     // ============================================================
     @Step("Click invisible Save button (expected to throw ElementNotInteractableException)")
     public ExceptionsPage clickInvisibleSaveButton() {
-        rawClick(By.name("Save"));
+        // Force a raw click to trigger ElementNotInteractableException
+        driver.findElement(By.name("Save")).click();
         return this;
     }
 
@@ -127,7 +125,7 @@ public class ExceptionsPage extends BasePage {
     @Step("Wait for instructions text to disappear from DOM")
     public boolean waitForInstructionsToDisappear() {
         try {
-            waitUntil(driver -> !isElementPresent(instructionsText));
+            wait.until(driver -> !isElementPresent(instructionsText));
             return true;
         } catch (Exception e) {
             return false;
@@ -136,14 +134,12 @@ public class ExceptionsPage extends BasePage {
 
     @Step("Get confirmation message")
     public String getConfirmationMessage() {
-        waitForVisibility(confirmationMessage);
-        return getText(confirmationMessage);
+        return getText(confirmationMessage).replaceAll("\\s+", " ").trim();
     }
 
     @Step("Get error message")
     public String getErrorMessage() {
-        waitForVisibility(errorMessage);
-        return getText(errorMessage);
+        return getText(errorMessage).replaceAll("\\s+", " ").trim();
     }
 
     // ============================================================
@@ -152,7 +148,7 @@ public class ExceptionsPage extends BasePage {
     @Step("Wait for Row 2 input with short timeout (3 seconds)")
     public boolean waitForRow2InputShortTimeout() {
         try {
-            shortWait.until(driver -> isElementVisible(row2Input));
+            wait.until(driver -> isElementVisible(row2Input));
             return true;
         } catch (TimeoutException e) {
             return false;

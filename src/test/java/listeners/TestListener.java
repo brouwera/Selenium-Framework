@@ -2,7 +2,6 @@ package listeners;
 
 import base.BaseTest;
 import io.qameta.allure.Allure;
-import io.qameta.allure.Attachment;
 import org.openqa.selenium.*;
 import org.openqa.selenium.logging.LogEntry;
 import org.openqa.selenium.logging.LogType;
@@ -12,17 +11,20 @@ import org.slf4j.MDC;
 import org.testng.ITestContext;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
+import utils.ArtifactManager;
 
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class TestListener implements ITestListener {
 
     private static final Logger log = LoggerFactory.getLogger(TestListener.class);
-    private static final String LOG_DIR = "logs";
 
     // ============================================================
     // Suite Lifecycle
@@ -32,15 +34,21 @@ public class TestListener implements ITestListener {
     public void onStart(ITestContext context) {
         MDC.put("testName", "SUITE");
         log.info("=== TEST SUITE STARTED: {} ===", context.getName());
-        MDC.remove("testName");
 
-        createLogDirectory();
+        ArtifactManager.initRun();
+
+        MDC.remove("testName");
     }
 
     @Override
     public void onFinish(ITestContext context) {
         MDC.put("testName", "SUITE");
         log.info("=== TEST SUITE FINISHED: {} ===", context.getName());
+
+        ArtifactManager.writeRunSummary();
+        ArtifactManager.zipRunDirectory();
+        ArtifactManager.cleanupOldRuns();
+
         MDC.remove("testName");
     }
 
@@ -53,8 +61,14 @@ public class TestListener implements ITestListener {
         String fullName = getFullTestName(result);
         MDC.put("testName", fullName);
 
+        long start = System.currentTimeMillis();
+        result.setAttribute("testStart", start);
+
         log.info("=== STARTING TEST: {} ===", fullName);
         Allure.step("Starting test: " + fullName);
+
+        ArtifactManager.createTestDirectory(fullName);
+        ArtifactManager.appendToTestLog("Test started: " + fullName);
     }
 
     @Override
@@ -62,19 +76,29 @@ public class TestListener implements ITestListener {
         String fullName = getFullTestName(result);
         MDC.put("testName", fullName);
 
+        long start = getStartTime(result);
+        long end = System.currentTimeMillis();
+        long duration = end - start;
+
         log.info("=== TEST PASSED: {} ===", fullName);
         Allure.step("Test passed: " + fullName);
 
         WebDriver driver = getDriver(result);
         if (driver != null) {
-            try {
-                saveSuccessScreenshot(driver);
-            } catch (Exception e) {
-                log.warn("Unable to capture success screenshot: {}", e.getMessage());
-            }
+            attachScreenshot(driver, "success");
+            attachPageSource(driver);
+            attachBrowserLogs(driver);
         }
 
-        attachPerTestLog(result);
+        ArtifactManager.copyGlobalLog();
+        ArtifactManager.appendToTestLog("Test passed: " + fullName);
+        attachPerTestLog();
+
+        Map<String, Object> metadata = buildMetadata(result, fullName, start, end, duration);
+        ArtifactManager.writeMetadata(fullName, metadata);
+
+        ArtifactManager.recordTestResult(fullName, "PASSED", duration, null, start, end);
+
         MDC.remove("testName");
     }
 
@@ -83,31 +107,32 @@ public class TestListener implements ITestListener {
         String fullName = getFullTestName(result);
         MDC.put("testName", fullName);
 
+        long start = getStartTime(result);
+        long end = System.currentTimeMillis();
+        long duration = end - start;
+
         log.error("=== TEST FAILED: {} ===", fullName);
 
         WebDriver driver = getDriver(result);
         if (driver != null) {
-            try {
-                saveFailureScreenshot(driver);
-            } catch (Exception e) {
-                log.warn("Unable to capture failure screenshot: {}", e.getMessage());
-            }
-
-            try {
-                savePageSource(driver);
-            } catch (Exception e) {
-                log.warn("Unable to capture page source: {}", e.getMessage());
-            }
-
-            try {
-                saveBrowserLogs(driver);
-            } catch (Exception e) {
-                log.warn("Unable to capture browser logs: {}", e.getMessage());
-            }
+            attachScreenshot(driver, "failure");
+            attachPageSource(driver);
+            attachBrowserLogs(driver);
         }
 
-        saveFailureMessage(result.getThrowable());
-        attachPerTestLog(result);
+        Throwable throwable = result.getThrowable();
+        attachFailureMessage(throwable);
+
+        ArtifactManager.copyGlobalLog();
+        ArtifactManager.appendToTestLog("Test failed: " + fullName);
+        attachPerTestLog();
+
+        String failureMessage = throwable != null ? throwable.toString() : null;
+
+        Map<String, Object> metadata = buildMetadata(result, fullName, start, end, duration);
+        ArtifactManager.writeMetadata(fullName, metadata);
+
+        ArtifactManager.recordTestResult(fullName, "FAILED", duration, failureMessage, start, end);
 
         Allure.step("Failure captured for test: " + fullName);
         MDC.remove("testName");
@@ -118,10 +143,22 @@ public class TestListener implements ITestListener {
         String fullName = getFullTestName(result);
         MDC.put("testName", fullName);
 
+        long start = getStartTime(result);
+        long end = System.currentTimeMillis();
+        long duration = end - start;
+
         log.warn("=== TEST SKIPPED: {} ===", fullName);
         Allure.step("Test skipped: " + fullName);
 
-        attachPerTestLog(result);
+        ArtifactManager.copyGlobalLog();
+        ArtifactManager.appendToTestLog("Test skipped: " + fullName);
+        attachPerTestLog();
+
+        Map<String, Object> metadata = buildMetadata(result, fullName, start, end, duration);
+        ArtifactManager.writeMetadata(fullName, metadata);
+
+        ArtifactManager.recordTestResult(fullName, "SKIPPED", duration, null, start, end);
+
         MDC.remove("testName");
     }
 
@@ -139,78 +176,123 @@ public class TestListener implements ITestListener {
     }
 
     // ============================================================
-    // Per-Test Log Handling
+    // Artifact Attachments
+    // ============================================================
+
+    private void attachScreenshot(WebDriver driver, String type) {
+        try {
+            byte[] data = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
+            Path file = ArtifactManager.writeScreenshot(data, type);
+
+            Allure.addAttachment("Screenshot (" + type + ")", "image/png",
+                    Files.newInputStream(file), "png");
+
+        } catch (Exception e) {
+            log.warn("Unable to capture {} screenshot: {}", type, e.getMessage());
+        }
+    }
+
+    private void attachPageSource(WebDriver driver) {
+        try {
+            byte[] data = driver.getPageSource().getBytes(StandardCharsets.UTF_8);
+            Path file = ArtifactManager.writePageSource(data);
+
+            Allure.addAttachment("Page Source", "text/html",
+                    Files.newInputStream(file), "html");
+
+        } catch (Exception e) {
+            log.warn("Unable to capture page source: {}", e.getMessage());
+        }
+    }
+
+    private void attachBrowserLogs(WebDriver driver) {
+        try {
+            List<LogEntry> logs = driver.manage().logs().get(LogType.BROWSER).getAll();
+            String logText = logs.stream().map(LogEntry::toString).collect(Collectors.joining("\n"));
+
+            Path file = ArtifactManager.writeBrowserLogs(logText);
+
+            Allure.addAttachment("Browser Console Logs", "text/plain",
+                    Files.newInputStream(file), "txt");
+
+        } catch (Exception e) {
+            log.warn("Unable to capture browser logs: {}", e.getMessage());
+        }
+    }
+
+    private void attachFailureMessage(Throwable throwable) {
+        try {
+            String message = throwable != null ? throwable.toString() : "No stack trace available";
+            Path file = ArtifactManager.writeFailureMessage(message);
+
+            Allure.addAttachment("Failure Details", "text/plain",
+                    Files.newInputStream(file), "txt");
+
+        } catch (Exception e) {
+            log.warn("Unable to attach failure message: {}", e.getMessage());
+        }
+    }
+
+    private void attachPerTestLog() {
+        try {
+            Path logFile = ArtifactManager.getCurrentTestDir()
+                    .resolve("logs")
+                    .resolve("test.log");
+
+            Allure.addAttachment("Per-Test Log", "text/plain",
+                    Files.newInputStream(logFile), "txt");
+
+        } catch (Exception e) {
+            log.warn("Unable to attach per-test log: {}", e.getMessage());
+        }
+    }
+
+    // ============================================================
+    // Helpers
     // ============================================================
 
     private String getFullTestName(ITestResult result) {
         String className = result.getTestClass().getRealClass().getSimpleName();
         String methodName = result.getMethod().getMethodName();
-        return className + "." + methodName;
-    }
 
-    private Path getPerTestLogPath(ITestResult result) {
-        return Paths.get(LOG_DIR, getFullTestName(result) + ".log");
-    }
+        Object[] params = result.getParameters();
 
-    @Attachment(value = "Test Log", type = "text/plain")
-    private byte[] attachLogFile(Path path) {
-        try {
-            return Files.readAllBytes(path);
-        } catch (IOException e) {
-            log.warn("Unable to read log file {}: {}", path, e.getMessage());
-            return ("Unable to attach log file: " + e.getMessage()).getBytes();
+        if (params != null && params.length > 0) {
+            String paramString = Arrays.stream(params)
+                    .map(Object::toString)
+                    .map(s -> s.replaceAll("[^a-zA-Z0-9_-]", ""))
+                    .collect(Collectors.joining(""));
+            return className + "." + methodName + "_" + paramString;
         }
+
+        int index = result.getMethod().getCurrentInvocationCount();
+        return className + "." + methodName + "_" + index;
     }
 
-    private void attachPerTestLog(ITestResult result) {
-        Path logPath = getPerTestLogPath(result);
-        if (Files.exists(logPath)) {
-            attachLogFile(logPath);
+    private long getStartTime(ITestResult result) {
+        Object attr = result.getAttribute("testStart");
+        if (attr instanceof Long) {
+            return (Long) attr;
         }
+        // Fallback to TestNG timing if attribute missing
+        return result.getStartMillis();
     }
 
-    private void createLogDirectory() {
-        try {
-            Files.createDirectories(Paths.get(LOG_DIR));
-        } catch (IOException e) {
-            log.warn("Unable to create log directory '{}': {}", LOG_DIR, e.getMessage());
-        }
-    }
-
-    // ============================================================
-    // Allure Attachments
-    // ============================================================
-
-    @Attachment(value = "Screenshot on Success", type = "image/png")
-    public byte[] saveSuccessScreenshot(WebDriver driver) {
-        return ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
-    }
-
-    @Attachment(value = "Screenshot on Failure", type = "image/png")
-    public byte[] saveFailureScreenshot(WebDriver driver) {
-        return ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
-    }
-
-    @Attachment(value = "Page Source", type = "text/html")
-    public byte[] savePageSource(WebDriver driver) {
-        return driver.getPageSource().getBytes(StandardCharsets.UTF_8);
-    }
-
-    @Attachment(value = "Browser Console Logs", type = "text/plain")
-    public String saveBrowserLogs(WebDriver driver) {
-        try {
-            List<LogEntry> logs = driver.manage().logs().get(LogType.BROWSER).getAll();
-            return logs.stream()
-                    .map(LogEntry::toString)
-                    .collect(Collectors.joining("\n"));
-        } catch (Exception e) {
-            log.warn("Unable to retrieve browser logs: {}", e.getMessage());
-            return "No browser logs available or browser does not support log retrieval.";
-        }
-    }
-
-    @Attachment(value = "Failure Details", type = "text/plain")
-    public String saveFailureMessage(Throwable throwable) {
-        return throwable != null ? throwable.toString() : "No stack trace available";
+    private Map<String, Object> buildMetadata(ITestResult result,
+                                              String fullName,
+                                              long start,
+                                              long end,
+                                              long duration) {
+        Map<String, Object> metadata = new LinkedHashMap<>();
+        metadata.put("fullName", fullName);
+        metadata.put("className", result.getTestClass().getName());
+        metadata.put("methodName", result.getMethod().getMethodName());
+        metadata.put("parameters", Arrays.toString(result.getParameters()));
+        metadata.put("suiteName", result.getTestContext().getSuite().getName());
+        metadata.put("threadName", Thread.currentThread().getName());
+        metadata.put("testStart", start);
+        metadata.put("testEnd", end);
+        metadata.put("testDurationMs", duration);
+        return metadata;
     }
 }

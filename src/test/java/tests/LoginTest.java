@@ -21,7 +21,7 @@ public class LoginTest extends BaseTest {
     // Navigation Helpers
     // ============================================================
     private LoginPage navigateToLoginPage() {
-        return new HomePage(this)
+        return new HomePage(getDriver(), getWait())
                 .open()
                 .goToLoginPage();
     }
@@ -46,7 +46,7 @@ public class LoginTest extends BaseTest {
 
         if (expectedResult.equalsIgnoreCase("success")) {
 
-            SuccessfulLoginPage successPage = loginPage.login(username, password);
+            SuccessfulLoginPage successPage = loginPage.loginExpectingSuccess(username, password);
 
             AssertionHelper.assertTrue(
                     successPage.isSuccessMessageDisplayed(),
@@ -60,11 +60,18 @@ public class LoginTest extends BaseTest {
 
         } else {
 
-            loginPage.login(username, password);
+            String actualError = loginPage.loginExpectingFailure(username, password);
 
             AssertionHelper.assertTrue(
                     loginPage.isErrorMessageVisible(),
                     "Error message should be visible for invalid login"
+            );
+
+            // ✅ Updated: use getErrorMessage(), not getErrorMessageText()
+            AssertionHelper.assertEquals(
+                    actualError,
+                    loginPage.getErrorMessage(),
+                    "Error message text should match expected"
             );
         }
     }
@@ -80,7 +87,7 @@ public class LoginTest extends BaseTest {
     public void userCanLoginThroughNavigationFlow() {
 
         LoginPage loginPage = navigateToLoginPage();
-        SuccessfulLoginPage successPage = loginPage.login("student", "Password123");
+        SuccessfulLoginPage successPage = loginPage.loginExpectingSuccess("student", "Password123");
 
         AssertionHelper.assertTrue(
                 successPage.isSuccessMessageDisplayed(),
@@ -101,7 +108,7 @@ public class LoginTest extends BaseTest {
     public void userCanLogoutAfterSuccessfulLogin() {
 
         LoginPage loginPage = navigateToLoginPage();
-        SuccessfulLoginPage successPage = loginPage.login("student", "Password123");
+        SuccessfulLoginPage successPage = loginPage.loginExpectingSuccess("student", "Password123");
 
         AssertionHelper.assertTrue(
                 successPage.isSuccessMessageDisplayed(),

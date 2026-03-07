@@ -1,8 +1,9 @@
 package pages;
 
-import base.BaseTest;
 import io.qameta.allure.Step;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class HomePage extends BasePage {
 
@@ -16,8 +17,8 @@ public class HomePage extends BasePage {
     // ============================================================
     // Constructor
     // ============================================================
-    public HomePage(BaseTest test) {
-        super(test);
+    public HomePage(WebDriver driver, WebDriverWait wait) {
+        super(driver, wait);
     }
 
     // ============================================================
@@ -25,7 +26,7 @@ public class HomePage extends BasePage {
     // ============================================================
     @Step("Open Practice Home Page")
     public HomePage open() {
-        navigateToPractice("");
+        driver.get("https://practicetestautomation.com/practice/");
         return this;
     }
 
@@ -35,18 +36,18 @@ public class HomePage extends BasePage {
     @Step("Navigate to Login Page")
     public LoginPage goToLoginPage() {
         click(testLoginLink);
-        return new LoginPage(test);
+        return new LoginPage(driver, wait);
     }
 
     @Step("Navigate to Exceptions Page")
     public ExceptionsPage goToExceptionsPage() {
         click(testExceptionsLink);
-        return new ExceptionsPage(test);
+        return new ExceptionsPage(driver, wait);
     }
 
     @Step("Navigate to Table Page")
     public TablePage goToTablePage() {
         click(testTableLink);
-        return new TablePage(test);
+        return new TablePage(driver, wait);
     }
 }

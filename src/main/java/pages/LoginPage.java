@@ -1,8 +1,9 @@
 package pages;
 
-import base.BaseTest;
 import io.qameta.allure.Step;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class LoginPage extends BasePage {
 
@@ -17,16 +18,16 @@ public class LoginPage extends BasePage {
     // ============================================================
     // Constructor
     // ============================================================
-    public LoginPage(BaseTest test) {
-        super(test);
+    public LoginPage(WebDriver driver, WebDriverWait wait) {
+        super(driver, wait);
     }
 
     // ============================================================
-    // Page Load
+    // Navigation
     // ============================================================
     @Step("Open Login Page")
     public LoginPage open() {
-        navigateToPractice("test-login/");
+        driver.get("https://practicetestautomation.com/practice-test-login/");
         return this;
     }
 
@@ -36,7 +37,7 @@ public class LoginPage extends BasePage {
     }
 
     // ============================================================
-    // Individual Actions
+    // Field Actions
     // ============================================================
     @Step("Enter username: {username}")
     public LoginPage enterUsername(String username) {
@@ -53,11 +54,11 @@ public class LoginPage extends BasePage {
     @Step("Click Login button")
     public SuccessfulLoginPage clickLoginButton() {
         click(submitButton);
-        return new SuccessfulLoginPage(test);
+        return new SuccessfulLoginPage(driver, wait);
     }
 
     // ============================================================
-    // Composite Actions
+    // Composite Actions (Positive Flow)
     // ============================================================
     @Step("Log in as user: {username}")
     public SuccessfulLoginPage login(String username, String password) {
@@ -66,8 +67,38 @@ public class LoginPage extends BasePage {
                 .clickLoginButton();
     }
 
+    @Step("Attempt login expecting success for user: {username}")
+    public SuccessfulLoginPage loginExpectingSuccess(String username, String password) {
+        return login(username, password);
+    }
+
     // ============================================================
-    // Visibility Checks
+    // Negative Login Flow
+    // ============================================================
+    @Step("Attempt login expecting failure for user: {username}")
+    public String loginExpectingFailure(String username, String password) {
+        enterUsername(username);
+        enterPassword(password);
+        click(submitButton);
+        return getErrorMessage();
+    }
+
+    // ============================================================
+    // Utility Helpers
+    // ============================================================
+    @Step("Clear login form")
+    public LoginPage clearLoginForm() {
+        clear(usernameField);
+        clear(passwordField);
+        return this;
+    }
+
+    public boolean isErrorMessage(String expected) {
+        return getErrorMessage().equalsIgnoreCase(expected.trim());
+    }
+
+    // ============================================================
+    // Visibility + Text Helpers
     // ============================================================
     @Step("Check if Login button is displayed")
     public boolean isLoginButtonDisplayed() {
@@ -81,6 +112,6 @@ public class LoginPage extends BasePage {
 
     @Step("Get error message text")
     public String getErrorMessage() {
-        return getText(errorMessage);
+        return getText(errorMessage).replaceAll("\\s+", " ").trim();
     }
 }

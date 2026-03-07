@@ -1,4 +1,4 @@
-package utils;
+package exceptions;
 
 /**
  * Custom exception for CSV parsing errors.

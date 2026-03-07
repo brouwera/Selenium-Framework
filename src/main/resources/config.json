@@ -7,13 +7,16 @@
     "timeouts": {
       "explicit": 10,
       "pageLoad": 30,
-      "short": 3
+      "short": 3,
+      "script": 30
     },
     "drivers": {
       "edge": "D:\\\\Automation Tools\\\\EdgeDriver\\\\msedgedriver.exe",
       "gecko": "D:\\\\Automation Tools\\\\GeckoDriver\\\\geckodriver.exe"
-    }
+    },
+    "artifactRoot": "target/artifacts"
   },
+
   "stage": {
     "practiceBaseUrl": "https://practicetestautomation.com/practice/",
     "herokuBaseUrl": "https://the-internet.herokuapp.com/",
@@ -22,13 +25,16 @@
     "timeouts": {
       "explicit": 10,
       "pageLoad": 30,
-      "short": 3
+      "short": 3,
+      "script": 30
     },
     "drivers": {
       "edge": "D:\\\\Automation Tools\\\\EdgeDriver\\\\msedgedriver.exe",
       "gecko": "D:\\\\Automation Tools\\\\GeckoDriver\\\\geckodriver.exe"
-    }
+    },
+    "artifactRoot": "target/artifacts"
   },
+
   "prod": {
     "practiceBaseUrl": "https://practicetestautomation.com/practice/",
     "herokuBaseUrl": "https://the-internet.herokuapp.com/",
@@ -37,11 +43,13 @@
     "timeouts": {
       "explicit": 10,
       "pageLoad": 30,
-      "short": 3
+      "short": 3,
+      "script": 30
     },
     "drivers": {
       "edge": "D:\\\\Automation Tools\\\\EdgeDriver\\\\msedgedriver.exe",
       "gecko": "D:\\\\Automation Tools\\\\GeckoDriver\\\\geckodriver.exe"
-    }
+    },
+    "artifactRoot": "target/artifacts"
   }
 }

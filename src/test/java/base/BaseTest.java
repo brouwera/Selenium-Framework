@@ -1,14 +1,8 @@
 package base;
 
 import config.ConfigManager;
-import io.github.bonigarcia.wdm.WebDriverManager;
-import org.openqa.selenium.*;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.edge.EdgeDriver;
-import org.openqa.selenium.edge.EdgeOptions;
-import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.firefox.FirefoxOptions;
+import factory.WebDriverFactory;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,10 +11,7 @@ import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 
-import java.io.File;
 import java.lang.reflect.Method;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.time.Duration;
 
 public class BaseTest {
@@ -58,18 +49,44 @@ public class BaseTest {
 
         log.info("===== STARTING TEST: {} =====", testName);
 
-        String browser = ConfigManager.getBrowser();
-        boolean headless = ConfigManager.isHeadless();
-        int explicitWait = ConfigManager.getExplicitWait();
+        // ============================================================
+        // Configuration Logging
+        // ============================================================
+        log.info("Environment: {}", ConfigManager.getEnvironment());
+        log.info("Browser: {}", ConfigManager.getBrowser());
+        log.info("Headless: {}", ConfigManager.isHeadless());
+        log.info("Remote: {}", ConfigManager.isRemote());
+        log.info("Explicit Wait: {} seconds", ConfigManager.getExplicitWait());
+        log.info("Page Load Timeout: {} seconds", ConfigManager.getPageLoadTimeout());
+        log.info("Script Timeout: {} seconds", ConfigManager.getScriptTimeout());
 
-        log.info("Browser: {}", browser);
-        log.info("Headless: {}", headless);
-        log.info("Explicit Wait: {} seconds", explicitWait);
-
-        WebDriver webDriver = createDriver(browser, headless);
+        // ============================================================
+        // WebDriver Creation (via WebDriverFactory)
+        // ============================================================
+        WebDriver webDriver = WebDriverFactory.createDriver();
         driver.set(webDriver);
 
-        wait.set(new WebDriverWait(webDriver, Duration.ofSeconds(explicitWait)));
+        // ============================================================
+        // Apply Timeouts
+        // ============================================================
+        webDriver.manage().timeouts().pageLoadTimeout(
+                Duration.ofSeconds(ConfigManager.getPageLoadTimeout())
+        );
+
+        webDriver.manage().timeouts().scriptTimeout(
+                Duration.ofSeconds(ConfigManager.getScriptTimeout())
+        );
+
+        // ============================================================
+        // Explicit Wait
+        // ============================================================
+        wait.set(new WebDriverWait(webDriver, Duration.ofSeconds(ConfigManager.getExplicitWait())));
+
+        // ============================================================
+        // No automatic navigation here
+        // Each Page Object controls its own navigation
+        // ============================================================
+        log.info("Driver setup complete for test: {}", testName);
     }
 
     @AfterMethod(alwaysRun = true)
@@ -79,8 +96,6 @@ public class BaseTest {
 
         if (result.getStatus() == ITestResult.FAILURE) {
             log.error("===== TEST FAILED: {} =====", testName);
-            attachScreenshot(testName);
-            attachLogFile(testName);
         } else if (result.getStatus() == ITestResult.SUCCESS) {
             log.info("===== TEST PASSED: {} =====", testName);
         } else {
@@ -101,84 +116,5 @@ public class BaseTest {
         wait.remove();
 
         MDC.remove("testName");
-    }
-
-    // ============================================================
-    // Screenshot Capture
-    // ============================================================
-    private void attachScreenshot(String testName) {
-        try {
-            WebDriver webDriver = driver.get();
-            if (webDriver == null) return;
-
-            byte[] screenshot = ((TakesScreenshot) webDriver).getScreenshotAs(OutputType.BYTES);
-
-            Path screenshotPath = Path.of("logs", testName + "-screenshot.png");
-            Files.write(screenshotPath, screenshot);
-
-            log.info("Screenshot saved: {}", screenshotPath.toAbsolutePath());
-
-        } catch (Exception e) {
-            log.error("Failed to capture screenshot for {}", testName, e);
-        }
-    }
-
-    // ============================================================
-    // Log Attachment (for Allure tomorrow)
-    // ============================================================
-    private void attachLogFile(String testName) {
-        try {
-            File logFile = new File("logs/" + testName + ".log");
-            if (logFile.exists()) {
-                log.info("Log file available for attachment: {}", logFile.getAbsolutePath());
-            } else {
-                log.warn("No per-test log file found for {}", testName);
-            }
-        } catch (Exception e) {
-            log.error("Failed to process log file for {}", testName, e);
-        }
-    }
-
-    // ============================================================
-    // Driver Factory
-    // ============================================================
-    private WebDriver createDriver(String browser, boolean headless) {
-
-        log.info("Creating WebDriver instance for browser: {}", browser);
-
-        switch (browser.toLowerCase()) {
-
-            case "chrome":
-                WebDriverManager.chromedriver().setup();
-                ChromeOptions chromeOptions = new ChromeOptions();
-
-                boolean isCI = System.getenv("CI") != null;
-
-                if (isCI) {
-                    log.info("Running in CI mode → enabling CI Chrome flags");
-                    chromeOptions.addArguments("--headless=new", "--disable-gpu", "--no-sandbox",
-                            "--disable-dev-shm-usage", "--window-size=1920,1080");
-                } else {
-                    chromeOptions.addArguments("--start-maximized");
-                    if (headless) chromeOptions.addArguments("--headless=new");
-                }
-
-                return new ChromeDriver(chromeOptions);
-
-            case "edge":
-                System.setProperty("webdriver.edge.driver", ConfigManager.getEdgeDriverPath());
-                EdgeOptions edgeOptions = new EdgeOptions();
-                if (headless) edgeOptions.addArguments("--headless=new");
-                return new EdgeDriver(edgeOptions);
-
-            case "firefox":
-                System.setProperty("webdriver.gecko.driver", ConfigManager.getGeckoDriverPath());
-                FirefoxOptions firefoxOptions = new FirefoxOptions();
-                if (headless) firefoxOptions.addArguments("--headless");
-                return new FirefoxDriver(firefoxOptions);
-
-            default:
-                throw new RuntimeException("Unsupported browser: " + browser);
-        }
     }
 }

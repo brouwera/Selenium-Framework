@@ -1,8 +1,9 @@
 package pages;
 
-import base.BaseTest;
 import io.qameta.allure.Step;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class FramesPage extends BasePage {
 
@@ -15,8 +16,8 @@ public class FramesPage extends BasePage {
     // ============================================================
     // Constructor
     // ============================================================
-    public FramesPage(BaseTest test) {
-        super(test);
+    public FramesPage(WebDriver driver, WebDriverWait wait) {
+        super(driver, wait);
     }
 
     // ============================================================
@@ -24,8 +25,21 @@ public class FramesPage extends BasePage {
     // ============================================================
     @Step("Open Frames page")
     public FramesPage open() {
-        navigateToHeroku("frames");
+        driver.get("https://the-internet.herokuapp.com/frames");
         return this;
+    }
+
+    // ============================================================
+    // Visibility Checks
+    // ============================================================
+    @Step("Check if Nested Frames link is visible")
+    public boolean isNestedFramesLinkVisible() {
+        return isDisplayed(nestedFramesLink);
+    }
+
+    @Step("Check if iFrame link is visible")
+    public boolean isIFrameLinkVisible() {
+        return isDisplayed(iFrameLink);
     }
 
     // ============================================================
@@ -34,12 +48,12 @@ public class FramesPage extends BasePage {
     @Step("Click Nested Frames link")
     public NestedFramesPage clickNestedFrames() {
         click(nestedFramesLink);
-        return new NestedFramesPage(test);
+        return new NestedFramesPage(driver, wait);
     }
 
     @Step("Click iFrame link")
     public IFramePage clickIFrame() {
         click(iFrameLink);
-        return new IFramePage(test);
+        return new IFramePage(driver, wait);
     }
 }

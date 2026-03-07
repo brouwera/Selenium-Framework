@@ -1,8 +1,10 @@
 package pages;
 
-import base.BaseTest;
 import io.qameta.allure.Step;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class DynamicControlsPage extends BasePage {
 
@@ -19,8 +21,8 @@ public class DynamicControlsPage extends BasePage {
     // ============================================================
     // Constructor
     // ============================================================
-    public DynamicControlsPage(BaseTest test) {
-        super(test);
+    public DynamicControlsPage(WebDriver driver, WebDriverWait wait) {
+        super(driver, wait);
     }
 
     // ============================================================
@@ -28,7 +30,7 @@ public class DynamicControlsPage extends BasePage {
     // ============================================================
     @Step("Open Dynamic Controls page")
     public DynamicControlsPage open() {
-        navigateToHeroku("dynamic_controls");
+        driver.get("https://the-internet.herokuapp.com/dynamic_controls");
         return this;
     }
 
@@ -48,7 +50,7 @@ public class DynamicControlsPage extends BasePage {
 
     @Step("Wait for checkbox to disappear")
     public DynamicControlsPage waitForCheckboxToDisappear() {
-        waitForInvisibility(checkbox);
+        wait.until(ExpectedConditions.invisibilityOfElementLocated(checkbox));
         return this;
     }
 
@@ -69,18 +71,18 @@ public class DynamicControlsPage extends BasePage {
 
     @Step("Check if input field is enabled")
     public boolean isInputEnabled() {
-        return driver.findElement(inputField).isEnabled();
+        return find(inputField).isEnabled();
     }
 
     @Step("Wait for input field to become enabled")
     public DynamicControlsPage waitForInputToBeEnabled() {
-        waitUntil(d -> driver.findElement(inputField).isEnabled());
+        wait.until(driver -> find(inputField).isEnabled());
         return this;
     }
 
     @Step("Wait for input field to become disabled")
     public DynamicControlsPage waitForInputToBeDisabled() {
-        waitUntil(d -> !driver.findElement(inputField).isEnabled());
+        wait.until(driver -> !find(inputField).isEnabled());
         return this;
     }
 
@@ -92,9 +94,15 @@ public class DynamicControlsPage extends BasePage {
         return isElementVisible(loadingIndicator);
     }
 
+    @Step("Wait for loading indicator to appear")
+    public DynamicControlsPage waitForLoadingToAppear() {
+        wait.until(ExpectedConditions.visibilityOfElementLocated(loadingIndicator));
+        return this;
+    }
+
     @Step("Wait for loading indicator to disappear")
     public DynamicControlsPage waitForLoadingToDisappear() {
-        waitForInvisibility(loadingIndicator);
+        wait.until(ExpectedConditions.invisibilityOfElementLocated(loadingIndicator));
         return this;
     }
 
@@ -103,6 +111,6 @@ public class DynamicControlsPage extends BasePage {
     // ============================================================
     @Step("Get message text")
     public String getMessageText() {
-        return getText(message);
+        return getText(message).replaceAll("\\s+", " ").trim();
     }
 }

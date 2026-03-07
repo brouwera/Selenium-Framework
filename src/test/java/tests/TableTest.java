@@ -20,7 +20,7 @@ public class TableTest extends BaseTest {
     // Navigation Helper
     // ============================================================
     private TablePage navigateToTablePage() {
-        return new HomePage(this)
+        return new HomePage(getDriver(), getWait())
                 .open()
                 .goToTablePage();
     }

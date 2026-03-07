@@ -1,8 +1,9 @@
 package pages;
 
-import base.BaseTest;
 import io.qameta.allure.Step;
 import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class NestedFramesPage extends BasePage {
 
@@ -19,8 +20,8 @@ public class NestedFramesPage extends BasePage {
     // ============================================================
     // Constructor
     // ============================================================
-    public NestedFramesPage(BaseTest test) {
-        super(test);
+    public NestedFramesPage(WebDriver driver, WebDriverWait wait) {
+        super(driver, wait);
     }
 
     // ============================================================
@@ -28,7 +29,7 @@ public class NestedFramesPage extends BasePage {
     // ============================================================
     @Step("Open Nested Frames page")
     public NestedFramesPage open() {
-        navigateToHeroku("nested_frames");
+        driver.get("https://the-internet.herokuapp.com/nested_frames");
         return this;
     }
 
@@ -37,35 +38,47 @@ public class NestedFramesPage extends BasePage {
     // ============================================================
     @Step("Get text from Left Frame")
     public String getLeftFrameText() {
+        switchToDefault();
         switchToFrame(topFrame);
         switchToFrame(leftFrame);
-        String text = getText(body);
+
+        String text = getText(body).trim();
+
         switchToDefault();
         return text;
     }
 
     @Step("Get text from Middle Frame")
     public String getMiddleFrameText() {
+        switchToDefault();
         switchToFrame(topFrame);
         switchToFrame(middleFrame);
-        String text = getText(body);
+
+        String text = getText(body).trim();
+
         switchToDefault();
         return text;
     }
 
     @Step("Get text from Right Frame")
     public String getRightFrameText() {
+        switchToDefault();
         switchToFrame(topFrame);
         switchToFrame(rightFrame);
-        String text = getText(body);
+
+        String text = getText(body).trim();
+
         switchToDefault();
         return text;
     }
 
     @Step("Get text from Bottom Frame")
     public String getBottomFrameText() {
+        switchToDefault();
         switchToFrame(bottomFrame);
-        String text = getText(body);
+
+        String text = getText(body).trim();
+
         switchToDefault();
         return text;
     }

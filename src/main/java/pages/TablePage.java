@@ -1,9 +1,11 @@
 package pages;
 
-import base.BaseTest;
 import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -43,14 +45,14 @@ public class TablePage extends BasePage {
     // No results message
     private final By noResultsMessage = By.id("noData");
 
-    // First language cell (used for language wait)
+    // First language cell
     private final By firstLanguageCell = By.cssSelector("tbody tr td[data-col='language']");
 
     // ============================================================
     // Constructor
     // ============================================================
-    public TablePage(BaseTest test) {
-        super(test);
+    public TablePage(WebDriver driver, WebDriverWait wait) {
+        super(driver, wait);
     }
 
     // ============================================================
@@ -58,7 +60,7 @@ public class TablePage extends BasePage {
     // ============================================================
     @Step("Open Test Table page")
     public TablePage open() {
-        navigateToPractice("test-tables/");
+        driver.get("https://practicetestautomation.com/practice-test-tables/");
         return this;
     }
 
@@ -105,6 +107,13 @@ public class TablePage extends BasePage {
         return this;
     }
 
+    private void setCheckbox(By locator, boolean checked) {
+        WebElement box = find(locator);
+        if (box.isSelected() != checked) {
+            box.click();
+        }
+    }
+
     @Step("Select Min Enrollments: {value}")
     public TablePage setMinEnrollments(String value) {
         click(minEnrollDropdownButton);
@@ -115,7 +124,8 @@ public class TablePage extends BasePage {
 
     @Step("Sort by: {option}")
     public TablePage sortBy(String option) {
-        selectByVisibleText(sortDropdown, option);
+        WebElement dropdown = find(sortDropdown);
+        dropdown.sendKeys(option);
         waitForTableToUpdate();
         return this;
     }
@@ -145,7 +155,7 @@ public class TablePage extends BasePage {
     // ============================================================
     @Step("Get all visible table rows")
     public List<WebElement> getVisibleRows() {
-        return findElements(tableRows);
+        return findAll(tableRows);
     }
 
     @Step("Get values from column: {colName}")
@@ -218,11 +228,11 @@ public class TablePage extends BasePage {
     // Table Refresh Waits
     // ============================================================
     private void waitForTableToUpdate() {
-        waitUntil(driver -> driver.findElements(tableRows).size() > 0);
+        wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(tableRows));
     }
 
     private void waitForLanguageToBe(String expected) {
-        waitUntil(driver -> {
+        wait.until(driver -> {
             WebElement cell = driver.findElement(firstLanguageCell);
             return cell.getText().trim().equalsIgnoreCase(expected);
         });

@@ -1,0 +1,183 @@
+package factory;
+
+import config.ConfigManager;
+import io.github.bonigarcia.wdm.WebDriverManager;
+import org.openqa.selenium.PageLoadStrategy;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.edge.EdgeDriver;
+import org.openqa.selenium.edge.EdgeOptions;
+import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.remote.RemoteWebDriver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.net.URL;
+import java.time.Duration;
+
+public class WebDriverFactory {
+
+    private static final Logger log = LoggerFactory.getLogger(WebDriverFactory.class);
+
+    private static final int WINDOW_WIDTH = 1920;
+    private static final int WINDOW_HEIGHT = 1080;
+
+    private static final Duration PAGELOAD_TIMEOUT = Duration.ofSeconds(30);
+    private static final Duration SCRIPT_TIMEOUT = Duration.ofSeconds(30);
+
+    public static WebDriver createDriver() {
+        String browser = ConfigManager.getBrowser().toLowerCase();
+        boolean headless = ConfigManager.isHeadless();
+        boolean remote = ConfigManager.isRemote();
+
+        log.info("Creating WebDriver: browser={}, headless={}, remote={}", browser, headless, remote);
+
+        if (remote) {
+            return createRemoteDriver(browser, headless);
+        }
+
+        switch (browser) {
+            case "chrome":
+                return createChromeDriver(headless);
+
+            case "firefox":
+                return createFirefoxDriver(headless);
+
+            case "edge":
+                return createEdgeDriver(headless);
+
+            default:
+                throw new IllegalArgumentException("Unsupported browser: " + browser);
+        }
+    }
+
+    // ============================================================
+    // Chrome
+    // ============================================================
+
+    private static WebDriver createChromeDriver(boolean headless) {
+        WebDriverManager.chromedriver().setup();
+
+        ChromeOptions options = buildChromeOptions(headless);
+        ChromeDriver driver = new ChromeDriver(options);
+
+        applyTimeouts(driver);
+        log.info("ChromeDriver initialized");
+        return driver;
+    }
+
+    private static ChromeOptions buildChromeOptions(boolean headless) {
+        ChromeOptions options = new ChromeOptions();
+
+        options.setPageLoadStrategy(PageLoadStrategy.NORMAL);
+
+        if (headless) {
+            options.addArguments("--headless=new");
+        }
+
+        options.addArguments("--disable-gpu");
+        options.addArguments("--no-sandbox");
+        options.addArguments("--disable-dev-shm-usage");
+        options.addArguments("--window-size=" + WINDOW_WIDTH + "," + WINDOW_HEIGHT);
+
+        return options;
+    }
+
+    // ============================================================
+    // Firefox
+    // ============================================================
+
+    private static WebDriver createFirefoxDriver(boolean headless) {
+        WebDriverManager.firefoxdriver().setup();
+
+        FirefoxOptions options = buildFirefoxOptions(headless);
+        FirefoxDriver driver = new FirefoxDriver(options);
+
+        applyTimeouts(driver);
+        log.info("FirefoxDriver initialized");
+        return driver;
+    }
+
+    private static FirefoxOptions buildFirefoxOptions(boolean headless) {
+        FirefoxOptions options = new FirefoxOptions();
+
+        if (headless) {
+            options.addArguments("-headless");
+        }
+
+        options.addArguments("--width=" + WINDOW_WIDTH);
+        options.addArguments("--height=" + WINDOW_HEIGHT);
+
+        return options;
+    }
+
+    // ============================================================
+    // Edge
+    // ============================================================
+
+    private static WebDriver createEdgeDriver(boolean headless) {
+        WebDriverManager.edgedriver().setup();
+
+        EdgeOptions options = buildEdgeOptions(headless);
+        EdgeDriver driver = new EdgeDriver(options);
+
+        applyTimeouts(driver);
+        log.info("EdgeDriver initialized");
+        return driver;
+    }
+
+    private static EdgeOptions buildEdgeOptions(boolean headless) {
+        EdgeOptions options = new EdgeOptions();
+
+        if (headless) {
+            options.addArguments("--headless=new");
+        }
+
+        options.addArguments("--disable-gpu");
+        options.addArguments("--no-sandbox");
+        options.addArguments("--disable-dev-shm-usage");
+        options.addArguments("--window-size=" + WINDOW_WIDTH + "," + WINDOW_HEIGHT);
+
+        return options;
+    }
+
+    // ============================================================
+    // Remote WebDriver (Selenium Grid / BrowserStack / Sauce Labs)
+    // ============================================================
+
+    private static WebDriver createRemoteDriver(String browser, boolean headless) {
+        try {
+            URL gridUrl = new URL(ConfigManager.getRemoteUrl());
+            log.info("Connecting to remote WebDriver at {}", gridUrl);
+
+            switch (browser) {
+                case "chrome":
+                    return new RemoteWebDriver(gridUrl, buildChromeOptions(headless));
+
+                case "firefox":
+                    return new RemoteWebDriver(gridUrl, buildFirefoxOptions(headless));
+
+                case "edge":
+                    return new RemoteWebDriver(gridUrl, buildEdgeOptions(headless));
+
+                default:
+                    throw new IllegalArgumentException("Unsupported remote browser: " + browser);
+            }
+
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to initialize remote WebDriver", e);
+        }
+    }
+
+    // ============================================================
+    // Shared helpers
+    // ============================================================
+
+    private static void applyTimeouts(WebDriver driver) {
+        driver.manage().timeouts().pageLoadTimeout(PAGELOAD_TIMEOUT);
+        driver.manage().timeouts().scriptTimeout(SCRIPT_TIMEOUT);
+        driver.manage().timeouts().implicitlyWait(Duration.ZERO);
+    }
+}

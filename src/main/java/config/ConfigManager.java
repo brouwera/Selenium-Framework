@@ -9,28 +9,19 @@ import java.io.InputStream;
 
 public final class ConfigManager {
 
-    // ============================================================
-    // Fields
-    // ============================================================
     private static final String CONFIG_FILE = "config.json";
-    private static JsonNode rootNode;          // Entire JSON tree
-    private static JsonNode envNode;           // Selected environment block
-    private static Dotenv dotenv;              // .env overrides
+    private static JsonNode rootNode;
+    private static JsonNode envNode;
+    private static Dotenv dotenv;
 
     private ConfigManager() {}
 
-    // ============================================================
-    // Static Initialization (Load .env + JSON config)
-    // ============================================================
     static {
         loadDotEnv();
         loadJsonConfig();
         selectEnvironmentBlock();
     }
 
-    // ============================================================
-    // Load .env File (Optional)
-    // ============================================================
     private static void loadDotEnv() {
         try {
             dotenv = Dotenv.configure()
@@ -41,9 +32,6 @@ public final class ConfigManager {
         }
     }
 
-    // ============================================================
-    // Load config.json
-    // ============================================================
     private static void loadJsonConfig() {
         try (InputStream input = ConfigManager.class.getClassLoader().getResourceAsStream(CONFIG_FILE)) {
 
@@ -61,13 +49,10 @@ public final class ConfigManager {
         }
     }
 
-    // ============================================================
-    // Select Environment Block
-    // ============================================================
     private static void selectEnvironmentBlock() {
-        String env = getEnvironment(); // local, stage, prod
-
+        String env = getEnvironment();
         envNode = rootNode.get(env);
+
         if (envNode == null) {
             throw new FrameworkInitializationException(
                     "Environment block '" + env + "' not found in " + CONFIG_FILE
@@ -75,26 +60,16 @@ public final class ConfigManager {
         }
     }
 
-    // ============================================================
-    // Unified Getter (Order: System → .env → JSON)
-    // ============================================================
     private static String getOverride(String key) {
-
-        // 1. System property override
         String systemValue = System.getProperty(key);
-        if (systemValue != null) {
-            return systemValue;
-        }
+        if (systemValue != null) return systemValue;
 
-        // 2. .env override
         if (dotenv != null) {
             String envValue = dotenv.get(key);
-            if (envValue != null) {
-                return envValue;
-            }
+            if (envValue != null) return envValue;
         }
 
-        return null; // No override found
+        return null;
     }
 
     private static String getJsonString(String jsonKey) {
@@ -107,14 +82,29 @@ public final class ConfigManager {
         return node.asText();
     }
 
-    private static int getJsonInt(JsonNode parent, String key) {
+    private static int getJsonInt(JsonNode parent, String key, int defaultValue) {
+        if (parent == null) return defaultValue;
+
         JsonNode node = parent.get(key);
         if (node == null || !node.isInt()) {
-            throw new FrameworkInitializationException(
-                    "Missing or invalid integer key: " + key
-            );
+            return defaultValue;
         }
+
         return node.asInt();
+    }
+
+    private static String getJsonStringFromGroup(String group, String key) {
+        JsonNode groupNode = envNode.get(group);
+        if (groupNode == null) {
+            throw new FrameworkInitializationException("Missing group: " + group);
+        }
+
+        JsonNode valueNode = groupNode.get(key);
+        if (valueNode == null) {
+            throw new FrameworkInitializationException("Missing key in group '" + group + "': " + key);
+        }
+
+        return valueNode.asText();
     }
 
     // ============================================================
@@ -123,8 +113,6 @@ public final class ConfigManager {
     public static String getEnvironment() {
         String override = getOverride("env");
         if (override != null) return override.toLowerCase();
-
-        // Default to "local" if not provided
         return "local";
     }
 
@@ -152,58 +140,71 @@ public final class ConfigManager {
     public static boolean isHeadless() {
         String override = getOverride("headless");
         if (override != null) return Boolean.parseBoolean(override);
-
         return envNode.get("headless").asBoolean();
     }
 
     // ============================================================
-    // Timeout Settings
+    // Timeout Settings (SAFE DEFAULTS ADDED)
     // ============================================================
     public static int getExplicitWait() {
         String override = getOverride("explicit.wait");
         if (override != null) return Integer.parseInt(override);
-
-        return getJsonInt(envNode.get("timeouts"), "explicit");
+        return getJsonInt(envNode.get("timeouts"), "explicit", 10);
     }
 
     public static int getPageLoadTimeout() {
         String override = getOverride("page.load.timeout");
         if (override != null) return Integer.parseInt(override);
-
-        return getJsonInt(envNode.get("timeouts"), "pageLoad");
+        return getJsonInt(envNode.get("timeouts"), "pageLoad", 30);
     }
 
     public static int getShortWait() {
         String override = getOverride("short.wait");
         if (override != null) return Integer.parseInt(override);
+        return getJsonInt(envNode.get("timeouts"), "short", 3);
+    }
 
-        return getJsonInt(envNode.get("timeouts"), "short");
+    public static int getScriptTimeout() {
+        String override = getOverride("script.timeout");
+        if (override != null) return Integer.parseInt(override);
+        return getJsonInt(envNode.get("timeouts"), "script", 30);
     }
 
     // ============================================================
-    // Driver Paths
+    // Remote WebDriver Support
     // ============================================================
-    public static String getEdgeDriverPath() {
-        String override = getOverride("edge.driver.path");
-        return override != null ? override : getJsonStringFromGroup("drivers", "edge");
+    public static boolean isRemote() {
+        String override = getOverride("remote");
+        if (override != null) return Boolean.parseBoolean(override);
+
+        JsonNode node = envNode.get("remote");
+        return node != null && node.asBoolean(false);
     }
 
-    public static String getGeckoDriverPath() {
-        String override = getOverride("gecko.driver.path");
-        return override != null ? override : getJsonStringFromGroup("drivers", "gecko");
+    public static String getRemoteUrl() {
+        String override = getOverride("remoteUrl");
+        if (override != null) return override;
+
+        JsonNode node = envNode.get("remoteUrl");
+        if (node != null && !node.isNull()) {
+            return node.asText();
+        }
+
+        return "";
     }
 
-    private static String getJsonStringFromGroup(String group, String key) {
-        JsonNode groupNode = envNode.get(group);
-        if (groupNode == null) {
-            throw new FrameworkInitializationException("Missing group: " + group);
+    // ============================================================
+    // Artifact Root Directory
+    // ============================================================
+    public static String getArtifactRoot() {
+        String override = getOverride("artifact.root");
+        if (override != null) return override;
+
+        JsonNode node = envNode.get("artifactRoot");
+        if (node != null && !node.isNull()) {
+            return node.asText();
         }
 
-        JsonNode valueNode = groupNode.get(key);
-        if (valueNode == null) {
-            throw new FrameworkInitializationException("Missing key in group '" + group + "': " + key);
-        }
-
-        return valueNode.asText();
+        return "artifacts";
     }
 }

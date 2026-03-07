@@ -16,7 +16,7 @@ public class ExceptionsTest extends BaseTest {
     // Navigation Helper
     // ============================================================
     private ExceptionsPage navigateToExceptionsPage() {
-        return new HomePage(this)
+        return new HomePage(getDriver(), getWait())
                 .open()
                 .goToExceptionsPage();
     }
@@ -28,7 +28,9 @@ public class ExceptionsTest extends BaseTest {
     @Description("Verify that clicking Add eventually reveals Row 2 input field.")
     @Test
     public void testRow2AppearsAfterDelay() {
+
         ExceptionsPage page = navigateToExceptionsPage();
+
         page.clickAddButton();
 
         AssertionHelper.assertTrue(
@@ -44,6 +46,7 @@ public class ExceptionsTest extends BaseTest {
     @Description("Verify that saving text in Row 2 works and avoids clicking invisible Save in Row 1.")
     @Test
     public void testSaveTextRow2() {
+
         ExceptionsPage page = navigateToExceptionsPage();
 
         page.clickAddButton()
@@ -61,7 +64,9 @@ public class ExceptionsTest extends BaseTest {
     @Description("Intentionally click the invisible Save button to show the exception behavior.")
     @Test(expectedExceptions = ElementNotInteractableException.class)
     public void testInvisibleSaveThrowsException() {
+
         ExceptionsPage page = navigateToExceptionsPage();
+
         page.clickInvisibleSaveButton();
     }
 
@@ -72,6 +77,7 @@ public class ExceptionsTest extends BaseTest {
     @Description("Verify Row 1 is disabled before clicking Edit.")
     @Test
     public void testRow1IsDisabledInitially() {
+
         ExceptionsPage page = navigateToExceptionsPage();
 
         AssertionHelper.assertFalse(
@@ -84,6 +90,7 @@ public class ExceptionsTest extends BaseTest {
     @Description("Verify that editing Row 1 requires clicking Edit first.")
     @Test
     public void testEditRow1() {
+
         ExceptionsPage page = navigateToExceptionsPage();
 
         page.clickRow1Edit()
@@ -104,6 +111,7 @@ public class ExceptionsTest extends BaseTest {
     @Description("Verify that instructions text disappears after clicking Add.")
     @Test
     public void testInstructionsDisappear() {
+
         ExceptionsPage page = navigateToExceptionsPage();
 
         AssertionHelper.assertTrue(
@@ -123,6 +131,7 @@ public class ExceptionsTest extends BaseTest {
     @Description("Verify instructions element is removed from DOM after clicking Add.")
     @Test
     public void testInstructionsRemovedFromDOM() {
+
         ExceptionsPage page = navigateToExceptionsPage();
 
         page.clickAddButton();
@@ -140,6 +149,7 @@ public class ExceptionsTest extends BaseTest {
     @Description("Verify that a 3-second wait fails because Row 2 appears after ~5 seconds.")
     @Test
     public void testShortTimeoutFails() {
+
         ExceptionsPage page = navigateToExceptionsPage();
 
         boolean appeared = page.waitForRow2InputShortTimeout();
