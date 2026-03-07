@@ -24,9 +24,6 @@ public class WebDriverFactory {
     private static final int WINDOW_WIDTH = 1920;
     private static final int WINDOW_HEIGHT = 1080;
 
-    private static final Duration PAGELOAD_TIMEOUT = Duration.ofSeconds(30);
-    private static final Duration SCRIPT_TIMEOUT = Duration.ofSeconds(30);
-
     public static WebDriver createDriver() {
         String browser = ConfigManager.getBrowser().toLowerCase();
         boolean headless = ConfigManager.isHeadless();
@@ -77,9 +74,12 @@ public class WebDriverFactory {
             options.addArguments("--headless=new");
         }
 
+        // CI-safe flags
         options.addArguments("--disable-gpu");
         options.addArguments("--no-sandbox");
         options.addArguments("--disable-dev-shm-usage");
+        options.addArguments("--disable-extensions");
+        options.addArguments("--disable-infobars");
         options.addArguments("--window-size=" + WINDOW_WIDTH + "," + WINDOW_HEIGHT);
 
         return options;
@@ -135,9 +135,12 @@ public class WebDriverFactory {
             options.addArguments("--headless=new");
         }
 
+        // CI-safe flags
         options.addArguments("--disable-gpu");
         options.addArguments("--no-sandbox");
         options.addArguments("--disable-dev-shm-usage");
+        options.addArguments("--disable-extensions");
+        options.addArguments("--disable-infobars");
         options.addArguments("--window-size=" + WINDOW_WIDTH + "," + WINDOW_HEIGHT);
 
         return options;
@@ -176,8 +179,17 @@ public class WebDriverFactory {
     // ============================================================
 
     private static void applyTimeouts(WebDriver driver) {
-        driver.manage().timeouts().pageLoadTimeout(PAGELOAD_TIMEOUT);
-        driver.manage().timeouts().scriptTimeout(SCRIPT_TIMEOUT);
-        driver.manage().timeouts().implicitlyWait(Duration.ZERO);
+        Duration pageLoad = Duration.ofSeconds(ConfigManager.getPageLoadTimeout());
+        Duration script = Duration.ofSeconds(ConfigManager.getScriptTimeout());
+        Duration implicit = Duration.ofSeconds(ConfigManager.getImplicitWait());
+
+        log.info("Applying timeouts: pageLoad={}s, script={}s, implicit={}s",
+                pageLoad.getSeconds(), script.getSeconds(), implicit.getSeconds());
+
+        driver.manage().timeouts().pageLoadTimeout(pageLoad);
+        driver.manage().timeouts().scriptTimeout(script);
+
+        // Enforce implicitWait=0 as a best practice
+        driver.manage().timeouts().implicitlyWait(implicit);
     }
 }

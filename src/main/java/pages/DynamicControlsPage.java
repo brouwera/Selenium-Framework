@@ -8,9 +8,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class DynamicControlsPage extends BasePage {
 
-    // ============================================================
-    // Locators
-    // ============================================================
     private final By checkbox = By.id("checkbox");
     private final By removeAddButton = By.xpath("//button[text()='Remove' or text()='Add']");
     private final By enableDisableButton = By.xpath("//button[text()='Enable' or text()='Disable']");
@@ -18,9 +15,6 @@ public class DynamicControlsPage extends BasePage {
     private final By message = By.id("message");
     private final By inputField = By.xpath("//input[@type='text']");
 
-    // ============================================================
-    // Constructor
-    // ============================================================
     public DynamicControlsPage(WebDriver driver, WebDriverWait wait) {
         super(driver, wait);
     }
@@ -30,7 +24,7 @@ public class DynamicControlsPage extends BasePage {
     // ============================================================
     @Step("Open Dynamic Controls page")
     public DynamicControlsPage open() {
-        driver.get("https://the-internet.herokuapp.com/dynamic_controls");
+        navigateTo("https://the-internet.herokuapp.com/dynamic_controls");
         return this;
     }
 
@@ -40,6 +34,7 @@ public class DynamicControlsPage extends BasePage {
     @Step("Click Remove/Add button")
     public DynamicControlsPage clickRemoveOrAdd() {
         click(removeAddButton);
+        waitForLoadingToDisappear();
         return this;
     }
 
@@ -50,7 +45,7 @@ public class DynamicControlsPage extends BasePage {
 
     @Step("Wait for checkbox to disappear")
     public DynamicControlsPage waitForCheckboxToDisappear() {
-        wait.until(ExpectedConditions.invisibilityOfElementLocated(checkbox));
+        waitForInvisibility(checkbox);
         return this;
     }
 
@@ -66,6 +61,7 @@ public class DynamicControlsPage extends BasePage {
     @Step("Click Enable/Disable button")
     public DynamicControlsPage clickEnableOrDisable() {
         click(enableDisableButton);
+        waitForLoadingToDisappear();
         return this;
     }
 
@@ -96,13 +92,13 @@ public class DynamicControlsPage extends BasePage {
 
     @Step("Wait for loading indicator to appear")
     public DynamicControlsPage waitForLoadingToAppear() {
-        wait.until(ExpectedConditions.visibilityOfElementLocated(loadingIndicator));
+        waitForVisibility(loadingIndicator);
         return this;
     }
 
     @Step("Wait for loading indicator to disappear")
     public DynamicControlsPage waitForLoadingToDisappear() {
-        wait.until(ExpectedConditions.invisibilityOfElementLocated(loadingIndicator));
+        waitForInvisibility(loadingIndicator);
         return this;
     }
 

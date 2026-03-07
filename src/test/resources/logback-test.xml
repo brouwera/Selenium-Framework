@@ -1,60 +1,58 @@
-<configuration>
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true">
 
-    <property name="LOG_DIR" value="logs" />
+    <!-- ========================================================= -->
+    <!-- MDC variable for per-test logging                         -->
+    <!-- ========================================================= -->
+    <variable name="TEST_NAME" value="${mdc:testName:-unknown-test}" />
 
-    <!-- ========================= -->
-    <!-- Console Output            -->
-    <!-- ========================= -->
+    <!-- ========================================================= -->
+    <!-- Pattern (aligned for step numbers + durations)            -->
+    <!-- ========================================================= -->
+    <property name="LOG_PATTERN"
+              value="%d{HH:mm:ss.SSS} %-5level [%thread] [%X{testName:-no-test}] %logger{36} - %msg%n" />
+
+    <!-- ========================================================= -->
+    <!-- Console Appender                                          -->
+    <!-- ========================================================= -->
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>
-                %d{HH:mm:ss.SSS} %-5level [%thread] [%X{testName}] %logger{36} - %msg%n
-            </pattern>
+            <pattern>${LOG_PATTERN}</pattern>
         </encoder>
     </appender>
 
-    <!-- ========================= -->
-    <!-- Framework Rolling Log     -->
-    <!-- ========================= -->
+    <!-- ========================================================= -->
+    <!-- Global Framework Log (Rolling)                            -->
+    <!-- ========================================================= -->
     <appender name="FRAMEWORK" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOG_DIR}/framework.log</file>
+        <file>logs/framework.log</file>
+
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${LOG_DIR}/framework.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>logs/framework.%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>7</maxHistory>
         </rollingPolicy>
+
         <encoder>
-            <pattern>
-                %d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] [%X{testName}] %logger{36} - %msg%n
-            </pattern>
+            <pattern>${LOG_PATTERN}</pattern>
         </encoder>
     </appender>
 
-    <!-- ========================= -->
-    <!-- Per-Test Log Files        -->
-    <!-- ========================= -->
-    <appender name="PER_TEST" class="ch.qos.logback.classic.sift.SiftingAppender">
-        <discriminator class="ch.qos.logback.classic.sift.MDCBasedDiscriminator">
-            <key>testName</key>
-            <defaultValue>unknown-test</defaultValue>
-        </discriminator>
+    <!-- ========================================================= -->
+    <!-- Per-Test Log File (MDC-driven)                            -->
+    <!-- ========================================================= -->
+    <appender name="PER_TEST" class="ch.qos.logback.core.FileAppender">
+        <file>logs/${TEST_NAME}.log</file>
+        <append>true</append>
 
-        <sift>
-            <appender name="FILE-${testName}" class="ch.qos.logback.core.FileAppender">
-                <file>${LOG_DIR}/${testName}.log</file>
-                <append>false</append>
-                <encoder>
-                    <pattern>
-                        %d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] [%X{testName}] %logger{36} - %msg%n
-                    </pattern>
-                </encoder>
-            </appender>
-        </sift>
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
     </appender>
 
-    <!-- ========================= -->
-    <!-- Root Logger               -->
-    <!-- ========================= -->
-    <root level="info">
+    <!-- ========================================================= -->
+    <!-- Root Logger                                               -->
+    <!-- ========================================================= -->
+    <root level="INFO">
         <appender-ref ref="CONSOLE" />
         <appender-ref ref="FRAMEWORK" />
         <appender-ref ref="PER_TEST" />

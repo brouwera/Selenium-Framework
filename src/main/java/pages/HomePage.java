@@ -8,7 +8,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 public class HomePage extends BasePage {
 
     // ============================================================
-    // Locators (Practice Page)
+    // Locators
     // ============================================================
     private final By testLoginLink = By.linkText("Test Login Page");
     private final By testExceptionsLink = By.linkText("Test Exceptions");
@@ -26,7 +26,7 @@ public class HomePage extends BasePage {
     // ============================================================
     @Step("Open Practice Home Page")
     public HomePage open() {
-        driver.get("https://practicetestautomation.com/practice/");
+        navigateTo("https://practicetestautomation.com/practice/");
         return this;
     }
 

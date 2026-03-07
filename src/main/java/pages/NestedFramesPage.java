@@ -7,9 +7,6 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class NestedFramesPage extends BasePage {
 
-    // ============================================================
-    // Locators
-    // ============================================================
     private final By topFrame = By.name("frame-top");
     private final By leftFrame = By.name("frame-left");
     private final By middleFrame = By.name("frame-middle");
@@ -17,9 +14,6 @@ public class NestedFramesPage extends BasePage {
     private final By bottomFrame = By.name("frame-bottom");
     private final By body = By.tagName("body");
 
-    // ============================================================
-    // Constructor
-    // ============================================================
     public NestedFramesPage(WebDriver driver, WebDriverWait wait) {
         super(driver, wait);
     }
@@ -29,7 +23,7 @@ public class NestedFramesPage extends BasePage {
     // ============================================================
     @Step("Open Nested Frames page")
     public NestedFramesPage open() {
-        driver.get("https://the-internet.herokuapp.com/nested_frames");
+        navigateTo("https://the-internet.herokuapp.com/nested_frames");
         return this;
     }
 

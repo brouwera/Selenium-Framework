@@ -3,9 +3,7 @@ package tests;
 import base.BaseTest;
 import dataproviders.LoginDataProvider;
 import helpers.AssertionHelper;
-import io.qameta.allure.Epic;
-import io.qameta.allure.Feature;
-import io.qameta.allure.Story;
+import io.qameta.allure.*;
 import org.testng.annotations.Test;
 import pages.HomePage;
 import pages.LoginPage;
@@ -20,6 +18,7 @@ public class LoginTest extends BaseTest {
     // ============================================================
     // Navigation Helpers
     // ============================================================
+    @Step("Navigate to Login Page")
     private LoginPage navigateToLoginPage() {
         return new HomePage(getDriver(), getWait())
                 .open()
@@ -30,11 +29,12 @@ public class LoginTest extends BaseTest {
     // Data-Driven Login Test
     // ============================================================
     @Story("Data-driven login validation")
+    @Severity(SeverityLevel.CRITICAL)
+    @Description("Validates login behavior using CSV-driven test data for both positive and negative scenarios.")
     @Test(
             groups = {"regression"},
             dataProvider = "loginData",
-            dataProviderClass = LoginDataProvider.class,
-            description = "Validates login behavior using CSV-driven test data"
+            dataProviderClass = LoginDataProvider.class
     )
     public void loginDataDrivenTest(Map<String, String> data) {
 
@@ -67,7 +67,6 @@ public class LoginTest extends BaseTest {
                     "Error message should be visible for invalid login"
             );
 
-            // ✅ Updated: use getErrorMessage(), not getErrorMessageText()
             AssertionHelper.assertEquals(
                     actualError,
                     loginPage.getErrorMessage(),
@@ -80,10 +79,9 @@ public class LoginTest extends BaseTest {
     // Positive Flow Tests
     // ============================================================
     @Story("User can log in through navigation flow")
-    @Test(
-            groups = {"smoke"},
-            description = "Validates that a user can navigate through the site and successfully log in"
-    )
+    @Severity(SeverityLevel.BLOCKER)
+    @Description("Validates that a user can navigate through the site and successfully log in.")
+    @Test(groups = {"smoke"})
     public void userCanLoginThroughNavigationFlow() {
 
         LoginPage loginPage = navigateToLoginPage();
@@ -101,10 +99,9 @@ public class LoginTest extends BaseTest {
     }
 
     @Story("User can log out after a successful login")
-    @Test(
-            groups = {"smoke"},
-            description = "Validates that a logged-in user can log out and return to the Login page"
-    )
+    @Severity(SeverityLevel.CRITICAL)
+    @Description("Validates that a logged-in user can log out and return to the Login page.")
+    @Test(groups = {"smoke"})
     public void userCanLogoutAfterSuccessfulLogin() {
 
         LoginPage loginPage = navigateToLoginPage();
@@ -120,6 +117,77 @@ public class LoginTest extends BaseTest {
         AssertionHelper.assertTrue(
                 loginPageAfterLogout.isLoginButtonDisplayed(),
                 "Login button should be visible after logout"
+        );
+    }
+
+    // ============================================================
+    // Standalone Negative Tests (Day 27 Enhancement)
+    // ============================================================
+
+    @Story("Invalid username produces correct error message")
+    @Severity(SeverityLevel.NORMAL)
+    @Description("Ensures that an invalid username triggers the expected error message.")
+    @Test(groups = {"regression"})
+    public void invalidUsernameShowsError() {
+
+        LoginPage loginPage = navigateToLoginPage();
+        String error = loginPage.loginExpectingFailure("wrongUser", "Password123");
+
+        AssertionHelper.assertTrue(loginPage.isErrorMessageVisible(), "Error message should be visible");
+        AssertionHelper.assertEquals(error, "Your username is invalid!", "Error message should match expected");
+    }
+
+    @Story("Invalid password produces correct error message")
+    @Severity(SeverityLevel.NORMAL)
+    @Description("Ensures that an invalid password triggers the expected error message.")
+    @Test(groups = {"regression"})
+    public void invalidPasswordShowsError() {
+
+        LoginPage loginPage = navigateToLoginPage();
+        String error = loginPage.loginExpectingFailure("student", "WrongPassword");
+
+        AssertionHelper.assertTrue(loginPage.isErrorMessageVisible(), "Error message should be visible");
+        AssertionHelper.assertEquals(error, "Your password is invalid!", "Error message should match expected");
+    }
+
+    @Story("Empty fields produce correct error message")
+    @Severity(SeverityLevel.MINOR)
+    @Description("Ensures that submitting empty login fields triggers the expected error message.")
+    @Test(groups = {"regression"})
+    public void emptyFieldsShowError() {
+
+        LoginPage loginPage = navigateToLoginPage();
+        loginPage.clearLoginForm();
+
+        String error = loginPage.loginExpectingFailure("", "");
+
+        AssertionHelper.assertTrue(loginPage.isErrorMessageVisible(), "Error message should be visible");
+        AssertionHelper.assertEquals(error, "Your username is invalid!", "Error message should match expected");
+    }
+
+    // ============================================================
+    // Updated Enter-Key Behavior Test (Corrected)
+    // ============================================================
+    @Story("Submit login form using Enter key")
+    @Severity(SeverityLevel.NORMAL)
+    @Description("Ensures that pressing Enter in the password field does not trigger a successful login.")
+    @Test(groups = {"regression"})
+    public void submitWithEnterKeyTriggersLogin() {
+
+        LoginPage loginPage = navigateToLoginPage();
+
+        loginPage.enterUsername("student")
+                .enterPassword("Password123")
+                .submitWithEnterKey();
+
+        AssertionHelper.assertTrue(
+                loginPage.isLoginButtonDisplayed(),
+                "Login button should still be visible because Enter key does not submit the form"
+        );
+
+        AssertionHelper.assertTrue(
+                !loginPage.isErrorMessageVisible() || loginPage.isLoginButtonDisplayed(),
+                "No navigation should occur when pressing Enter"
         );
     }
 }

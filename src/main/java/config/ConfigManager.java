@@ -22,6 +22,9 @@ public final class ConfigManager {
         selectEnvironmentBlock();
     }
 
+    // ============================================================
+    // Loaders
+    // ============================================================
     private static void loadDotEnv() {
         try {
             dotenv = Dotenv.configure()
@@ -60,6 +63,9 @@ public final class ConfigManager {
         }
     }
 
+    // ============================================================
+    // Helpers
+    // ============================================================
     private static String getOverride(String key) {
         String systemValue = System.getProperty(key);
         if (systemValue != null) return systemValue;
@@ -93,22 +99,8 @@ public final class ConfigManager {
         return node.asInt();
     }
 
-    private static String getJsonStringFromGroup(String group, String key) {
-        JsonNode groupNode = envNode.get(group);
-        if (groupNode == null) {
-            throw new FrameworkInitializationException("Missing group: " + group);
-        }
-
-        JsonNode valueNode = groupNode.get(key);
-        if (valueNode == null) {
-            throw new FrameworkInitializationException("Missing key in group '" + group + "': " + key);
-        }
-
-        return valueNode.asText();
-    }
-
     // ============================================================
-    // Environment Handling
+    // Environment
     // ============================================================
     public static String getEnvironment() {
         String override = getOverride("env");
@@ -143,36 +135,6 @@ public final class ConfigManager {
         return envNode.get("headless").asBoolean();
     }
 
-    // ============================================================
-    // Timeout Settings (SAFE DEFAULTS ADDED)
-    // ============================================================
-    public static int getExplicitWait() {
-        String override = getOverride("explicit.wait");
-        if (override != null) return Integer.parseInt(override);
-        return getJsonInt(envNode.get("timeouts"), "explicit", 10);
-    }
-
-    public static int getPageLoadTimeout() {
-        String override = getOverride("page.load.timeout");
-        if (override != null) return Integer.parseInt(override);
-        return getJsonInt(envNode.get("timeouts"), "pageLoad", 30);
-    }
-
-    public static int getShortWait() {
-        String override = getOverride("short.wait");
-        if (override != null) return Integer.parseInt(override);
-        return getJsonInt(envNode.get("timeouts"), "short", 3);
-    }
-
-    public static int getScriptTimeout() {
-        String override = getOverride("script.timeout");
-        if (override != null) return Integer.parseInt(override);
-        return getJsonInt(envNode.get("timeouts"), "script", 30);
-    }
-
-    // ============================================================
-    // Remote WebDriver Support
-    // ============================================================
     public static boolean isRemote() {
         String override = getOverride("remote");
         if (override != null) return Boolean.parseBoolean(override);
@@ -194,7 +156,41 @@ public final class ConfigManager {
     }
 
     // ============================================================
-    // Artifact Root Directory
+    // Timeout Settings (SAFE DEFAULTS)
+    // ============================================================
+    public static int getExplicitWait() {
+        String override = getOverride("explicit.wait");
+        if (override != null) return Integer.parseInt(override);
+        return getJsonInt(envNode.get("timeouts"), "explicit", 10);
+    }
+
+    public static int getPageLoadTimeout() {
+        String override = getOverride("page.load.timeout");
+        if (override != null) return Integer.parseInt(override);
+        return getJsonInt(envNode.get("timeouts"), "pageLoad", 30);
+    }
+
+    public static int getScriptTimeout() {
+        String override = getOverride("script.timeout");
+        if (override != null) return Integer.parseInt(override);
+        return getJsonInt(envNode.get("timeouts"), "script", 30);
+    }
+
+    public static int getShortWait() {
+        String override = getOverride("short.wait");
+        if (override != null) return Integer.parseInt(override);
+        return getJsonInt(envNode.get("timeouts"), "short", 3);
+    }
+
+    // ⭐ NEW — Required by WebDriverFactory
+    public static int getImplicitWait() {
+        String override = getOverride("implicit.wait");
+        if (override != null) return Integer.parseInt(override);
+        return getJsonInt(envNode.get("timeouts"), "implicit", 0);
+    }
+
+    // ============================================================
+    // Artifact Root Directory (SAFE DEFAULT)
     // ============================================================
     public static String getArtifactRoot() {
         String override = getOverride("artifact.root");
@@ -205,6 +201,6 @@ public final class ConfigManager {
             return node.asText();
         }
 
-        return "artifacts";
+        return "target/artifacts";
     }
 }

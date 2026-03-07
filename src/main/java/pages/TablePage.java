@@ -17,40 +17,26 @@ public class TablePage extends BasePage {
     // Locators
     // ============================================================
 
-    // Language radio buttons
     private final By langAny = By.cssSelector("input[name='lang'][value='Any']");
     private final By langJava = By.cssSelector("input[name='lang'][value='Java']");
     private final By langPython = By.cssSelector("input[name='lang'][value='Python']");
 
-    // Level checkboxes
     private final By levelBeginner = By.cssSelector("input[name='level'][value='Beginner']");
     private final By levelIntermediate = By.cssSelector("input[name='level'][value='Intermediate']");
     private final By levelAdvanced = By.cssSelector("input[name='level'][value='Advanced']");
 
-    // Min Enrollments dropdown
     private final By minEnrollDropdownButton = By.cssSelector("#enrollDropdown .dropdown-button");
     private By minEnrollOption(String value) {
         return By.cssSelector("#enrollDropdown .dropdown-menu li[data-value='" + value + "']");
     }
 
-    // Sort dropdown
     private final By sortDropdown = By.id("sortBy");
-
-    // Reset button
     private final By resetButton = By.id("resetFilters");
 
-    // Table rows
     private final By tableRows = By.cssSelector("tbody tr");
-
-    // No results message
     private final By noResultsMessage = By.id("noData");
-
-    // First language cell
     private final By firstLanguageCell = By.cssSelector("tbody tr td[data-col='language']");
 
-    // ============================================================
-    // Constructor
-    // ============================================================
     public TablePage(WebDriver driver, WebDriverWait wait) {
         super(driver, wait);
     }
@@ -60,7 +46,7 @@ public class TablePage extends BasePage {
     // ============================================================
     @Step("Open Test Table page")
     public TablePage open() {
-        driver.get("https://practicetestautomation.com/practice-test-tables/");
+        navigateTo("https://practicetestautomation.com/practice-test-tables/");
         return this;
     }
 
@@ -110,6 +96,7 @@ public class TablePage extends BasePage {
     private void setCheckbox(By locator, boolean checked) {
         WebElement box = find(locator);
         if (box.isSelected() != checked) {
+            log.info("CLICK CHECKBOX: {} → {}", locator, checked);
             box.click();
         }
     }
@@ -124,8 +111,7 @@ public class TablePage extends BasePage {
 
     @Step("Sort by: {option}")
     public TablePage sortBy(String option) {
-        WebElement dropdown = find(sortDropdown);
-        dropdown.sendKeys(option);
+        type(sortDropdown, option);
         waitForTableToUpdate();
         return this;
     }
@@ -163,7 +149,7 @@ public class TablePage extends BasePage {
         List<String> values = new ArrayList<>();
 
         for (WebElement row : getVisibleRows()) {
-            WebElement cell = row.findElement(By.cssSelector("td[data-col='" + colName + "']"));
+            WebElement cell = findWithin(row, By.cssSelector("td[data-col='" + colName + "']"));
             String text = cell.getText().trim();
             if (!text.isEmpty()) {
                 values.add(text);
@@ -177,7 +163,7 @@ public class TablePage extends BasePage {
         List<Integer> values = new ArrayList<>();
 
         for (WebElement row : getVisibleRows()) {
-            WebElement cell = row.findElement(By.cssSelector("td[data-col='" + colName + "']"));
+            WebElement cell = findWithin(row, By.cssSelector("td[data-col='" + colName + "']"));
             String text = cell.getText().trim();
             if (!text.isEmpty()) {
                 values.add(parseEnrollment(text));
@@ -228,13 +214,23 @@ public class TablePage extends BasePage {
     // Table Refresh Waits
     // ============================================================
     private void waitForTableToUpdate() {
+        log.info("WAIT: table refresh");
         wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(tableRows));
     }
 
     private void waitForLanguageToBe(String expected) {
+        log.info("WAIT: first language cell to be '{}'", expected);
         wait.until(driver -> {
             WebElement cell = driver.findElement(firstLanguageCell);
             return cell.getText().trim().equalsIgnoreCase(expected);
         });
+    }
+
+    // ============================================================
+    // Helper: Find element inside a row with logging
+    // ============================================================
+    private WebElement findWithin(WebElement parent, By locator) {
+        log.info("FIND (within row): {}", locator);
+        return parent.findElement(locator);
     }
 }

@@ -2,32 +2,24 @@ package pages;
 
 import io.qameta.allure.Step;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class LoginPage extends BasePage {
 
-    // ============================================================
-    // Locators
-    // ============================================================
     private final By usernameField = By.id("username");
     private final By passwordField = By.id("password");
     private final By submitButton = By.id("submit");
     private final By errorMessage = By.id("error");
 
-    // ============================================================
-    // Constructor
-    // ============================================================
     public LoginPage(WebDriver driver, WebDriverWait wait) {
         super(driver, wait);
     }
 
-    // ============================================================
-    // Navigation
-    // ============================================================
     @Step("Open Login Page")
     public LoginPage open() {
-        driver.get("https://practicetestautomation.com/practice-test-login/");
+        navigateTo("https://practicetestautomation.com/practice-test-login/");
         return this;
     }
 
@@ -36,9 +28,6 @@ public class LoginPage extends BasePage {
         return isDisplayed(usernameField) && isDisplayed(submitButton);
     }
 
-    // ============================================================
-    // Field Actions
-    // ============================================================
     @Step("Enter username: {username}")
     public LoginPage enterUsername(String username) {
         type(usernameField, username);
@@ -51,15 +40,35 @@ public class LoginPage extends BasePage {
         return this;
     }
 
+    @Step("Clear username field")
+    public LoginPage clearUsername() {
+        clear(usernameField);
+        return this;
+    }
+
+    @Step("Clear password field")
+    public LoginPage clearPassword() {
+        clear(passwordField);
+        return this;
+    }
+
+    @Step("Submit login form using Enter key")
+    public LoginPage submitWithEnterKey() {
+        find(passwordField).sendKeys(Keys.ENTER);
+        return this;
+    }
+
+    @Step("Get password field type attribute")
+    public String getPasswordFieldType() {
+        return getAttribute(passwordField, "type");
+    }
+
     @Step("Click Login button")
     public SuccessfulLoginPage clickLoginButton() {
         click(submitButton);
         return new SuccessfulLoginPage(driver, wait);
     }
 
-    // ============================================================
-    // Composite Actions (Positive Flow)
-    // ============================================================
     @Step("Log in as user: {username}")
     public SuccessfulLoginPage login(String username, String password) {
         return enterUsername(username)
@@ -72,24 +81,24 @@ public class LoginPage extends BasePage {
         return login(username, password);
     }
 
-    // ============================================================
-    // Negative Login Flow
-    // ============================================================
     @Step("Attempt login expecting failure for user: {username}")
     public String loginExpectingFailure(String username, String password) {
         enterUsername(username);
         enterPassword(password);
         click(submitButton);
+        waitForErrorMessage();
         return getErrorMessage();
     }
 
-    // ============================================================
-    // Utility Helpers
-    // ============================================================
+    @Step("Wait for error message to appear")
+    public void waitForErrorMessage() {
+        waitForVisibility(errorMessage);
+    }
+
     @Step("Clear login form")
     public LoginPage clearLoginForm() {
-        clear(usernameField);
-        clear(passwordField);
+        clearUsername();
+        clearPassword();
         return this;
     }
 
@@ -97,9 +106,6 @@ public class LoginPage extends BasePage {
         return getErrorMessage().equalsIgnoreCase(expected.trim());
     }
 
-    // ============================================================
-    // Visibility + Text Helpers
-    // ============================================================
     @Step("Check if Login button is displayed")
     public boolean isLoginButtonDisplayed() {
         return isDisplayed(submitButton);

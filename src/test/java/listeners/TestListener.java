@@ -16,15 +16,19 @@ import utils.ArtifactManager;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class TestListener implements ITestListener {
 
     private static final Logger log = LoggerFactory.getLogger(TestListener.class);
+
+    // ============================================================
+    // EARLY MDC SUPPORT (critical for BasePage logging)
+    // ============================================================
+    public static void setTestNameEarly(String name) {
+        MDC.put("testName", name);
+    }
 
     // ============================================================
     // Suite Lifecycle
@@ -36,8 +40,6 @@ public class TestListener implements ITestListener {
         log.info("=== TEST SUITE STARTED: {} ===", context.getName());
 
         ArtifactManager.initRun();
-
-        MDC.remove("testName");
     }
 
     @Override
@@ -48,8 +50,6 @@ public class TestListener implements ITestListener {
         ArtifactManager.writeRunSummary();
         ArtifactManager.zipRunDirectory();
         ArtifactManager.cleanupOldRuns();
-
-        MDC.remove("testName");
     }
 
     // ============================================================
@@ -59,7 +59,12 @@ public class TestListener implements ITestListener {
     @Override
     public void onTestStart(ITestResult result) {
         String fullName = getFullTestName(result);
+
+        // Set MDC for per-test logging
         MDC.put("testName", fullName);
+
+        // Create per-test directory
+        ArtifactManager.createTestDirectory(fullName);
 
         long start = System.currentTimeMillis();
         result.setAttribute("testStart", start);
@@ -67,7 +72,6 @@ public class TestListener implements ITestListener {
         log.info("=== STARTING TEST: {} ===", fullName);
         Allure.step("Starting test: " + fullName);
 
-        ArtifactManager.createTestDirectory(fullName);
         ArtifactManager.appendToTestLog("Test started: " + fullName);
     }
 
@@ -99,7 +103,7 @@ public class TestListener implements ITestListener {
 
         ArtifactManager.recordTestResult(fullName, "PASSED", duration, null, start, end);
 
-        MDC.remove("testName");
+        MDC.clear();
     }
 
     @Override
@@ -135,7 +139,7 @@ public class TestListener implements ITestListener {
         ArtifactManager.recordTestResult(fullName, "FAILED", duration, failureMessage, start, end);
 
         Allure.step("Failure captured for test: " + fullName);
-        MDC.remove("testName");
+        MDC.clear();
     }
 
     @Override
@@ -159,7 +163,7 @@ public class TestListener implements ITestListener {
 
         ArtifactManager.recordTestResult(fullName, "SKIPPED", duration, null, start, end);
 
-        MDC.remove("testName");
+        MDC.clear();
     }
 
     // ============================================================
@@ -274,7 +278,6 @@ public class TestListener implements ITestListener {
         if (attr instanceof Long) {
             return (Long) attr;
         }
-        // Fallback to TestNG timing if attribute missing
         return result.getStartMillis();
     }
 

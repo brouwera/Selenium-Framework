@@ -1,16 +1,13 @@
 package pages;
 
 import io.qameta.allure.Step;
-import org.openqa.selenium.By;
+import org.openqa.selenium.*;
 import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class ExceptionsPage extends BasePage {
 
-    // ============================================================
-    // Locators
-    // ============================================================
     private final By addButton = By.id("add_btn");
 
     private final By row1Input = By.cssSelector("#row1 input.input-field");
@@ -24,25 +21,16 @@ public class ExceptionsPage extends BasePage {
     private final By confirmationMessage = By.id("confirmation");
     private final By errorMessage = By.id("error");
 
-    // ============================================================
-    // Constructor
-    // ============================================================
     public ExceptionsPage(WebDriver driver, WebDriverWait wait) {
         super(driver, wait);
     }
 
-    // ============================================================
-    // Page Load
-    // ============================================================
     @Step("Open Exceptions Page")
     public ExceptionsPage open() {
-        driver.get("https://practicetestautomation.com/practice-test-exceptions/");
+        navigateTo("https://practicetestautomation.com/practice-test-exceptions/");
         return this;
     }
 
-    // ============================================================
-    // Row 2 Actions
-    // ============================================================
     @Step("Click Add button")
     public ExceptionsPage clickAddButton() {
         click(addButton);
@@ -67,9 +55,6 @@ public class ExceptionsPage extends BasePage {
         return this;
     }
 
-    // ============================================================
-    // Row 1 Actions
-    // ============================================================
     @Step("Click Edit button on Row 1")
     public ExceptionsPage clickRow1Edit() {
         click(row1EditButton);
@@ -99,19 +84,13 @@ public class ExceptionsPage extends BasePage {
         return find(row1Input).isEnabled();
     }
 
-    // ============================================================
-    // Special Case: Invisible Save Button (Exception Test)
-    // ============================================================
     @Step("Click invisible Save button (expected to throw ElementNotInteractableException)")
     public ExceptionsPage clickInvisibleSaveButton() {
-        // Force a raw click to trigger ElementNotInteractableException
+        log.info("RAW CLICK (expected failure): {}", By.name("Save"));
         driver.findElement(By.name("Save")).click();
         return this;
     }
 
-    // ============================================================
-    // Visibility & DOM Checks
-    // ============================================================
     @Step("Check if instructions text is displayed")
     public boolean isInstructionsDisplayed() {
         return isElementVisible(instructionsText);
@@ -142,9 +121,6 @@ public class ExceptionsPage extends BasePage {
         return getText(errorMessage).replaceAll("\\s+", " ").trim();
     }
 
-    // ============================================================
-    // Short Timeout (TimeoutException Test)
-    // ============================================================
     @Step("Wait for Row 2 input with short timeout (3 seconds)")
     public boolean waitForRow2InputShortTimeout() {
         try {

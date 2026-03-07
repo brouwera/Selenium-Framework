@@ -9,16 +9,10 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class IFramePage extends BasePage {
 
-    // ============================================================
-    // Locators
-    // ============================================================
     private final By editorIframe = By.id("mce_0_ifr");
     private final By editorBody = By.id("tinymce");
     private final By popupCloseButton = By.cssSelector("button.tox-notification__dismiss");
 
-    // ============================================================
-    // Constructor
-    // ============================================================
     public IFramePage(WebDriver driver, WebDriverWait wait) {
         super(driver, wait);
     }
@@ -28,7 +22,7 @@ public class IFramePage extends BasePage {
     // ============================================================
     @Step("Open iFrame page")
     public IFramePage open() {
-        driver.get("https://the-internet.herokuapp.com/iframe");
+        navigateTo("https://the-internet.herokuapp.com/iframe");
         return this;
     }
 
@@ -41,7 +35,7 @@ public class IFramePage extends BasePage {
 
         if (isElementPresent(popupCloseButton)) {
             click(popupCloseButton);
-            wait.until(ExpectedConditions.invisibilityOfElementLocated(popupCloseButton));
+            waitForInvisibility(popupCloseButton);
         }
 
         return this;
@@ -52,7 +46,7 @@ public class IFramePage extends BasePage {
     // ============================================================
     private void enterEditorFrame() {
         switchToDefault();
-        wait.until(ExpectedConditions.frameToBeAvailableAndSwitchToIt(editorIframe));
+        switchToFrame(editorIframe);
     }
 
     private void exitEditorFrame() {
@@ -68,8 +62,7 @@ public class IFramePage extends BasePage {
         closePopupIfPresent();
         enterEditorFrame();
 
-        wait.until(ExpectedConditions.visibilityOfElementLocated(editorBody));
-
+        waitForVisibility(editorBody);
         String text = find(editorBody).getText().trim();
 
         exitEditorFrame();

@@ -25,7 +25,7 @@ public class FramesPage extends BasePage {
     // ============================================================
     @Step("Open Frames page")
     public FramesPage open() {
-        driver.get("https://the-internet.herokuapp.com/frames");
+        navigateTo("https://the-internet.herokuapp.com/frames");
         return this;
     }
 
