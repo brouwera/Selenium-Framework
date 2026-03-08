@@ -24,7 +24,7 @@ public class HomePage extends BasePage {
     // ============================================================
     // Page Load
     // ============================================================
-    @Step("Open Practice Home Page")
+    @Step("Open Practice Test Automation Home Page")
     public HomePage open() {
         navigateTo("https://practicetestautomation.com/practice/");
         return this;
@@ -33,20 +33,23 @@ public class HomePage extends BasePage {
     // ============================================================
     // Navigation Helpers
     // ============================================================
-    @Step("Navigate to Login Page")
+    @Step("Navigate to Test Login Page")
     public LoginPage goToLoginPage() {
+        hover(testLoginLink);
         click(testLoginLink);
         return new LoginPage(driver, wait);
     }
 
-    @Step("Navigate to Exceptions Page")
+    @Step("Navigate to Test Exceptions Page")
     public ExceptionsPage goToExceptionsPage() {
+        hover(testExceptionsLink);
         click(testExceptionsLink);
         return new ExceptionsPage(driver, wait);
     }
 
-    @Step("Navigate to Table Page")
+    @Step("Navigate to Test Table Page")
     public TablePage goToTablePage() {
+        hover(testTableLink);
         click(testTableLink);
         return new TablePage(driver, wait);
     }

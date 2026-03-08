@@ -1,7 +1,10 @@
 package pages;
 
+import io.qameta.allure.Allure;
 import org.openqa.selenium.*;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.logging.LogEntry;
+import org.openqa.selenium.logging.LogType;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
@@ -18,7 +21,7 @@ public abstract class BasePage {
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
-    // Step counter resets per test via MDC routing (each test has its own logger instance)
+    // Step counter resets per test via MDC routing
     private static final ThreadLocal<AtomicInteger> stepCounter =
             ThreadLocal.withInitial(() -> new AtomicInteger(1));
 
@@ -48,6 +51,26 @@ public abstract class BasePage {
         log.info("[{}] {} ({} ms)", String.format("%02d", stepNum), action, end - start);
     }
 
+    private <T> T stepReturn(String action, SupplierWithException<T> supplier) {
+        int stepNum = stepCounter.get().getAndIncrement();
+        long start = System.currentTimeMillis();
+        try {
+            T result = supplier.get();
+            long end = System.currentTimeMillis();
+            log.info("[{}] {} ({} ms)", String.format("%02d", stepNum), action, end - start);
+            return result;
+        } catch (Exception e) {
+            long end = System.currentTimeMillis();
+            log.info("[{}] {} FAILED ({} ms)", String.format("%02d", stepNum), action, end - start);
+            throw e;
+        }
+    }
+
+    @FunctionalInterface
+    private interface SupplierWithException<T> {
+        T get();
+    }
+
     // ============================================================
     // Unified Find Helpers (with logging + stale retry)
     // ============================================================
@@ -69,26 +92,6 @@ public abstract class BasePage {
     protected List<WebElement> findAll(By locator) {
         return stepReturn("FIND ALL " + fmt(locator),
                 () -> driver.findElements(locator));
-    }
-
-    private <T> T stepReturn(String action, SupplierWithException<T> supplier) {
-        int stepNum = stepCounter.get().getAndIncrement();
-        long start = System.currentTimeMillis();
-        try {
-            T result = supplier.get();
-            long end = System.currentTimeMillis();
-            log.info("[{}] {} ({} ms)", String.format("%02d", stepNum), action, end - start);
-            return result;
-        } catch (Exception e) {
-            long end = System.currentTimeMillis();
-            log.info("[{}] {} FAILED ({} ms)", String.format("%02d", stepNum), action, end - start);
-            throw e;
-        }
-    }
-
-    @FunctionalInterface
-    private interface SupplierWithException<T> {
-        T get();
     }
 
     // ============================================================
@@ -119,6 +122,14 @@ public abstract class BasePage {
         step("CLEAR " + fmt(locator), () -> {
             wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
             find(locator).clear();
+        });
+    }
+
+    protected void submitWithEnterKey(By locator) {
+        step("SUBMIT (ENTER) " + fmt(locator), () -> {
+            wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+            WebElement el = find(locator);
+            el.sendKeys(Keys.ENTER);
         });
     }
 
@@ -246,6 +257,31 @@ public abstract class BasePage {
                 Thread.sleep(500);
             } catch (InterruptedException ignored) {}
         });
+    }
+
+    // ============================================================
+    // Browser Console Log Helpers (Day 28 Enhancement)
+    // ============================================================
+    protected List<LogEntry> getBrowserConsoleLogs() {
+        return driver.manage()
+                .logs()
+                .get(LogType.BROWSER)
+                .getAll();
+    }
+
+    protected void attachBrowserConsoleLogs() {
+        List<LogEntry> logs = getBrowserConsoleLogs();
+        if (logs.isEmpty()) {
+            Allure.addAttachment("Browser Console Logs", "No console logs captured.");
+            return;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for (LogEntry entry : logs) {
+            sb.append(String.format("[%s] %s%n", entry.getLevel(), entry.getMessage()));
+        }
+
+        Allure.addAttachment("Browser Console Logs", sb.toString());
     }
 
     // ============================================================

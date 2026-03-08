@@ -85,6 +85,12 @@ public class LoginTest extends BaseTest {
     public void userCanLoginThroughNavigationFlow() {
 
         LoginPage loginPage = navigateToLoginPage();
+
+        // ============================================================
+        // Day 28 Validation: Attach Browser Console Logs
+        // ============================================================
+        loginPage.attachBrowserConsoleLogs();
+
         SuccessfulLoginPage successPage = loginPage.loginExpectingSuccess("student", "Password123");
 
         AssertionHelper.assertTrue(

@@ -2,7 +2,6 @@ package pages;
 
 import io.qameta.allure.Step;
 import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -17,6 +16,9 @@ public class LoginPage extends BasePage {
         super(driver, wait);
     }
 
+    // ============================================================
+    // Navigation
+    // ============================================================
     @Step("Open Login Page")
     public LoginPage open() {
         navigateTo("https://practicetestautomation.com/practice-test-login/");
@@ -28,6 +30,9 @@ public class LoginPage extends BasePage {
         return isDisplayed(usernameField) && isDisplayed(submitButton);
     }
 
+    // ============================================================
+    // Field Actions
+    // ============================================================
     @Step("Enter username: {username}")
     public LoginPage enterUsername(String username) {
         type(usernameField, username);
@@ -54,7 +59,7 @@ public class LoginPage extends BasePage {
 
     @Step("Submit login form using Enter key")
     public LoginPage submitWithEnterKey() {
-        find(passwordField).sendKeys(Keys.ENTER);
+        submitWithEnterKey(passwordField);
         return this;
     }
 
@@ -63,12 +68,18 @@ public class LoginPage extends BasePage {
         return getAttribute(passwordField, "type");
     }
 
+    // ============================================================
+    // Button Actions
+    // ============================================================
     @Step("Click Login button")
     public SuccessfulLoginPage clickLoginButton() {
         click(submitButton);
         return new SuccessfulLoginPage(driver, wait);
     }
 
+    // ============================================================
+    // Composite Actions (Positive Flow)
+    // ============================================================
     @Step("Log in as user: {username}")
     public SuccessfulLoginPage login(String username, String password) {
         return enterUsername(username)
@@ -81,6 +92,9 @@ public class LoginPage extends BasePage {
         return login(username, password);
     }
 
+    // ============================================================
+    // Negative Login Flow
+    // ============================================================
     @Step("Attempt login expecting failure for user: {username}")
     public String loginExpectingFailure(String username, String password) {
         enterUsername(username);
@@ -95,6 +109,9 @@ public class LoginPage extends BasePage {
         waitForVisibility(errorMessage);
     }
 
+    // ============================================================
+    // Utility Helpers
+    // ============================================================
     @Step("Clear login form")
     public LoginPage clearLoginForm() {
         clearUsername();
@@ -106,6 +123,9 @@ public class LoginPage extends BasePage {
         return getErrorMessage().equalsIgnoreCase(expected.trim());
     }
 
+    // ============================================================
+    // Visibility + Text Helpers
+    // ============================================================
     @Step("Check if Login button is displayed")
     public boolean isLoginButtonDisplayed() {
         return isDisplayed(submitButton);
@@ -119,5 +139,13 @@ public class LoginPage extends BasePage {
     @Step("Get error message text")
     public String getErrorMessage() {
         return getText(errorMessage).replaceAll("\\s+", " ").trim();
+    }
+
+    // ============================================================
+    // Day 28 Enhancement: Browser Console Log Exposure
+    // ============================================================
+    @Step("Attach browser console logs")
+    public void attachBrowserConsoleLogs() {
+        super.attachBrowserConsoleLogs();
     }
 }

@@ -5,6 +5,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.ArrayList;
@@ -109,9 +110,14 @@ public class TablePage extends BasePage {
         return this;
     }
 
+    // ============================================================
+    // Sorting (Corrected)
+    // ============================================================
     @Step("Sort by: {option}")
     public TablePage sortBy(String option) {
-        type(sortDropdown, option);
+        log.info("SORT: selecting '{}'", option);
+        WebElement dropdown = find(sortDropdown);
+        new Select(dropdown).selectByVisibleText(option);
         waitForTableToUpdate();
         return this;
     }

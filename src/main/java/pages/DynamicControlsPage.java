@@ -15,6 +15,9 @@ public class DynamicControlsPage extends BasePage {
     private final By message = By.id("message");
     private final By inputField = By.xpath("//input[@type='text']");
 
+    // Tracks whether the spinner was ever visible
+    private boolean loadingObserved = false;
+
     public DynamicControlsPage(WebDriver driver, WebDriverWait wait) {
         super(driver, wait);
     }
@@ -34,6 +37,14 @@ public class DynamicControlsPage extends BasePage {
     @Step("Click Remove/Add button")
     public DynamicControlsPage clickRemoveOrAdd() {
         click(removeAddButton);
+        waitForLoadingCycle();
+        return this;
+    }
+
+    @Step("Click Remove/Add and verify loading indicator appears")
+    public DynamicControlsPage clickRemoveOrAddExpectingLoading() {
+        click(removeAddButton);
+        waitForLoadingToAppear();
         waitForLoadingToDisappear();
         return this;
     }
@@ -61,7 +72,7 @@ public class DynamicControlsPage extends BasePage {
     @Step("Click Enable/Disable button")
     public DynamicControlsPage clickEnableOrDisable() {
         click(enableDisableButton);
-        waitForLoadingToDisappear();
+        waitForLoadingCycle();
         return this;
     }
 
@@ -92,7 +103,12 @@ public class DynamicControlsPage extends BasePage {
 
     @Step("Wait for loading indicator to appear")
     public DynamicControlsPage waitForLoadingToAppear() {
-        waitForVisibility(loadingIndicator);
+        try {
+            waitForVisibility(loadingIndicator);
+            loadingObserved = true;
+        } catch (Exception ignored) {
+            // Spinner may appear too fast; ignore
+        }
         return this;
     }
 
@@ -100,6 +116,29 @@ public class DynamicControlsPage extends BasePage {
     public DynamicControlsPage waitForLoadingToDisappear() {
         waitForInvisibility(loadingIndicator);
         return this;
+    }
+
+    /**
+     * Full loading cycle:
+     * 1. Wait for spinner to appear (if it does)
+     * 2. Wait for spinner to disappear
+     */
+    @Step("Wait for loading cycle to complete")
+    public DynamicControlsPage waitForLoadingCycle() {
+        try {
+            wait.until(ExpectedConditions.visibilityOfElementLocated(loadingIndicator));
+            loadingObserved = true;
+        } catch (Exception ignored) {
+            // Spinner may appear too fast; ignore
+        }
+
+        wait.until(ExpectedConditions.invisibilityOfElementLocated(loadingIndicator));
+        return this;
+    }
+
+    // Used by the test to confirm spinner was seen
+    public boolean wasLoadingIndicatorObserved() {
+        return loadingObserved;
     }
 
     // ============================================================

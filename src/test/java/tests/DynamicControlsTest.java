@@ -100,21 +100,13 @@ public class DynamicControlsTest extends BaseTest {
         DynamicControlsPage page = new DynamicControlsPage(getDriver(), getWait())
                 .open();
 
-        // Trigger loading
-        page.clickRemoveOrAdd();
+        // New method that explicitly waits for appearance + disappearance
+        page.clickRemoveOrAddExpectingLoading();
 
-        // Spinner should appear immediately
+        // Assert spinner was observed at least once
         AssertionHelper.assertTrue(
-                page.isLoadingVisible(),
+                page.wasLoadingIndicatorObserved(),
                 "Loading indicator should appear"
-        );
-
-        // Then disappear
-        page.waitForLoadingToDisappear();
-
-        AssertionHelper.assertFalse(
-                page.isLoadingVisible(),
-                "Loading indicator should disappear"
         );
     }
 }
