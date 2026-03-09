@@ -880,6 +880,37 @@ The framework now includes a robust, optional console‑log exposure feature tha
 
 ---
 
+### **Day 29 — Step‑Counter Architecture Validation, Listener Synchronization, and Maven Parallel Execution Alignment**
+
+Today’s work focused on stabilizing and validating the framework’s execution‑tracking architecture by ensuring consistent, predictable step numbering across the entire test run. This included synchronizing the TestListener, BasePage, and BaseTest lifecycle interactions, aligning Maven Surefire behavior with TestNG’s parallel configuration, and confirming that the global step‑counter model functions cleanly across sequential and parallel execution modes.
+
+**Key Achievements**
+- Validated the global step‑counter architecture:
+  - Confirmed that step numbers increment continuously across the entire run
+  - Ensured no cross‑test contamination through proper ThreadLocal isolation
+  - Verified that this model improves debugging clarity by providing a single, unambiguous step index for the entire suite
+- Synchronized TestListener, BasePage, and BaseTest:
+  - Ensured TestListener lifecycle events fire consistently before page‑level actions
+  - Confirmed MDC routing is correct for all tests and threads
+  - Validated that per‑test artifact directories, metadata, and logs are created reliably
+- Updated Maven Surefire configuration:
+  - Enabled parallel execution to match TestNG’s configuration
+  - Ensured consistent behavior between IntelliJ and Maven runs
+  - Preserved compatibility with Allure, logging, and artifact generation
+- Re‑validated Day 28 enhancements:
+  - Confirmed browser console‑log exposure works as designed
+  - Verified Allure attachments for screenshots, page source, browser logs, and per‑test logs
+  - Ensured no regressions after listener and lifecycle updates
+- Completed a full `mvn clean test` run:
+  - All 33 tests passed successfully
+  - Step numbering, logging, and artifacts behaved consistently across the suite
+  - Allure report generated cleanly with environment metadata and per‑test attachments
+
+**Outcome:**  
+The framework now has a fully validated, enterprise‑grade execution‑tracking model with synchronized lifecycle events, predictable step numbering, and stable parallel behavior across both IntelliJ and Maven. This global step‑counter approach enhances debugging clarity, improves communication when reporting failures, and provides a clean chronological trace of the entire run. With Days 28–29 complete, the framework is positioned for final polish and documentation in Day 30.
+
+---
+
 ### 🚧 Upcoming Enhancements (Planned)
 
 ### Table Module

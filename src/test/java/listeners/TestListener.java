@@ -1,5 +1,6 @@
 package listeners;
 
+import pages.BasePage;
 import base.BaseTest;
 import io.qameta.allure.Allure;
 import org.openqa.selenium.*;
@@ -16,6 +17,7 @@ import utils.ArtifactManager;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -24,14 +26,14 @@ public class TestListener implements ITestListener {
     private static final Logger log = LoggerFactory.getLogger(TestListener.class);
 
     // ============================================================
-    // EARLY MDC SUPPORT (critical for BasePage logging)
+    // EARLY MDC SUPPORT
     // ============================================================
     public static void setTestNameEarly(String name) {
         MDC.put("testName", name);
     }
 
     // ============================================================
-    // Suite Lifecycle
+    // SUITE LIFECYCLE
     // ============================================================
 
     @Override
@@ -40,6 +42,38 @@ public class TestListener implements ITestListener {
         log.info("=== TEST SUITE STARTED: {} ===", context.getName());
 
         ArtifactManager.initRun();
+
+        // Generate environment.properties
+        try {
+            Path resultsDir = Path.of("target", "allure-results");
+            Files.createDirectories(resultsDir);
+
+            Path envFile = resultsDir.resolve("environment.properties");
+
+            Properties props = new Properties();
+            props.setProperty("Suite", context.getName());
+            props.setProperty("Timestamp", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+            props.setProperty("OS", System.getProperty("os.name"));
+            props.setProperty("OS Version", System.getProperty("os.version"));
+            props.setProperty("Java Version", System.getProperty("java.version"));
+            props.setProperty("Browser", System.getProperty("browser", "chrome"));
+            props.setProperty("Headless", System.getProperty("headless", "false"));
+            props.setProperty("Remote", System.getProperty("remote", "false"));
+            props.setProperty("Environment", System.getProperty("env", "local"));
+
+            try (var out = Files.newOutputStream(envFile)) {
+                props.store(out, "Allure Environment Properties");
+            }
+
+            log.info("Generated Allure environment.properties at {}", envFile.toAbsolutePath());
+
+        } catch (Exception e) {
+            log.warn("Unable to generate environment.properties: {}", e.getMessage());
+        }
+
+        Allure.addAttachment("Environment Info", "text/plain",
+                "Suite: " + context.getName() + "\n" +
+                        "Timestamp: " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
     }
 
     @Override
@@ -53,15 +87,25 @@ public class TestListener implements ITestListener {
     }
 
     // ============================================================
-    // Test Lifecycle
+    // TEST LIFECYCLE
     // ============================================================
 
     @Override
     public void onTestStart(ITestResult result) {
         String fullName = getFullTestName(result);
 
-        // Set MDC for per-test logging
+        // Store final test name to prevent invocation mismatch
+        result.setAttribute("finalTestName", fullName);
+
+        // Reset step counter (Day 29 fix)
+        BasePage.resetStepCounter();
+
+        // MDC setup
         MDC.put("testName", fullName);
+        MDC.put("step", "0");
+
+        String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new Date());
+        MDC.put("testStartTimestamp", timestamp);
 
         // Create per-test directory
         ArtifactManager.createTestDirectory(fullName);
@@ -69,15 +113,15 @@ public class TestListener implements ITestListener {
         long start = System.currentTimeMillis();
         result.setAttribute("testStart", start);
 
-        log.info("=== STARTING TEST: {} ===", fullName);
-        Allure.step("Starting test: " + fullName);
+        log.info("=== STARTING TEST: {} at {} ===", fullName, timestamp);
+        Allure.step("Starting test: " + fullName + " at " + timestamp);
 
-        ArtifactManager.appendToTestLog("Test started: " + fullName);
+        ArtifactManager.appendToTestLog("Test started: " + fullName + " at " + timestamp);
     }
 
     @Override
     public void onTestSuccess(ITestResult result) {
-        String fullName = getFullTestName(result);
+        String fullName = (String) result.getAttribute("finalTestName");
         MDC.put("testName", fullName);
 
         long start = getStartTime(result);
@@ -108,7 +152,7 @@ public class TestListener implements ITestListener {
 
     @Override
     public void onTestFailure(ITestResult result) {
-        String fullName = getFullTestName(result);
+        String fullName = (String) result.getAttribute("finalTestName");
         MDC.put("testName", fullName);
 
         long start = getStartTime(result);
@@ -144,7 +188,7 @@ public class TestListener implements ITestListener {
 
     @Override
     public void onTestSkipped(ITestResult result) {
-        String fullName = getFullTestName(result);
+        String fullName = (String) result.getAttribute("finalTestName");
         MDC.put("testName", fullName);
 
         long start = getStartTime(result);
@@ -167,7 +211,7 @@ public class TestListener implements ITestListener {
     }
 
     // ============================================================
-    // WebDriver Retrieval
+    // DRIVER RETRIEVAL
     // ============================================================
 
     private WebDriver getDriver(ITestResult result) {
@@ -180,7 +224,7 @@ public class TestListener implements ITestListener {
     }
 
     // ============================================================
-    // Artifact Attachments
+    // ATTACHMENTS
     // ============================================================
 
     private void attachScreenshot(WebDriver driver, String type) {
@@ -252,10 +296,31 @@ public class TestListener implements ITestListener {
     }
 
     // ============================================================
-    // Helpers
+    // HELPERS
     // ============================================================
 
     private String getFullTestName(ITestResult result) {
+        String className = result.getTestClass().getRealClass().getSimpleName();
+        String methodName = result.getMethod().getMethodName();
+
+        Object[] params = result.getParameters();
+
+        if (params != null && params.length > 0) {
+            String paramString = Arrays.stream(params)
+                    .map(Object::toString)
+                    .map(s -> s.replaceAll("[^a-zA-Z0-9_-]", ""))
+                    .collect(Collectors.joining(""));
+            return className + "." + methodName + "_" + paramString;
+        }
+
+        int index = result.getMethod().getCurrentInvocationCount();
+        return className + "." + methodName + "_" + index;
+    }
+
+    // ============================================================
+    // Public static getTestName() — required by BaseTest
+    // ============================================================
+    public static String getTestName(ITestResult result) {
         String className = result.getTestClass().getRealClass().getSimpleName();
         String methodName = result.getMethod().getMethodName();
 
@@ -296,6 +361,7 @@ public class TestListener implements ITestListener {
         metadata.put("testStart", start);
         metadata.put("testEnd", end);
         metadata.put("testDurationMs", duration);
+        metadata.put("testStartTimestamp", MDC.get("testStartTimestamp"));
         return metadata;
     }
 }

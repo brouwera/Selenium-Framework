@@ -103,14 +103,14 @@
             <version>${slf4j.version}</version>
         </dependency>
 
-        <!-- Logback Core (REQUIRED for SLF4J 2.x binding) -->
+        <!-- Logback Core -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-core</artifactId>
             <version>${logback.version}</version>
         </dependency>
 
-        <!-- Logback Classic (implementation) -->
+        <!-- Logback Classic -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
@@ -162,14 +162,19 @@
                 </executions>
             </plugin>
 
-            <!-- Surefire Plugin (UPDATED WITH FIX) -->
+            <!-- Surefire Plugin (UPDATED WITH PARALLEL EXECUTION) -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${surefire.version}</version>
                 <configuration>
 
-                    <!-- ⭐ REQUIRED FOR LOGGING TO WORK ⭐ -->
+                    <!-- ⭐ ENABLE PARALLEL EXECUTION ⭐ -->
+                    <parallel>methods</parallel>
+                    <threadCount>2</threadCount>
+                    <useUnlimitedThreads>false</useUnlimitedThreads>
+
+                    <!-- ⭐ REQUIRED FOR LOGGING + ALLURE ⭐ -->
                     <useSystemClassLoader>false</useSystemClassLoader>
 
                     <suiteXmlFiles>

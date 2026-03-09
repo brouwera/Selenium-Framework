@@ -39,11 +39,11 @@ public class BaseTest {
         // ============================================================
         // EARLY MDC SET (critical for BasePage logging)
         // ============================================================
-        String testName = method.getDeclaringClass().getSimpleName() + "." + method.getName();
-        TestListener.setTestNameEarly(testName);
-        MDC.put("testName", testName);
+        String earlyName = method.getDeclaringClass().getSimpleName() + "." + method.getName();
+        TestListener.setTestNameEarly(earlyName);
+        MDC.put("testName", earlyName);
 
-        log.info("===== STARTING TEST: {} =====", testName);
+        log.info("===== STARTING TEST (EARLY): {} =====", earlyName);
 
         // ============================================================
         // Configuration Logging
@@ -78,29 +78,39 @@ public class BaseTest {
         // ============================================================
         wait.set(new WebDriverWait(webDriver, Duration.ofSeconds(ConfigManager.getExplicitWait())));
 
-        log.info("Driver setup complete for test: {}", testName);
+        log.info("Driver setup complete for test: {}", earlyName);
     }
 
     @AfterMethod(alwaysRun = true)
     public void tearDown(Method method, ITestResult result) {
 
-        String testName = MDC.get("testName");
+        // ============================================================
+        // Retrieve the *real* test name from the listener
+        // ============================================================
+        String finalName = (String) result.getAttribute("finalTestName");
+
+        // Fallback only if needed
+        if (finalName == null) {
+            finalName = TestListener.getTestName(result);
+        }
+
+        MDC.put("testName", finalName);
 
         if (result.getStatus() == ITestResult.FAILURE) {
-            log.error("===== TEST FAILED: {} =====", testName);
+            log.error("===== TEST FAILED: {} =====", finalName);
         } else if (result.getStatus() == ITestResult.SUCCESS) {
-            log.info("===== TEST PASSED: {} =====", testName);
+            log.info("===== TEST PASSED: {} =====", finalName);
         } else {
-            log.warn("===== TEST SKIPPED: {} =====", testName);
+            log.warn("===== TEST SKIPPED: {} =====", finalName);
         }
 
         WebDriver webDriver = driver.get();
         if (webDriver != null) {
             try {
-                log.info("Closing browser for test: {}", testName);
+                log.info("Closing browser for test: {}", finalName);
                 webDriver.quit();
             } catch (Exception e) {
-                log.error("Error during driver.quit() for test {}", testName, e);
+                log.error("Error during driver.quit() for test {}", finalName, e);
             }
         }
 

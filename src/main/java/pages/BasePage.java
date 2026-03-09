@@ -21,9 +21,21 @@ public abstract class BasePage {
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
-    // Step counter resets per test via MDC routing
+    // ============================================================
+    // Step Counter (reset handled by TestListener)
+    // ============================================================
     private static final ThreadLocal<AtomicInteger> stepCounter =
             ThreadLocal.withInitial(() -> new AtomicInteger(1));
+
+    public static void resetStepCounter() {
+        stepCounter.get().set(1);
+    }
+
+    // ============================================================
+    // Debug flag for highlightElement()
+    // ============================================================
+    private static final boolean DEBUG_HIGHLIGHT =
+            Boolean.parseBoolean(System.getProperty("debug.highlight", "false"));
 
     // ============================================================
     // Constructor
@@ -101,6 +113,7 @@ public abstract class BasePage {
         step("CLICK " + fmt(locator), () -> {
             try {
                 wait.until(ExpectedConditions.elementToBeClickable(locator));
+                highlightElement(locator);
                 find(locator).click();
             } catch (Exception e) {
                 log.warn("CLICK FAILED → JS CLICK {}", fmt(locator));
@@ -112,6 +125,7 @@ public abstract class BasePage {
     protected void type(By locator, String text) {
         step("TYPE " + fmt(locator) + " → '" + text + "'", () -> {
             wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+            highlightElement(locator);
             WebElement el = find(locator);
             el.clear();
             el.sendKeys(text);
@@ -121,6 +135,7 @@ public abstract class BasePage {
     protected void clear(By locator) {
         step("CLEAR " + fmt(locator), () -> {
             wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+            highlightElement(locator);
             find(locator).clear();
         });
     }
@@ -128,8 +143,8 @@ public abstract class BasePage {
     protected void submitWithEnterKey(By locator) {
         step("SUBMIT (ENTER) " + fmt(locator), () -> {
             wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
-            WebElement el = find(locator);
-            el.sendKeys(Keys.ENTER);
+            highlightElement(locator);
+            find(locator).sendKeys(Keys.ENTER);
         });
     }
 
@@ -137,6 +152,7 @@ public abstract class BasePage {
         final String[] result = new String[1];
         step("GET TEXT " + fmt(locator), () -> {
             wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+            highlightElement(locator);
             result[0] = find(locator).getText();
         });
         return result[0];
@@ -146,6 +162,7 @@ public abstract class BasePage {
         final String[] result = new String[1];
         step("GET ATTRIBUTE '" + attribute + "' from " + fmt(locator), () -> {
             wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+            highlightElement(locator);
             result[0] = find(locator).getAttribute(attribute);
         });
         return result[0];
@@ -157,6 +174,7 @@ public abstract class BasePage {
     protected void hover(By locator) {
         step("HOVER " + fmt(locator), () -> {
             WebElement el = wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+            highlightElement(locator);
             actions.moveToElement(el).perform();
         });
     }
@@ -167,6 +185,7 @@ public abstract class BasePage {
     protected void jsClick(By locator) {
         step("JS CLICK " + fmt(locator), () -> {
             WebElement el = wait.until(ExpectedConditions.elementToBeClickable(locator));
+            highlightElement(locator);
             ((JavascriptExecutor) driver).executeScript("arguments[0].click();", el);
         });
     }
@@ -174,8 +193,30 @@ public abstract class BasePage {
     protected void scrollIntoView(By locator) {
         step("SCROLL INTO VIEW " + fmt(locator), () -> {
             WebElement el = wait.until(ExpectedConditions.visibilityOfElementLocated(locator));
+            highlightElement(locator);
             ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", el);
         });
+    }
+
+    // ============================================================
+    // Debug-Only Highlight Helper
+    // ============================================================
+    protected void highlightElement(By locator) {
+        if (!DEBUG_HIGHLIGHT) return;
+
+        try {
+            WebElement el = find(locator);
+            JavascriptExecutor js = (JavascriptExecutor) driver;
+
+            String originalStyle = el.getAttribute("style");
+            js.executeScript("arguments[0].setAttribute('style', arguments[1]);",
+                    el, "border: 2px solid #ffcc00; background: rgba(255,255,0,0.2);");
+
+            Thread.sleep(150);
+
+            js.executeScript("arguments[0].setAttribute('style', arguments[1]);",
+                    el, originalStyle);
+        } catch (Exception ignored) {}
     }
 
     // ============================================================
@@ -249,6 +290,17 @@ public abstract class BasePage {
     }
 
     // ============================================================
+    // Page Load Wait
+    // ============================================================
+    protected void waitForPageLoad() {
+        step("WAIT page load", () -> {
+            JavascriptExecutor js = (JavascriptExecutor) driver;
+            wait.until(webDriver ->
+                    js.executeScript("return document.readyState").equals("complete"));
+        });
+    }
+
+    // ============================================================
     // Network Idle Wait (placeholder)
     // ============================================================
     protected void waitForNetworkIdle() {
@@ -260,7 +312,20 @@ public abstract class BasePage {
     }
 
     // ============================================================
-    // Browser Console Log Helpers (Day 28 Enhancement)
+    // Safe Sleep Helper (Day 29 Enhancement)
+    // ============================================================
+    protected void safeSleep(long millis) {
+        step("SAFE SLEEP " + millis + "ms", () -> {
+            try {
+                Thread.sleep(millis);
+            } catch (InterruptedException ignored) {
+                Thread.currentThread().interrupt();
+            }
+        });
+    }
+
+    // ============================================================
+    // Browser Console Log Helpers
     // ============================================================
     protected List<LogEntry> getBrowserConsoleLogs() {
         return driver.manage()
