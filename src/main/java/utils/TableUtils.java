@@ -49,7 +49,6 @@ public final class TableUtils {
     // ============================================================
     // Sorting Validation
     // ============================================================
-
     @Step("Check if numeric list is sorted ascending")
     public static boolean isSortedAscending(List<Integer> values) {
         if (values == null || values.isEmpty()) {
@@ -75,7 +74,6 @@ public final class TableUtils {
     // ============================================================
     // Filtering Helpers
     // ============================================================
-
     @Step("Filter values by minimum enrollment: {min}")
     public static List<Integer> filterByMinEnrollment(List<Integer> values, int min) {
         if (values == null) {
@@ -97,9 +95,11 @@ public final class TableUtils {
             return Collections.emptyList();
         }
 
+        String lowerKeyword = keyword.toLowerCase();
         List<String> filtered = new ArrayList<>();
+
         for (String value : values) {
-            if (value != null && value.toLowerCase().contains(keyword.toLowerCase())) {
+            if (value != null && value.toLowerCase().contains(lowerKeyword)) {
                 filtered.add(value);
             }
         }
@@ -109,15 +109,16 @@ public final class TableUtils {
     // ============================================================
     // Row Comparison Helpers
     // ============================================================
-
     @Step("Check if all values equal expected: {expected}")
     public static boolean allEqual(List<String> values, String expected) {
         if (values == null || expected == null) {
             return false;
         }
 
+        String expectedTrimmed = expected.trim();
+
         for (String value : values) {
-            if (value == null || !value.trim().equalsIgnoreCase(expected.trim())) {
+            if (value == null || !value.trim().equalsIgnoreCase(expectedTrimmed)) {
                 return false;
             }
         }

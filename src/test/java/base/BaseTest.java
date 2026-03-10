@@ -14,6 +14,8 @@ import org.testng.annotations.BeforeMethod;
 
 import java.lang.reflect.Method;
 import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class BaseTest {
 
@@ -31,23 +33,29 @@ public class BaseTest {
     }
 
     // ============================================================
+    // Test Name Helper (MDC-backed)
+    // ============================================================
+    public String getTestName() {
+        String name = MDC.get("testName");
+        return name != null ? name : "UnknownTest";
+    }
+
+    // ============================================================
     // Test Lifecycle
     // ============================================================
     @BeforeMethod(alwaysRun = true)
     public void setUp(Method method) {
 
-        // ============================================================
-        // EARLY MDC SET (critical for BasePage logging)
-        // ============================================================
+        // Early MDC set for BasePage logging
         String earlyName = method.getDeclaringClass().getSimpleName() + "." + method.getName();
         TestListener.setTestNameEarly(earlyName);
         MDC.put("testName", earlyName);
 
-        log.info("===== STARTING TEST (EARLY): {} =====", earlyName);
+        // Timestamp logging
+        String timestamp = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        log.info("===== TEST START: {} at {} =====", earlyName, timestamp);
 
-        // ============================================================
-        // Configuration Logging
-        // ============================================================
+        // Configuration logging
         log.info("Environment: {}", ConfigManager.getEnvironment());
         log.info("Browser: {}", ConfigManager.getBrowser());
         log.info("Headless: {}", ConfigManager.isHeadless());
@@ -56,26 +64,19 @@ public class BaseTest {
         log.info("Page Load Timeout: {} seconds", ConfigManager.getPageLoadTimeout());
         log.info("Script Timeout: {} seconds", ConfigManager.getScriptTimeout());
 
-        // ============================================================
-        // WebDriver Creation
-        // ============================================================
+        // WebDriver creation
         WebDriver webDriver = WebDriverFactory.createDriver();
         driver.set(webDriver);
 
-        // ============================================================
-        // Apply Timeouts
-        // ============================================================
+        // Timeouts
         webDriver.manage().timeouts().pageLoadTimeout(
                 Duration.ofSeconds(ConfigManager.getPageLoadTimeout())
         );
-
         webDriver.manage().timeouts().scriptTimeout(
                 Duration.ofSeconds(ConfigManager.getScriptTimeout())
         );
 
-        // ============================================================
-        // Explicit Wait
-        // ============================================================
+        // Explicit wait
         wait.set(new WebDriverWait(webDriver, Duration.ofSeconds(ConfigManager.getExplicitWait())));
 
         log.info("Driver setup complete for test: {}", earlyName);
@@ -84,26 +85,22 @@ public class BaseTest {
     @AfterMethod(alwaysRun = true)
     public void tearDown(Method method, ITestResult result) {
 
-        // ============================================================
-        // Retrieve the *real* test name from the listener
-        // ============================================================
+        // Retrieve final test name from TestListener
         String finalName = (String) result.getAttribute("finalTestName");
-
-        // Fallback only if needed
         if (finalName == null) {
-            finalName = TestListener.getTestName(result);
+            finalName = "UnknownTest";
         }
 
         MDC.put("testName", finalName);
 
-        if (result.getStatus() == ITestResult.FAILURE) {
-            log.error("===== TEST FAILED: {} =====", finalName);
-        } else if (result.getStatus() == ITestResult.SUCCESS) {
-            log.info("===== TEST PASSED: {} =====", finalName);
-        } else {
-            log.warn("===== TEST SKIPPED: {} =====", finalName);
+        // Status logging
+        switch (result.getStatus()) {
+            case ITestResult.FAILURE -> log.error("===== TEST FAILED: {} =====", finalName);
+            case ITestResult.SUCCESS -> log.info("===== TEST PASSED: {} =====", finalName);
+            default -> log.warn("===== TEST SKIPPED: {} =====", finalName);
         }
 
+        // Driver teardown
         WebDriver webDriver = driver.get();
         if (webDriver != null) {
             try {
@@ -116,7 +113,6 @@ public class BaseTest {
 
         driver.remove();
         wait.remove();
-
-        // DO NOT clear MDC here — TestListener handles it
+        // MDC is cleared by TestListener
     }
 }

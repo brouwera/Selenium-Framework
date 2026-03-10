@@ -1,5 +1,6 @@
 package pages;
 
+import config.ConfigManager;
 import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -25,7 +26,9 @@ public class FramesPage extends BasePage {
     // ============================================================
     @Step("Open Frames page")
     public FramesPage open() {
-        navigateTo("https://the-internet.herokuapp.com/frames");
+        String url = ConfigManager.getHerokuBaseUrl() + "/frames";
+        navigateTo(url);
+        waitForPageLoad();
         return this;
     }
 
@@ -47,12 +50,14 @@ public class FramesPage extends BasePage {
     // ============================================================
     @Step("Click Nested Frames link")
     public NestedFramesPage clickNestedFrames() {
+        waitForVisibility(nestedFramesLink);
         click(nestedFramesLink);
         return new NestedFramesPage(driver, wait);
     }
 
     @Step("Click iFrame link")
     public IFramePage clickIFrame() {
+        waitForVisibility(iFrameLink);
         click(iFrameLink);
         return new IFramePage(driver, wait);
     }

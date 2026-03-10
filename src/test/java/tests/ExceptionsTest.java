@@ -15,6 +15,7 @@ public class ExceptionsTest extends BaseTest {
     // ============================================================
     // Navigation Helper
     // ============================================================
+    @Step("Navigate to Exceptions Page")
     private ExceptionsPage navigateToExceptionsPage() {
         return new HomePage(getDriver(), getWait())
                 .open()
@@ -25,12 +26,12 @@ public class ExceptionsTest extends BaseTest {
     // Test Case 1: NoSuchElementException (Row 2 appears late)
     // ============================================================
     @Story("Row 2 appears after delay")
+    @Severity(SeverityLevel.NORMAL)
     @Description("Verify that clicking Add eventually reveals Row 2 input field.")
-    @Test
+    @Test(groups = {"regression"})
     public void testRow2AppearsAfterDelay() {
 
         ExceptionsPage page = navigateToExceptionsPage();
-
         page.clickAddButton();
 
         AssertionHelper.assertTrue(
@@ -43,8 +44,9 @@ public class ExceptionsTest extends BaseTest {
     // Test Case 2: ElementNotInteractableException (Invisible Save)
     // ============================================================
     @Story("Save text in Row 2")
+    @Severity(SeverityLevel.CRITICAL)
     @Description("Verify that saving text in Row 2 works and avoids clicking invisible Save in Row 1.")
-    @Test
+    @Test(groups = {"regression"})
     public void testSaveTextRow2() {
 
         ExceptionsPage page = navigateToExceptionsPage();
@@ -56,17 +58,22 @@ public class ExceptionsTest extends BaseTest {
         AssertionHelper.assertEquals(
                 page.getConfirmationMessage(),
                 "Row 2 was saved",
-                "Confirmation message should match"
+                "Confirmation message should match expected text"
         );
     }
 
     @Story("Demonstrate ElementNotInteractableException")
+    @Severity(SeverityLevel.MINOR)
     @Description("Intentionally click the invisible Save button to show the exception behavior.")
-    @Test(expectedExceptions = ElementNotInteractableException.class)
+    @Test(
+            groups = {"regression"},
+            expectedExceptions = ElementNotInteractableException.class
+    )
     public void testInvisibleSaveThrowsException() {
 
         ExceptionsPage page = navigateToExceptionsPage();
 
+        // This intentionally triggers ElementNotInteractableException
         page.clickInvisibleSaveButton();
     }
 
@@ -74,8 +81,9 @@ public class ExceptionsTest extends BaseTest {
     // Test Case 3: InvalidElementStateException (Row 1 disabled)
     // ============================================================
     @Story("Row 1 disabled state")
+    @Severity(SeverityLevel.NORMAL)
     @Description("Verify Row 1 is disabled before clicking Edit.")
-    @Test
+    @Test(groups = {"regression"})
     public void testRow1IsDisabledInitially() {
 
         ExceptionsPage page = navigateToExceptionsPage();
@@ -87,8 +95,9 @@ public class ExceptionsTest extends BaseTest {
     }
 
     @Story("Edit Row 1 input")
+    @Severity(SeverityLevel.NORMAL)
     @Description("Verify that editing Row 1 requires clicking Edit first.")
-    @Test
+    @Test(groups = {"regression"})
     public void testEditRow1() {
 
         ExceptionsPage page = navigateToExceptionsPage();
@@ -108,8 +117,9 @@ public class ExceptionsTest extends BaseTest {
     // Test Case 4: StaleElementReferenceException
     // ============================================================
     @Story("Instructions disappear after Add")
+    @Severity(SeverityLevel.NORMAL)
     @Description("Verify that instructions text disappears after clicking Add.")
-    @Test
+    @Test(groups = {"regression"})
     public void testInstructionsDisappear() {
 
         ExceptionsPage page = navigateToExceptionsPage();
@@ -128,8 +138,9 @@ public class ExceptionsTest extends BaseTest {
     }
 
     @Story("Instructions removed from DOM")
+    @Severity(SeverityLevel.NORMAL)
     @Description("Verify instructions element is removed from DOM after clicking Add.")
-    @Test
+    @Test(groups = {"regression"})
     public void testInstructionsRemovedFromDOM() {
 
         ExceptionsPage page = navigateToExceptionsPage();
@@ -146,8 +157,9 @@ public class ExceptionsTest extends BaseTest {
     // Test Case 5: TimeoutException
     // ============================================================
     @Story("Short timeout causes failure")
+    @Severity(SeverityLevel.MINOR)
     @Description("Verify that a 3-second wait fails because Row 2 appears after ~5 seconds.")
-    @Test
+    @Test(groups = {"regression"})
     public void testShortTimeoutFails() {
 
         ExceptionsPage page = navigateToExceptionsPage();

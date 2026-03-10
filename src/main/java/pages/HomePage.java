@@ -1,5 +1,6 @@
 package pages;
 
+import config.ConfigManager;
 import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -26,7 +27,9 @@ public class HomePage extends BasePage {
     // ============================================================
     @Step("Open Practice Test Automation Home Page")
     public HomePage open() {
-        navigateTo("https://practicetestautomation.com/practice/");
+        String url = ConfigManager.getPracticeBaseUrl() + "/practice/";
+        navigateTo(url);
+        waitForPageLoad();
         return this;
     }
 
@@ -35,6 +38,7 @@ public class HomePage extends BasePage {
     // ============================================================
     @Step("Navigate to Test Login Page")
     public LoginPage goToLoginPage() {
+        waitForVisibility(testLoginLink);
         hover(testLoginLink);
         click(testLoginLink);
         return new LoginPage(driver, wait);
@@ -42,6 +46,7 @@ public class HomePage extends BasePage {
 
     @Step("Navigate to Test Exceptions Page")
     public ExceptionsPage goToExceptionsPage() {
+        waitForVisibility(testExceptionsLink);
         hover(testExceptionsLink);
         click(testExceptionsLink);
         return new ExceptionsPage(driver, wait);
@@ -49,6 +54,7 @@ public class HomePage extends BasePage {
 
     @Step("Navigate to Test Table Page")
     public TablePage goToTablePage() {
+        waitForVisibility(testTableLink);
         hover(testTableLink);
         click(testTableLink);
         return new TablePage(driver, wait);

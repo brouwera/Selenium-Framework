@@ -1,9 +1,9 @@
 package pages;
 
+import config.ConfigManager;
 import io.qameta.allure.Step;
-import org.openqa.selenium.By;
+import org.openqa.selenium.*;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -17,7 +17,6 @@ public class TablePage extends BasePage {
     // ============================================================
     // Locators
     // ============================================================
-
     private final By langAny = By.cssSelector("input[name='lang'][value='Any']");
     private final By langJava = By.cssSelector("input[name='lang'][value='Java']");
     private final By langPython = By.cssSelector("input[name='lang'][value='Python']");
@@ -38,6 +37,9 @@ public class TablePage extends BasePage {
     private final By noResultsMessage = By.id("noData");
     private final By firstLanguageCell = By.cssSelector("tbody tr td[data-col='language']");
 
+    // ============================================================
+    // Constructor
+    // ============================================================
     public TablePage(WebDriver driver, WebDriverWait wait) {
         super(driver, wait);
     }
@@ -47,7 +49,9 @@ public class TablePage extends BasePage {
     // ============================================================
     @Step("Open Test Table page")
     public TablePage open() {
-        navigateTo("https://practicetestautomation.com/practice-test-tables/");
+        String url = ConfigManager.getPracticeBaseUrl() + "/practice-test-tables/";
+        navigateTo(url);
+        waitForPageLoad();
         return this;
     }
 
@@ -61,10 +65,12 @@ public class TablePage extends BasePage {
                 click(langAny);
                 waitForTableToUpdate();
                 break;
+
             case "java":
                 click(langJava);
                 waitForLanguageToBe("Java");
                 break;
+
             case "python":
                 click(langPython);
                 waitForLanguageToBe("Python");
@@ -111,7 +117,7 @@ public class TablePage extends BasePage {
     }
 
     // ============================================================
-    // Sorting (Corrected)
+    // Sorting
     // ============================================================
     @Step("Sort by: {option}")
     public TablePage sortBy(String option) {

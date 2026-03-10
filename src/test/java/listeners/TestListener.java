@@ -1,6 +1,5 @@
 package listeners;
 
-import pages.BasePage;
 import base.BaseTest;
 import io.qameta.allure.Allure;
 import org.openqa.selenium.*;
@@ -12,6 +11,7 @@ import org.slf4j.MDC;
 import org.testng.ITestContext;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
+import pages.BasePage;
 import utils.ArtifactManager;
 
 import java.nio.charset.StandardCharsets;
@@ -25,6 +25,9 @@ public class TestListener implements ITestListener {
 
     private static final Logger log = LoggerFactory.getLogger(TestListener.class);
 
+    private static final SimpleDateFormat TS =
+            new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+
     // ============================================================
     // EARLY MDC SUPPORT
     // ============================================================
@@ -35,7 +38,6 @@ public class TestListener implements ITestListener {
     // ============================================================
     // SUITE LIFECYCLE
     // ============================================================
-
     @Override
     public void onStart(ITestContext context) {
         MDC.put("testName", "SUITE");
@@ -43,7 +45,6 @@ public class TestListener implements ITestListener {
 
         ArtifactManager.initRun();
 
-        // Generate environment.properties
         try {
             Path resultsDir = Path.of("target", "allure-results");
             Files.createDirectories(resultsDir);
@@ -52,7 +53,7 @@ public class TestListener implements ITestListener {
 
             Properties props = new Properties();
             props.setProperty("Suite", context.getName());
-            props.setProperty("Timestamp", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+            props.setProperty("Timestamp", TS.format(new Date()));
             props.setProperty("OS", System.getProperty("os.name"));
             props.setProperty("OS Version", System.getProperty("os.version"));
             props.setProperty("Java Version", System.getProperty("java.version"));
@@ -73,7 +74,7 @@ public class TestListener implements ITestListener {
 
         Allure.addAttachment("Environment Info", "text/plain",
                 "Suite: " + context.getName() + "\n" +
-                        "Timestamp: " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
+                        "Timestamp: " + TS.format(new Date()));
     }
 
     @Override
@@ -89,25 +90,20 @@ public class TestListener implements ITestListener {
     // ============================================================
     // TEST LIFECYCLE
     // ============================================================
-
     @Override
     public void onTestStart(ITestResult result) {
-        String fullName = getFullTestName(result);
+        String fullName = buildFullTestName(result);
 
-        // Store final test name to prevent invocation mismatch
         result.setAttribute("finalTestName", fullName);
 
-        // Reset step counter (Day 29 fix)
         BasePage.resetStepCounter();
 
-        // MDC setup
         MDC.put("testName", fullName);
         MDC.put("step", "0");
 
-        String timestamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new Date());
+        String timestamp = TS.format(new Date());
         MDC.put("testStartTimestamp", timestamp);
 
-        // Create per-test directory
         ArtifactManager.createTestDirectory(fullName);
 
         long start = System.currentTimeMillis();
@@ -121,73 +117,24 @@ public class TestListener implements ITestListener {
 
     @Override
     public void onTestSuccess(ITestResult result) {
-        String fullName = (String) result.getAttribute("finalTestName");
-        MDC.put("testName", fullName);
-
-        long start = getStartTime(result);
-        long end = System.currentTimeMillis();
-        long duration = end - start;
-
-        log.info("=== TEST PASSED: {} ===", fullName);
-        Allure.step("Test passed: " + fullName);
-
-        WebDriver driver = getDriver(result);
-        if (driver != null) {
-            attachScreenshot(driver, "success");
-            attachPageSource(driver);
-            attachBrowserLogs(driver);
-        }
-
-        ArtifactManager.copyGlobalLog();
-        ArtifactManager.appendToTestLog("Test passed: " + fullName);
-        attachPerTestLog();
-
-        Map<String, Object> metadata = buildMetadata(result, fullName, start, end, duration);
-        ArtifactManager.writeMetadata(fullName, metadata);
-
-        ArtifactManager.recordTestResult(fullName, "PASSED", duration, null, start, end);
-
-        MDC.clear();
+        handleTestCompletion(result, "PASSED", null);
     }
 
     @Override
     public void onTestFailure(ITestResult result) {
-        String fullName = (String) result.getAttribute("finalTestName");
-        MDC.put("testName", fullName);
-
-        long start = getStartTime(result);
-        long end = System.currentTimeMillis();
-        long duration = end - start;
-
-        log.error("=== TEST FAILED: {} ===", fullName);
-
-        WebDriver driver = getDriver(result);
-        if (driver != null) {
-            attachScreenshot(driver, "failure");
-            attachPageSource(driver);
-            attachBrowserLogs(driver);
-        }
-
         Throwable throwable = result.getThrowable();
-        attachFailureMessage(throwable);
-
-        ArtifactManager.copyGlobalLog();
-        ArtifactManager.appendToTestLog("Test failed: " + fullName);
-        attachPerTestLog();
-
-        String failureMessage = throwable != null ? throwable.toString() : null;
-
-        Map<String, Object> metadata = buildMetadata(result, fullName, start, end, duration);
-        ArtifactManager.writeMetadata(fullName, metadata);
-
-        ArtifactManager.recordTestResult(fullName, "FAILED", duration, failureMessage, start, end);
-
-        Allure.step("Failure captured for test: " + fullName);
-        MDC.clear();
+        handleTestCompletion(result, "FAILED", throwable);
     }
 
     @Override
     public void onTestSkipped(ITestResult result) {
+        handleTestCompletion(result, "SKIPPED", null);
+    }
+
+    // ============================================================
+    // COMPLETION HANDLER
+    // ============================================================
+    private void handleTestCompletion(ITestResult result, String status, Throwable throwable) {
         String fullName = (String) result.getAttribute("finalTestName");
         MDC.put("testName", fullName);
 
@@ -195,44 +142,72 @@ public class TestListener implements ITestListener {
         long end = System.currentTimeMillis();
         long duration = end - start;
 
-        log.warn("=== TEST SKIPPED: {} ===", fullName);
-        Allure.step("Test skipped: " + fullName);
+        logStatus(status, fullName);
+
+        WebDriver driver = getDriver(result);
+        if (driver != null) {
+            attachScreenshot(driver, status.toLowerCase());
+            attachPageSource(driver);
+            attachBrowserLogs(driver);
+        }
+
+        if (throwable != null) {
+            attachFailureMessage(throwable);
+        }
 
         ArtifactManager.copyGlobalLog();
-        ArtifactManager.appendToTestLog("Test skipped: " + fullName);
+        ArtifactManager.appendToTestLog("Test " + status + ": " + fullName);
         attachPerTestLog();
 
-        Map<String, Object> metadata = buildMetadata(result, fullName, start, end, duration);
+        Map<String, Object> metadata = buildMetadata(result, fullName, start, end, duration, status);
         ArtifactManager.writeMetadata(fullName, metadata);
 
-        ArtifactManager.recordTestResult(fullName, "SKIPPED", duration, null, start, end);
+        ArtifactManager.recordTestResult(
+                fullName,
+                status,
+                duration,
+                throwable != null ? throwable.toString() : null,
+                start,
+                end
+        );
 
         MDC.clear();
+    }
+
+    private void logStatus(String status, String fullName) {
+        switch (status) {
+            case "PASSED" -> log.info("=== TEST PASSED: {} ===", fullName);
+            case "FAILED" -> log.error("=== TEST FAILED: {} ===", fullName);
+            case "SKIPPED" -> log.warn("=== TEST SKIPPED: {} ===", fullName);
+        }
     }
 
     // ============================================================
     // DRIVER RETRIEVAL
     // ============================================================
-
     private WebDriver getDriver(ITestResult result) {
         Object instance = result.getInstance();
-        if (instance instanceof BaseTest) {
-            return ((BaseTest) instance).getDriver();
+        if (instance instanceof BaseTest base) {
+            try {
+                return base.getDriver();
+            } catch (Exception e) {
+                log.warn("Unable to retrieve driver from BaseTest: {}", e.getMessage());
+            }
+        } else {
+            log.warn("Test instance is not a BaseTest: {}", instance);
         }
-        log.warn("Test instance is not a BaseTest: {}", instance);
         return null;
     }
 
     // ============================================================
     // ATTACHMENTS
     // ============================================================
-
     private void attachScreenshot(WebDriver driver, String type) {
         try {
             byte[] data = ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
             Path file = ArtifactManager.writeScreenshot(data, type);
 
-            Allure.addAttachment("Screenshot (" + type + ")", "image/png",
+            Allure.addAttachment("Screenshot - " + type, "image/png",
                     Files.newInputStream(file), "png");
 
         } catch (Exception e) {
@@ -298,8 +273,7 @@ public class TestListener implements ITestListener {
     // ============================================================
     // HELPERS
     // ============================================================
-
-    private String getFullTestName(ITestResult result) {
+    private String buildFullTestName(ITestResult result) {
         String className = result.getTestClass().getRealClass().getSimpleName();
         String methodName = result.getMethod().getMethodName();
 
@@ -308,8 +282,8 @@ public class TestListener implements ITestListener {
         if (params != null && params.length > 0) {
             String paramString = Arrays.stream(params)
                     .map(Object::toString)
-                    .map(s -> s.replaceAll("[^a-zA-Z0-9_-]", ""))
-                    .collect(Collectors.joining(""));
+                    .map(this::sanitizeParam)
+                    .collect(Collectors.joining("_"));
             return className + "." + methodName + "_" + paramString;
         }
 
@@ -317,25 +291,8 @@ public class TestListener implements ITestListener {
         return className + "." + methodName + "_" + index;
     }
 
-    // ============================================================
-    // Public static getTestName() — required by BaseTest
-    // ============================================================
-    public static String getTestName(ITestResult result) {
-        String className = result.getTestClass().getRealClass().getSimpleName();
-        String methodName = result.getMethod().getMethodName();
-
-        Object[] params = result.getParameters();
-
-        if (params != null && params.length > 0) {
-            String paramString = Arrays.stream(params)
-                    .map(Object::toString)
-                    .map(s -> s.replaceAll("[^a-zA-Z0-9_-]", ""))
-                    .collect(Collectors.joining(""));
-            return className + "." + methodName + "_" + paramString;
-        }
-
-        int index = result.getMethod().getCurrentInvocationCount();
-        return className + "." + methodName + "_" + index;
+    private String sanitizeParam(String s) {
+        return s.replaceAll("[^a-zA-Z0-9_-]", "").replace(" ", "-");
     }
 
     private long getStartTime(ITestResult result) {
@@ -350,14 +307,23 @@ public class TestListener implements ITestListener {
                                               String fullName,
                                               long start,
                                               long end,
-                                              long duration) {
+                                              long duration,
+                                              String status) {
+
+        String className = result.getTestClass().getRealClass().getSimpleName();
+        String packageName = result.getTestClass().getRealClass().getPackageName();
+
         Map<String, Object> metadata = new LinkedHashMap<>();
         metadata.put("fullName", fullName);
-        metadata.put("className", result.getTestClass().getName());
+        metadata.put("className", className);
+        metadata.put("packageName", packageName);
+        metadata.put("categoryClass", className.replace("Test", ""));
+        metadata.put("categoryPackage", packageName.substring(packageName.lastIndexOf('.') + 1));
         metadata.put("methodName", result.getMethod().getMethodName());
         metadata.put("parameters", Arrays.toString(result.getParameters()));
         metadata.put("suiteName", result.getTestContext().getSuite().getName());
         metadata.put("threadName", Thread.currentThread().getName());
+        metadata.put("status", status);
         metadata.put("testStart", start);
         metadata.put("testEnd", end);
         metadata.put("testDurationMs", duration);

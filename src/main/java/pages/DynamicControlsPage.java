@@ -1,5 +1,6 @@
 package pages;
 
+import config.ConfigManager;
 import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -8,6 +9,9 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class DynamicControlsPage extends BasePage {
 
+    // ============================================================
+    // Locators
+    // ============================================================
     private final By checkbox = By.id("checkbox");
     private final By removeAddButton = By.xpath("//button[text()='Remove' or text()='Add']");
     private final By enableDisableButton = By.xpath("//button[text()='Enable' or text()='Disable']");
@@ -18,6 +22,9 @@ public class DynamicControlsPage extends BasePage {
     // Tracks whether the spinner was ever visible
     private boolean loadingObserved = false;
 
+    // ============================================================
+    // Constructor
+    // ============================================================
     public DynamicControlsPage(WebDriver driver, WebDriverWait wait) {
         super(driver, wait);
     }
@@ -27,7 +34,9 @@ public class DynamicControlsPage extends BasePage {
     // ============================================================
     @Step("Open Dynamic Controls page")
     public DynamicControlsPage open() {
-        navigateTo("https://the-internet.herokuapp.com/dynamic_controls");
+        String url = ConfigManager.getHerokuBaseUrl() + "/dynamic_controls";
+        navigateTo(url);
+        waitForPageLoad();
         return this;
     }
 

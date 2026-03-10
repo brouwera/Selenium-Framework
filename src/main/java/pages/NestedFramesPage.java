@@ -1,5 +1,6 @@
 package pages;
 
+import config.ConfigManager;
 import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -7,6 +8,9 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class NestedFramesPage extends BasePage {
 
+    // ============================================================
+    // Locators
+    // ============================================================
     private final By topFrame = By.name("frame-top");
     private final By leftFrame = By.name("frame-left");
     private final By middleFrame = By.name("frame-middle");
@@ -14,6 +18,9 @@ public class NestedFramesPage extends BasePage {
     private final By bottomFrame = By.name("frame-bottom");
     private final By body = By.tagName("body");
 
+    // ============================================================
+    // Constructor
+    // ============================================================
     public NestedFramesPage(WebDriver driver, WebDriverWait wait) {
         super(driver, wait);
     }
@@ -23,7 +30,9 @@ public class NestedFramesPage extends BasePage {
     // ============================================================
     @Step("Open Nested Frames page")
     public NestedFramesPage open() {
-        navigateTo("https://the-internet.herokuapp.com/nested_frames");
+        String url = ConfigManager.getHerokuBaseUrl() + "/nested_frames";
+        navigateTo(url);
+        waitForPageLoad();
         return this;
     }
 

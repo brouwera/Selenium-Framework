@@ -11,6 +11,8 @@ import org.openqa.selenium.edge.EdgeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.remote.CapabilityType;
+import org.openqa.selenium.remote.DesiredCapabilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,7 +63,7 @@ public class WebDriverFactory {
         ChromeDriver driver = new ChromeDriver(options);
 
         applyTimeouts(driver);
-        log.info("ChromeDriver initialized");
+        log.info("ChromeDriver initialized (sessionId={})", driver.getSessionId());
         return driver;
     }
 
@@ -74,13 +76,8 @@ public class WebDriverFactory {
             options.addArguments("--headless=new");
         }
 
-        // CI-safe flags
-        options.addArguments("--disable-gpu");
-        options.addArguments("--no-sandbox");
-        options.addArguments("--disable-dev-shm-usage");
-        options.addArguments("--disable-extensions");
-        options.addArguments("--disable-infobars");
-        options.addArguments("--window-size=" + WINDOW_WIDTH + "," + WINDOW_HEIGHT);
+        applyCiSafeFlags(options);
+        applyWindowSize(options);
 
         return options;
     }
@@ -103,13 +100,13 @@ public class WebDriverFactory {
     private static FirefoxOptions buildFirefoxOptions(boolean headless) {
         FirefoxOptions options = new FirefoxOptions();
 
+        options.setPageLoadStrategy(PageLoadStrategy.NORMAL);
+
         if (headless) {
             options.addArguments("-headless");
         }
 
-        options.addArguments("--width=" + WINDOW_WIDTH);
-        options.addArguments("--height=" + WINDOW_HEIGHT);
-
+        applyWindowSize(options);
         return options;
     }
 
@@ -131,17 +128,14 @@ public class WebDriverFactory {
     private static EdgeOptions buildEdgeOptions(boolean headless) {
         EdgeOptions options = new EdgeOptions();
 
+        options.setPageLoadStrategy(PageLoadStrategy.NORMAL);
+
         if (headless) {
             options.addArguments("--headless=new");
         }
 
-        // CI-safe flags
-        options.addArguments("--disable-gpu");
-        options.addArguments("--no-sandbox");
-        options.addArguments("--disable-dev-shm-usage");
-        options.addArguments("--disable-extensions");
-        options.addArguments("--disable-infobars");
-        options.addArguments("--window-size=" + WINDOW_WIDTH + "," + WINDOW_HEIGHT);
+        applyCiSafeFlags(options);
+        applyWindowSize(options);
 
         return options;
     }
@@ -155,21 +149,34 @@ public class WebDriverFactory {
             URL gridUrl = new URL(ConfigManager.getRemoteUrl());
             log.info("Connecting to remote WebDriver at {}", gridUrl);
 
+            DesiredCapabilities caps = new DesiredCapabilities();
+            caps.setCapability(CapabilityType.BROWSER_NAME, browser);
+
             switch (browser) {
                 case "chrome":
-                    return new RemoteWebDriver(gridUrl, buildChromeOptions(headless));
+                    caps.merge(buildChromeOptions(headless));
+                    break;
 
                 case "firefox":
-                    return new RemoteWebDriver(gridUrl, buildFirefoxOptions(headless));
+                    caps.merge(buildFirefoxOptions(headless));
+                    break;
 
                 case "edge":
-                    return new RemoteWebDriver(gridUrl, buildEdgeOptions(headless));
+                    caps.merge(buildEdgeOptions(headless));
+                    break;
 
                 default:
                     throw new IllegalArgumentException("Unsupported remote browser: " + browser);
             }
 
+            RemoteWebDriver driver = new RemoteWebDriver(gridUrl, caps);
+            applyTimeouts(driver);
+
+            log.info("RemoteWebDriver initialized (sessionId={})", driver.getSessionId());
+            return driver;
+
         } catch (Exception e) {
+            log.error("Failed to initialize remote WebDriver: {}", e.getMessage());
             throw new RuntimeException("Failed to initialize remote WebDriver", e);
         }
     }
@@ -181,15 +188,43 @@ public class WebDriverFactory {
     private static void applyTimeouts(WebDriver driver) {
         Duration pageLoad = Duration.ofSeconds(ConfigManager.getPageLoadTimeout());
         Duration script = Duration.ofSeconds(ConfigManager.getScriptTimeout());
-        Duration implicit = Duration.ofSeconds(ConfigManager.getImplicitWait());
 
-        log.info("Applying timeouts: pageLoad={}s, script={}s, implicit={}s",
-                pageLoad.getSeconds(), script.getSeconds(), implicit.getSeconds());
+        log.info("Applying timeouts: pageLoad={}s, script={}s, implicit=0s",
+                pageLoad.getSeconds(), script.getSeconds());
 
         driver.manage().timeouts().pageLoadTimeout(pageLoad);
         driver.manage().timeouts().scriptTimeout(script);
 
         // Enforce implicitWait=0 as a best practice
-        driver.manage().timeouts().implicitlyWait(implicit);
+        driver.manage().timeouts().implicitlyWait(Duration.ZERO);
+    }
+
+    private static void applyCiSafeFlags(ChromeOptions options) {
+        options.addArguments("--disable-gpu");
+        options.addArguments("--no-sandbox");
+        options.addArguments("--disable-dev-shm-usage");
+        options.addArguments("--disable-extensions");
+        options.addArguments("--disable-infobars");
+    }
+
+    private static void applyCiSafeFlags(EdgeOptions options) {
+        options.addArguments("--disable-gpu");
+        options.addArguments("--no-sandbox");
+        options.addArguments("--disable-dev-shm-usage");
+        options.addArguments("--disable-extensions");
+        options.addArguments("--disable-infobars");
+    }
+
+    private static void applyWindowSize(ChromeOptions options) {
+        options.addArguments("--window-size=" + WINDOW_WIDTH + "," + WINDOW_HEIGHT);
+    }
+
+    private static void applyWindowSize(EdgeOptions options) {
+        options.addArguments("--window-size=" + WINDOW_WIDTH + "," + WINDOW_HEIGHT);
+    }
+
+    private static void applyWindowSize(FirefoxOptions options) {
+        options.addArguments("--width=" + WINDOW_WIDTH);
+        options.addArguments("--height=" + WINDOW_HEIGHT);
     }
 }

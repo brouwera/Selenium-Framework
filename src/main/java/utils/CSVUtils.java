@@ -27,7 +27,7 @@ public final class CSVUtils {
     }
 
     public static List<Map<String, String>> readCsvAsListOfMaps(String resourcePath, String delimiter) {
-        if (delimiter == null) {
+        if (delimiter == null || delimiter.isEmpty()) {
             delimiter = DEFAULT_DELIMITER;
         }
 
@@ -48,8 +48,9 @@ public final class CSVUtils {
 
             Map<String, String> rowMap = new LinkedHashMap<>();
             for (int j = 0; j < headers.length; j++) {
+                String key = headers[j].trim();
                 String value = row[j] != null ? row[j].trim() : "";
-                rowMap.put(headers[j].trim(), value);
+                rowMap.put(key, value);
             }
             result.add(rowMap);
         }

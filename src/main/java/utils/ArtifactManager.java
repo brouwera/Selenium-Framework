@@ -24,6 +24,9 @@ public class ArtifactManager {
     private static final DateTimeFormatter RUN_FORMATTER =
             DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss");
 
+    private static final DateTimeFormatter HUMAN_TIMESTAMP =
+            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
+
     private static final ThreadLocal<Path> currentTestDir = new ThreadLocal<>();
 
     private static Path runRootDir;
@@ -48,13 +51,12 @@ public class ArtifactManager {
     // ============================================================
     // Run-level lifecycle
     // ============================================================
-
     public static void initRun() {
         try {
             runStartTime = LocalDateTime.now();
             runTimestamp = runStartTime.format(RUN_FORMATTER);
 
-            String root = ConfigManager.getArtifactRoot(); // e.g. target/artifacts
+            String root = ConfigManager.getArtifactRoot();
             runRootDir = Paths.get(root, runTimestamp);
 
             Files.createDirectories(runRootDir);
@@ -73,7 +75,6 @@ public class ArtifactManager {
     // ============================================================
     // Per-test directory + metadata
     // ============================================================
-
     public static Path createTestDirectory(String testName) {
         try {
             Path testDir = runRootDir.resolve(testName);
@@ -109,9 +110,14 @@ public class ArtifactManager {
             metadata.put("testName", testName);
             metadata.put("browser", ConfigManager.getBrowser());
             metadata.put("environment", ConfigManager.getEnvironment());
-            metadata.put("timestamp", LocalDateTime.now().format(RUN_FORMATTER));
+            metadata.put("timestamp", LocalDateTime.now().format(HUMAN_TIMESTAMP));
             metadata.put("practiceBaseUrl", ConfigManager.getPracticeBaseUrl());
             metadata.put("herokuBaseUrl", ConfigManager.getHerokuBaseUrl());
+            metadata.put("headless", ConfigManager.isHeadless());
+            metadata.put("remote", ConfigManager.isRemote());
+            metadata.put("explicitWait", ConfigManager.getExplicitWait());
+            metadata.put("pageLoadTimeout", ConfigManager.getPageLoadTimeout());
+            metadata.put("scriptTimeout", ConfigManager.getScriptTimeout());
 
             if (extraFields != null) {
                 metadata.putAll(extraFields);
@@ -132,7 +138,6 @@ public class ArtifactManager {
     // ============================================================
     // Per-test log writing + global log copy
     // ============================================================
-
     public static void appendToTestLog(String message) {
         try {
             Path logFile = currentTestDir.get().resolve("logs").resolve("test.log");
@@ -167,29 +172,31 @@ public class ArtifactManager {
     // ============================================================
     // File writing helpers
     // ============================================================
-
     public static Path writeScreenshot(byte[] data, String name) {
         return writeFile("screenshots", name + ".png", data);
     }
 
     public static Path writePageSource(byte[] data) {
-        return writeFile("pagesource", "pageSource.html", data);
+        return writeFile("pagesource", "page-source.html", data);
     }
 
     public static Path writeBrowserLogs(String logs) {
-        return writeFile("browserlogs", "console.log", logs.getBytes());
+        return writeFile("browserlogs", "browser.log", logs.getBytes());
     }
 
     public static Path writeFailureMessage(String message) {
-        return writeFile("logs", "failure.txt", message.getBytes());
+        return writeFile("logs", "failure-details.txt", message.getBytes());
     }
 
     public static Path writeFile(String subDir, String fileName, byte[] data) {
         try {
             Path dir = currentTestDir.get().resolve(subDir);
+            Files.createDirectories(dir);
+
             Path file = dir.resolve(fileName);
             Files.write(file, data, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
             return file;
+
         } catch (IOException e) {
             log.error("Failed to write artifact file {}", fileName, e);
             return null;
@@ -199,7 +206,6 @@ public class ArtifactManager {
     // ============================================================
     // Summary tracking
     // ============================================================
-
     public static void recordTestResult(
             String testName,
             String status,
@@ -211,17 +217,9 @@ public class ArtifactManager {
         try {
             totalTests++;
             switch (status) {
-                case "PASSED":
-                    passed++;
-                    break;
-                case "FAILED":
-                    failed++;
-                    break;
-                case "SKIPPED":
-                    skipped++;
-                    break;
-                default:
-                    break;
+                case "PASSED": passed++; break;
+                case "FAILED": failed++; break;
+                case "SKIPPED": skipped++; break;
             }
 
             TestResultInfo info = new TestResultInfo();
@@ -234,13 +232,11 @@ public class ArtifactManager {
 
             Path base = runRootDir.resolve(testName);
 
-            // Per-test log
             Path logFile = base.resolve("logs").resolve("test.log");
             if (Files.exists(logFile)) {
                 info.logPath = runRootDir.relativize(logFile).toString();
             }
 
-            // Screenshot: pick first file in screenshots folder if any
             Path screenshotsDir = base.resolve("screenshots");
             if (Files.exists(screenshotsDir)) {
                 try (DirectoryStream<Path> stream = Files.newDirectoryStream(screenshotsDir)) {
@@ -250,18 +246,15 @@ public class ArtifactManager {
                             break;
                         }
                     }
-                } catch (IOException ignored) {
                 }
             }
 
-            // Page source
-            Path pageSource = base.resolve("pagesource").resolve("pageSource.html");
+            Path pageSource = base.resolve("pagesource").resolve("page-source.html");
             if (Files.exists(pageSource)) {
                 info.pageSourcePath = runRootDir.relativize(pageSource).toString();
             }
 
-            // Browser logs
-            Path browserLogs = base.resolve("browserlogs").resolve("console.log");
+            Path browserLogs = base.resolve("browserlogs").resolve("browser.log");
             if (Files.exists(browserLogs)) {
                 info.browserLogsPath = runRootDir.relativize(browserLogs).toString();
             }
@@ -280,12 +273,15 @@ public class ArtifactManager {
 
             Map<String, Object> summary = new LinkedHashMap<>();
             summary.put("runTimestamp", runTimestamp);
-            summary.put("runStart", runStartTime.toString());
-            summary.put("runEnd", runEndTime.toString());
+            summary.put("runStart", runStartTime.format(HUMAN_TIMESTAMP));
+            summary.put("runEnd", runEndTime.format(HUMAN_TIMESTAMP));
             summary.put("runDurationMs", runDurationMs);
             summary.put("environment", ConfigManager.getEnvironment());
             summary.put("browser", ConfigManager.getBrowser());
-            summary.put("suiteName", "AutomationSuite");
+            summary.put("headless", ConfigManager.isHeadless());
+            summary.put("remote", ConfigManager.isRemote());
+            summary.put("practiceBaseUrl", ConfigManager.getPracticeBaseUrl());
+            summary.put("herokuBaseUrl", ConfigManager.getHerokuBaseUrl());
 
             try {
                 summary.put("machineName", InetAddress.getLocalHost().getHostName());
@@ -339,13 +335,14 @@ public class ArtifactManager {
     // ============================================================
     // Zipping + cleanup
     // ============================================================
-
     public static void zipRunDirectory() {
         Path zipFile = runRootDir.resolve("run.zip");
         try (ZipOutputStream zos = new ZipOutputStream(Files.newOutputStream(zipFile))) {
+
             Files.walk(runRootDir)
                     .filter(path -> !Files.isDirectory(path))
                     .filter(path -> !path.equals(zipFile))
+                    .sorted()
                     .forEach(path -> {
                         Path relative = runRootDir.relativize(path);
                         try (InputStream is = Files.newInputStream(path)) {
@@ -367,7 +364,7 @@ public class ArtifactManager {
 
     public static void cleanupOldRuns() {
         try {
-            String root = ConfigManager.getArtifactRoot(); // target/artifacts
+            String root = ConfigManager.getArtifactRoot();
             Path rootPath = Paths.get(root);
             if (!Files.exists(rootPath)) {
                 return;
@@ -417,7 +414,6 @@ public class ArtifactManager {
     // ============================================================
     // Internal model
     // ============================================================
-
     private static class TestResultInfo {
         String name;
         String status;

@@ -1,5 +1,6 @@
 package pages;
 
+import config.ConfigManager;
 import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -7,11 +8,17 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class LoginPage extends BasePage {
 
+    // ============================================================
+    // Locators
+    // ============================================================
     private final By usernameField = By.id("username");
     private final By passwordField = By.id("password");
     private final By submitButton = By.id("submit");
     private final By errorMessage = By.id("error");
 
+    // ============================================================
+    // Constructor
+    // ============================================================
     public LoginPage(WebDriver driver, WebDriverWait wait) {
         super(driver, wait);
     }
@@ -21,7 +28,9 @@ public class LoginPage extends BasePage {
     // ============================================================
     @Step("Open Login Page")
     public LoginPage open() {
-        navigateTo("https://practicetestautomation.com/practice-test-login/");
+        String url = ConfigManager.getPracticeBaseUrl() + "/practice-test-login/";
+        navigateTo(url);
+        waitForPageLoad();
         return this;
     }
 

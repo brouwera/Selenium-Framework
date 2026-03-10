@@ -2,9 +2,7 @@ package tests;
 
 import base.BaseTest;
 import helpers.AssertionHelper;
-import io.qameta.allure.Epic;
-import io.qameta.allure.Feature;
-import io.qameta.allure.Story;
+import io.qameta.allure.*;
 import org.testng.annotations.Test;
 import pages.HomePage;
 import pages.TablePage;
@@ -19,6 +17,7 @@ public class TableTest extends BaseTest {
     // ============================================================
     // Navigation Helper
     // ============================================================
+    @Step("Navigate to Course Table Page")
     private TablePage navigateToTablePage() {
         return new HomePage(getDriver(), getWait())
                 .open()
@@ -29,7 +28,10 @@ public class TableTest extends BaseTest {
     // Test Case 1: Language filter → Java
     // ============================================================
     @Story("Filter by Language: Java")
-    @Test(groups = {"regression"}, description = "Verify that selecting Language = Java shows only Java courses")
+    @Severity(SeverityLevel.NORMAL)
+    @Owner("Adam Brouwer")
+    @Description("Verify that selecting Language = Java shows only Java courses.")
+    @Test(groups = {"regression"})
     public void filterByLanguageJava() {
 
         TablePage table = navigateToTablePage()
@@ -47,7 +49,10 @@ public class TableTest extends BaseTest {
     // Test Case 2: Level filter → Beginner only
     // ============================================================
     @Story("Filter by Level: Beginner")
-    @Test(groups = {"regression"}, description = "Verify that only Beginner courses are visible when Intermediate and Advanced are unchecked")
+    @Severity(SeverityLevel.NORMAL)
+    @Owner("Adam Brouwer")
+    @Description("Verify that only Beginner courses are visible when Intermediate and Advanced are unchecked.")
+    @Test(groups = {"regression"})
     public void filterByLevelBeginner() {
 
         TablePage table = navigateToTablePage()
@@ -66,7 +71,10 @@ public class TableTest extends BaseTest {
     // Test Case 3: Min enrollments → 10,000+
     // ============================================================
     @Story("Filter by Min Enrollments: 10,000+")
-    @Test(groups = {"regression"}, description = "Verify that all visible courses have enrollments >= 10,000")
+    @Severity(SeverityLevel.NORMAL)
+    @Owner("Adam Brouwer")
+    @Description("Verify that all visible courses have enrollments >= 10,000.")
+    @Test(groups = {"regression"})
     public void filterByMinEnrollments() {
 
         TablePage table = navigateToTablePage()
@@ -84,7 +92,10 @@ public class TableTest extends BaseTest {
     // Test Case 4: Combined filters → Python + Beginner + 10,000+
     // ============================================================
     @Story("Combined Filters: Python + Beginner + 10,000+")
-    @Test(groups = {"regression"}, description = "Verify combined filtering logic for Language, Level, and Min Enrollments")
+    @Severity(SeverityLevel.CRITICAL)
+    @Owner("Adam Brouwer")
+    @Description("Verify combined filtering logic for Language, Level, and Min Enrollments.")
+    @Test(groups = {"regression"})
     public void combinedFilters() {
 
         TablePage table = navigateToTablePage()
@@ -117,7 +128,10 @@ public class TableTest extends BaseTest {
     // Test Case 5: No results state
     // ============================================================
     @Story("No Results State")
-    @Test(groups = {"regression"}, description = "Verify that no results message appears when filters yield no matches")
+    @Severity(SeverityLevel.MINOR)
+    @Owner("Adam Brouwer")
+    @Description("Verify that no results message appears when filters yield no matches.")
+    @Test(groups = {"regression"})
     public void noResultsState() {
 
         TablePage table = navigateToTablePage()
@@ -136,7 +150,10 @@ public class TableTest extends BaseTest {
     // Test Case 6: Reset button visibility and behavior
     // ============================================================
     @Story("Reset Button Behavior")
-    @Test(groups = {"regression"}, description = "Verify Reset button visibility and that it restores default filter values")
+    @Severity(SeverityLevel.NORMAL)
+    @Owner("Adam Brouwer")
+    @Description("Verify Reset button visibility and that it restores default filter values.")
+    @Test(groups = {"regression"})
     public void resetButtonBehavior() {
 
         TablePage table = navigateToTablePage()
@@ -166,7 +183,10 @@ public class TableTest extends BaseTest {
     // Test Case 7: Sort by Enrollments (ascending, numeric)
     // ============================================================
     @Story("Sort by Enrollments (Ascending)")
-    @Test(groups = {"regression"}, description = "Verify numeric sorting of enrollments in ascending order")
+    @Severity(SeverityLevel.NORMAL)
+    @Owner("Adam Brouwer")
+    @Description("Verify numeric sorting of enrollments in ascending order.")
+    @Test(groups = {"regression"})
     public void sortByEnrollmentsAscending() {
 
         TablePage table = navigateToTablePage()
@@ -184,7 +204,10 @@ public class TableTest extends BaseTest {
     // Test Case 8: Sort by Course Name (alphabetical)
     // ============================================================
     @Story("Sort by Course Name (A→Z)")
-    @Test(groups = {"regression"}, description = "Verify alphabetical sorting of course names")
+    @Severity(SeverityLevel.NORMAL)
+    @Owner("Adam Brouwer")
+    @Description("Verify alphabetical sorting of course names.")
+    @Test(groups = {"regression"})
     public void sortByCourseName() {
 
         TablePage table = navigateToTablePage()

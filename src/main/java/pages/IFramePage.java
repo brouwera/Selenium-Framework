@@ -1,18 +1,24 @@
 package pages;
 
+import config.ConfigManager;
 import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class IFramePage extends BasePage {
 
+    // ============================================================
+    // Locators
+    // ============================================================
     private final By editorIframe = By.id("mce_0_ifr");
     private final By editorBody = By.id("tinymce");
     private final By popupCloseButton = By.cssSelector("button.tox-notification__dismiss");
 
+    // ============================================================
+    // Constructor
+    // ============================================================
     public IFramePage(WebDriver driver, WebDriverWait wait) {
         super(driver, wait);
     }
@@ -22,7 +28,9 @@ public class IFramePage extends BasePage {
     // ============================================================
     @Step("Open iFrame page")
     public IFramePage open() {
-        navigateTo("https://the-internet.herokuapp.com/iframe");
+        String url = ConfigManager.getHerokuBaseUrl() + "/iframe";
+        navigateTo(url);
+        waitForPageLoad();
         return this;
     }
 
@@ -58,7 +66,6 @@ public class IFramePage extends BasePage {
     // ============================================================
     @Step("Get default text from the TinyMCE editor")
     public String getDefaultEditorText() {
-
         closePopupIfPresent();
         enterEditorFrame();
 

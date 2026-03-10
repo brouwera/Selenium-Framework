@@ -30,12 +30,14 @@ public final class LoginDataProvider {
     @DataProvider(name = "loginData")
     public static Object[][] loginData() {
 
+        log.debug("Loading login test data from {}", LOGIN_DATA_PATH);
+
         Object[][] data = CSVUtils.readCsvAsDataProvider(LOGIN_DATA_PATH);
 
-        if (data.length == 0) {
+        if (data == null || data.length == 0) {
             throw new RuntimeException(
                     "CSV file '" + LOGIN_DATA_PATH + "' returned no data rows. " +
-                            "Verify that the file is not empty and is correctly formatted."
+                            "Verify that the file exists, is not empty, and is correctly formatted."
             );
         }
 

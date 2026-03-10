@@ -290,6 +290,15 @@ public abstract class BasePage {
     }
 
     // ============================================================
+    // NEW: waitForErrorMessage() — Day 30 Enhancement
+    // ============================================================
+    protected void waitForErrorMessage(By locator) {
+        step("WAIT error message visible " + fmt(locator), () ->
+                wait.until(ExpectedConditions.visibilityOfElementLocated(locator))
+        );
+    }
+
+    // ============================================================
     // Page Load Wait
     // ============================================================
     protected void waitForPageLoad() {

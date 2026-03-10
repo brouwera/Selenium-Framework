@@ -11,7 +11,9 @@ public class AssertionHelper {
     // ============================================================
 
     public static void assertEquals(String actual, String expected, String message) {
-        Assert.assertEquals(actual, expected, message);
+        Assert.assertNotNull(actual, message + " | Actual value is null");
+        Assert.assertNotNull(expected, message + " | Expected value is null");
+        Assert.assertEquals(actual.trim(), expected.trim(), message);
     }
 
     public static void assertTrue(boolean condition, String message) {
@@ -31,18 +33,21 @@ public class AssertionHelper {
     // ============================================================
 
     public static void assertElementDisplayed(WebElement element, String message) {
-        Assert.assertNotNull(element, "Element reference is null: " + message);
+        Assert.assertNotNull(element, message + " | Element reference is null");
 
         try {
-            Assert.assertTrue(element.isDisplayed(), message);
+            Assert.assertTrue(
+                    element.isDisplayed(),
+                    message + " | Element is NOT displayed"
+            );
         } catch (StaleElementReferenceException e) {
-            Assert.fail("Element became stale while checking display state: " + message);
+            Assert.fail(message + " | Element became stale while checking display state");
         }
     }
 
     public static void assertTextContains(String actual, String expectedSubstring, String message) {
-        Assert.assertNotNull(actual, "Actual text is null: " + message);
-        Assert.assertNotNull(expectedSubstring, "Expected substring is null: " + message);
+        Assert.assertNotNull(actual, message + " | Actual text is null");
+        Assert.assertNotNull(expectedSubstring, message + " | Expected substring is null");
 
         Assert.assertTrue(
                 actual.contains(expectedSubstring),
@@ -51,9 +56,13 @@ public class AssertionHelper {
     }
 
     public static void assertTextMatches(String actual, String expected, String message) {
-        Assert.assertNotNull(actual, "Actual text is null: " + message);
-        Assert.assertNotNull(expected, "Expected text is null: " + message);
+        Assert.assertNotNull(actual, message + " | Actual text is null");
+        Assert.assertNotNull(expected, message + " | Expected text is null");
 
-        Assert.assertEquals(actual.trim(), expected.trim(), message);
+        Assert.assertEquals(
+                actual.trim(),
+                expected.trim(),
+                message + " | Expected: '" + expected + "' | Actual: '" + actual + "'"
+        );
     }
 }

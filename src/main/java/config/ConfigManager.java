@@ -64,7 +64,7 @@ public final class ConfigManager {
     }
 
     // ============================================================
-    // Helpers
+    // Unified Override Helper
     // ============================================================
     private static String getOverride(String key) {
         String systemValue = System.getProperty(key);
@@ -78,7 +78,10 @@ public final class ConfigManager {
         return null;
     }
 
-    private static String getJsonString(String jsonKey) {
+    private static String getConfigValue(String overrideKey, String jsonKey) {
+        String override = getOverride(overrideKey);
+        if (override != null) return override;
+
         JsonNode node = envNode.get(jsonKey);
         if (node == null || node.isNull()) {
             throw new FrameworkInitializationException(
@@ -88,13 +91,15 @@ public final class ConfigManager {
         return node.asText();
     }
 
-    private static int getJsonInt(JsonNode parent, String key, int defaultValue) {
-        if (parent == null) return defaultValue;
+    private static int getConfigInt(String overrideKey, String jsonKey, int defaultValue) {
+        String override = getOverride(overrideKey);
+        if (override != null) return Integer.parseInt(override);
 
-        JsonNode node = parent.get(key);
-        if (node == null || !node.isInt()) {
-            return defaultValue;
-        }
+        JsonNode timeouts = envNode.get("timeouts");
+        if (timeouts == null) return defaultValue;
+
+        JsonNode node = timeouts.get(jsonKey);
+        if (node == null || !node.isInt()) return defaultValue;
 
         return node.asInt();
     }
@@ -112,27 +117,26 @@ public final class ConfigManager {
     // Base URLs
     // ============================================================
     public static String getPracticeBaseUrl() {
-        String override = getOverride("practiceBaseUrl");
-        return override != null ? override : getJsonString("practiceBaseUrl");
+        return getConfigValue("practice.base.url", "practiceBaseUrl");
     }
 
     public static String getHerokuBaseUrl() {
-        String override = getOverride("herokuBaseUrl");
-        return override != null ? override : getJsonString("herokuBaseUrl");
+        return getConfigValue("heroku.base.url", "herokuBaseUrl");
     }
 
     // ============================================================
     // Browser Settings
     // ============================================================
     public static String getBrowser() {
-        String override = getOverride("browser");
-        return override != null ? override.toLowerCase() : getJsonString("browser").toLowerCase();
+        return getConfigValue("browser", "browser").toLowerCase();
     }
 
     public static boolean isHeadless() {
         String override = getOverride("headless");
         if (override != null) return Boolean.parseBoolean(override);
-        return envNode.get("headless").asBoolean();
+
+        JsonNode node = envNode.get("headless");
+        return node != null && node.asBoolean(false);
     }
 
     public static boolean isRemote() {
@@ -144,63 +148,36 @@ public final class ConfigManager {
     }
 
     public static String getRemoteUrl() {
-        String override = getOverride("remoteUrl");
-        if (override != null) return override;
-
-        JsonNode node = envNode.get("remoteUrl");
-        if (node != null && !node.isNull()) {
-            return node.asText();
-        }
-
-        return "";
+        return getConfigValue("remote.url", "remoteUrl");
     }
 
     // ============================================================
     // Timeout Settings (SAFE DEFAULTS)
     // ============================================================
     public static int getExplicitWait() {
-        String override = getOverride("explicit.wait");
-        if (override != null) return Integer.parseInt(override);
-        return getJsonInt(envNode.get("timeouts"), "explicit", 10);
+        return getConfigInt("timeouts.explicit", "explicit", 10);
     }
 
     public static int getPageLoadTimeout() {
-        String override = getOverride("page.load.timeout");
-        if (override != null) return Integer.parseInt(override);
-        return getJsonInt(envNode.get("timeouts"), "pageLoad", 30);
+        return getConfigInt("timeouts.pageLoad", "pageLoad", 30);
     }
 
     public static int getScriptTimeout() {
-        String override = getOverride("script.timeout");
-        if (override != null) return Integer.parseInt(override);
-        return getJsonInt(envNode.get("timeouts"), "script", 30);
+        return getConfigInt("timeouts.script", "script", 30);
     }
 
     public static int getShortWait() {
-        String override = getOverride("short.wait");
-        if (override != null) return Integer.parseInt(override);
-        return getJsonInt(envNode.get("timeouts"), "short", 3);
+        return getConfigInt("timeouts.short", "short", 3);
     }
 
-    // ⭐ NEW — Required by WebDriverFactory
     public static int getImplicitWait() {
-        String override = getOverride("implicit.wait");
-        if (override != null) return Integer.parseInt(override);
-        return getJsonInt(envNode.get("timeouts"), "implicit", 0);
+        return getConfigInt("timeouts.implicit", "implicit", 0);
     }
 
     // ============================================================
-    // Artifact Root Directory (SAFE DEFAULT)
+    // Artifact Root Directory
     // ============================================================
     public static String getArtifactRoot() {
-        String override = getOverride("artifact.root");
-        if (override != null) return override;
-
-        JsonNode node = envNode.get("artifactRoot");
-        if (node != null && !node.isNull()) {
-            return node.asText();
-        }
-
-        return "target/artifacts";
+        return getConfigValue("artifact.root", "artifactRoot");
     }
 }
