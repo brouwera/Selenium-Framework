@@ -6,50 +6,118 @@ A clean, maintainable, and professional Selenium + TestNG automation framework b
 # 📛 Badges
 <p align="center">
 
+  <!-- CI Status -->
   <a href="https://github.com/brouwera/Selenium-Framework/actions">
-    <img src="https://github.com/brouwera/Selenium-Framework/actions/workflows/ci.yml/badge.svg" alt="CI Status">
+    <img src="https://img.shields.io/github/actions/workflow/status/brouwera/Selenium-Framework/ci.yml?style=flat-square&label=CI%20Build" alt="CI Status">
   </a>
 
-  <img src="https://img.shields.io/badge/Allure-Report-ff69b4" alt="Allure Report">
-  <img src="https://img.shields.io/badge/Java-17-blue" alt="Java 17">
-  <img src="https://img.shields.io/badge/Selenium-4.18.1-brightgreen" alt="Selenium">
-  <img src="https://img.shields.io/badge/TestNG-7.10-orange" alt="TestNG">
-  <img src="https://img.shields.io/badge/License-MIT-lightgrey" alt="MIT License">
+  <!-- Last Commit -->
+  <img src="https://img.shields.io/github/last-commit/brouwera/Selenium-Framework?style=flat-square&color=blueviolet" alt="Last Commit">
+
+  <!-- Allure -->
+  <img src="https://img.shields.io/badge/Allure-Reporting-ff69b4?style=flat-square" alt="Allure Reporting">
+
+  <!-- Java -->
+  <img src="https://img.shields.io/badge/Java-17-blue?style=flat-square" alt="Java 17">
+
+  <!-- Selenium -->
+  <img src="https://img.shields.io/badge/Selenium-4.18.1-brightgreen?style=flat-square" alt="Selenium">
+
+  <!-- TestNG -->
+  <img src="https://img.shields.io/badge/TestNG-7.10-orange?style=flat-square" alt="TestNG">
+
+  <!-- License -->
+  <img src="https://img.shields.io/badge/License-MIT-lightgrey?style=flat-square" alt="MIT License">
 
 </p>
 
 ---
 
 # 📚 Table of Contents
-1. [Project Overview](#-project-overview)
-2. [Current Scope](#-current-scope-aligned-with-the-real-ui)
-3. [Features at a Glance](#-completed-features)
-4. [Project Structure](#-project-structure)
-5. [How to Run Locally](#-how-to-run)
-6. [How to Run in CI](#-how-to-run-in-ci)
-7. [Day-by-Day Progress Log](#-day-by-day-progress-log)
-8. [Upcoming Enhancements](#-upcoming-enhancements-planned)
-9. [Author](#-author)
+
+1. [Executive Summary](#-executive-summary)
+2. [Project Overview](#-project-overview)
+3. [Design Principles](#-design-principles)
+4. [Tech Stack](#-tech-stack)
+5. [Dependency & Versioning Strategy](#-dependency--versioning-strategy)
+6. [Test Strategy](#-test-strategy)
+7. [Framework Architecture](#-framework-architecture)
+8. [Logging Architecture](#-logging-architecture)
+9. [Performance Considerations](#-performance-considerations)
+10. [CI Pipeline Architecture](#-ci-pipeline-architecture)
+11. [Multi‑Environment Architecture](#-multi-environment-architecture)
+12. [Allure Report Preview](#-allure-report-preview)
+13. [Why This Framework Matters](#-why-this-framework-matters)
+14. [Enterprise‑Grade Enhancements (Days 25–30)](#-enterprisegrade-enhancements-days-25–30)
+15. [Features at a Glance](#-features-at-a-glance)
+16. [Data‑Driven Testing](#-data-driven-testing-csv-powered)
+17. [Current Scope](#-current-scope-aligned-with-the-real-ui)
+18. [Completed Features](#-completed-features)
+19. [Project Structure](#-project-structure)
+20. [How to Run](#-how-to-run)
+21. [How to Run in CI](#-how-to-run-in-ci)
+22. [AI‑Augmented QA Strategy](#-ai-augmented-qa-strategy-day-31)
+23. [Day‑by‑Day Progress Log](#-day-by-day-progress-log)
+24. [Upcoming Enhancements](#-upcoming-enhancements-updated-roadmap)
+25. [Future Enhancements](#-future-enhancements)
+26. [Author](#-author)
+
+---
+
+# ⭐ Executive Summary
+
+This 30‑day engineering log documents the evolution of a modern, enterprise‑grade Selenium + TestNG automation framework. The project began with a single working login test and grew into a multi‑module, production‑ready platform featuring:
+
+- A complete Page Object Model architecture
+- Parallel execution with TestNG + Maven Surefire
+- A JSON‑based multi‑environment configuration system
+- A professional logging layer (SLF4J + Logback + MDC)
+- A full artifact pipeline with per‑test logs, screenshots, page source, browser logs, and metadata
+- Allure reporting with step‑level tracing, retries, and environment metadata
+- Modules covering Login, Exceptions, Dynamic Controls, Frames, iFrame, and Table testing
+- A hardened WebDriverFactory with cross‑browser and headless support
+- A unified BasePage interaction layer with step numbering, durations, and defensive waits
+
+Across 30 days, the framework matured through iterative enhancements, architectural refactors, stability passes, and CI‑ready validation — culminating in **33/33 passing tests**, clean Allure reports, and a fully modernized automation platform aligned with real enterprise standards.
 
 ---
 
 # 🚀 Project Overview
 
-This framework automates the login functionality of:
+This framework automates multiple real‑world UI modules across two applications:
 
-**https://practicetestautomation.com/practice-test-login/**
+- **Practice Test Automation** — Login, Exceptions, Table  
+  https://practicetestautomation.com/practice-test-login/
+
+- **The‑Internet Herokuapp** — Frames, iFrame, Dynamic Controls, and supporting modules  
+  https://the-internet.herokuapp.com/
 
 It demonstrates:
 
 - Clean Page Object Model (POM) architecture
-- Explicit waits for stability
-- Thread‑safe WebDriver setup
-- Data‑driven testing
-- Allure reporting
-- Multi‑browser execution (Chrome, Edge, Firefox)
-- CI/CD readiness
+- Unified interaction model with explicit waits, retrying click, and resilient find()
+- Thread‑safe WebDriver setup using a dedicated WebDriverFactory
+- JSON‑based multi‑environment configuration
+- Data‑driven testing via CSV
+- Step‑numbered logging with SLF4J + Logback + MDC
+- Per‑test artifact directories with logs, screenshots, and metadata
+- Multi‑browser execution (Chrome, Edge, Firefox) + remote WebDriver support
+- CI/CD readiness with GitHub Actions
 
-All tests currently pass with **zero failures** across all supported browsers.
+All 33 tests across Login, Exceptions, Table, Frames, and iFrame modules currently pass with **zero failures** across all supported browsers.
+
+---
+
+# 🧠 Design Principles
+
+This framework is built around a set of engineering principles that ensure long‑term maintainability and clarity:
+
+- **Single Responsibility** — each class has one clear purpose (BasePage, WebDriverFactory, ConfigManager, etc.).
+- **Explicitness Over Magic** — no hidden waits, no implicit behavior; all interactions are intentional and observable.
+- **Fail Fast, Fail Loud** — clear exceptions, structured logging, and isolated per‑test artifacts make failures diagnosable.
+- **Environment Independence** — configuration, drivers, and test data are fully decoupled from the codebase.
+- **Parallel Safety** — ThreadLocal WebDriver, MDC logging, and isolated artifacts ensure clean parallel execution.
+- **Scalability First** — architecture supports new modules, environments, and CI/CD pipelines without refactoring.
 
 ---
 
@@ -63,19 +131,58 @@ This framework is built using a modern, industry-standard automation stack:
 - **Maven** — build + dependency management
 - **Allure Reports** — rich test reporting
 - **WebDriverManager** — automatic driver resolution
+- **WebDriverFactory** — centralized driver creation (local, headless, remote)
+- **Logback + SLF4J + MDC** — enterprise‑grade logging and per‑test log routing
+- **JSON‑based ConfigManager** — multi‑environment configuration with overrides
 - **GitHub Actions** — CI/CD pipeline
 - **Page Object Model (POM)** — maintainable architecture
 - **ThreadLocal WebDriver** — parallel‑ready design
 - **CSV Test Data** — data-driven testing
 
+---
+
+# 📦 Dependency & Versioning Strategy
+
+The framework uses pinned, stable versions of all critical dependencies to ensure reproducible builds:
+
+- Selenium 4.18.1 — stable WebDriver API
+- TestNG 7.10 — parallel execution + retry support
+- Logback 1.x — MDC‑based logging
+- Jackson — JSON configuration parsing
+
+Version upgrades follow a controlled process:
+1. Validate compatibility in a feature branch
+2. Run full suite locally and in CI
+3. Review Allure history for regressions
+4. Merge only after stability is confirmed
+
+---
+
+# 🧪 Test Strategy
+
+The framework follows a layered testing strategy:
+
+- **UI Tests** validate real user flows across Login, Exceptions, Table, Frames, iFrame, and Dynamic Controls.
+- **Data‑Driven Tests** ensure broad coverage of positive and negative scenarios.
+- **Resilient Interactions** prevent flakiness through explicit waits, retrying click, and unified find().
+- **Parallel Execution** increases throughput and validates thread safety.
+- **Artifact‑Driven Debugging** ensures every failure is diagnosable through logs, screenshots, and metadata.
+
+This approach mirrors real enterprise QA practices and ensures both stability and scalability.
+
+---
+
 # 🏗️ Framework Architecture
 
 ```mermaid
-
 flowchart TD
 
     subgraph TestLayer[Test Layer]
         LT[LoginTest]
+        ET[ExceptionsTest]
+        TT[TableTest]
+        FT[FramesTest]
+        IFT[iFrameTest]
     end
 
     subgraph DataLayer[Data Layer]
@@ -86,13 +193,21 @@ flowchart TD
     subgraph BaseLayer[Base Layer]
         BT[BaseTest]
         TL[TestListener]
-        CM[ConfigManager]
+        RA[RetryAnalyzer]
+        RL[RetryListener]
+        CM[ConfigManager (JSON)]
+        WF[WebDriverFactory]
+        AM[ArtifactManager]
     end
 
     subgraph PageObjects[Page Objects]
         LP[LoginPage]
         HP[HomePage]
         SLP[SuccessfulLoginPage]
+        EP[ExceptionsPage]
+        TP[TablePage]
+        FP[FramesPage]
+        IFP[iFramePage]
         BP[BasePage]
     end
 
@@ -105,15 +220,38 @@ flowchart TD
     DP --> CSV
 
     LT --> BT
+    ET --> BT
+    TT --> BT
+    FT --> BT
+    IFT --> BT
+
     BT --> CM
     BT --> TL
+    BT --> WF
+    TL --> AM
 
     LT --> LP
     LP --> BP
     HP --> BP
     SLP --> BP
 
-    LT --> Utils    
+    ET --> EP
+    EP --> BP
+
+    TT --> TP
+    TP --> BP
+
+    FT --> FP
+    FP --> BP
+
+    IFT --> IFP
+    IFP --> BP
+
+    LT --> Utils
+    ET --> Utils
+    TT --> Utils
+    FT --> Utils
+    IFT --> Utils
 ```
 
 ---
@@ -133,6 +271,47 @@ This framework includes a production‑grade logging system built with **SLF4J +
 - Lifecycle logging from TestListener (start, pass, fail, skip)
 - Allure attachments for screenshots, page source, browser logs, and per‑test logs
 - Rolling `framework.log` capturing global framework activity
+
+---
+
+## 🔹 Step‑Numbered Logging (Day 27 Upgrade)
+
+Every BasePage action is logged with:
+
+- Incrementing step numbers (`[01]`, `[02]`, …)
+- Duration tracking for each action (e.g., `(142 ms)`)
+- Clean locator formatting (`[id=username]`, `[xpath=//button]`)
+- Unified patterns across console, framework.log, and per‑test logs
+
+This creates a readable, narrative‑style execution trace for every test.
+
+---
+
+## 🔹 Unified Logback Pattern (Day 27 Upgrade)
+
+All logs now share a single, modernized pattern including:
+
+- Timestamp
+- Log level
+- Thread
+- MDC test name
+- Logger
+- Message
+
+This ensures consistent formatting across all log destinations.
+
+---
+
+## 🔹 Artifact Integration (Day 25–30 Upgrades)
+
+The logging system is fully integrated with the artifact pipeline:
+
+- Per‑test logs copied into each test’s artifact directory
+- Global logs included in the run‑level summary
+- Step‑numbered logs appear in all zipped artifact bundles
+- Retention policy keeps the last 10 runs
+
+This mirrors enterprise‑grade CI/CD debugging workflows.
 
 ---
 
@@ -241,8 +420,25 @@ This logging system demonstrates:
 
 It mirrors the logging approach used in enterprise QA automation frameworks.
 
+---
+
+# ⚡ Performance Considerations
+
+The framework is optimized for fast, reliable execution:
+
+- Parallel TestNG execution reduces total runtime.
+- Explicit waits eliminate unnecessary delays.
+- Network‑idle waits prevent premature interactions.
+- Headless mode accelerates CI runs.
+- Minimal implicit waits (set to 0) ensure deterministic timing.
+
+These optimizations keep the suite fast while maintaining stability.
+
+---
 
 # 🔄 CI Pipeline Architecture
+
+The CI pipeline also integrates the full artifact system, including per‑test directories, run‑level summaries, zipped artifacts, and automatic retention of the last 10 runs.
 
 ```mermaid
 
@@ -265,9 +461,9 @@ flowchart TD
     J --> L[View Surefire Reports in Artifacts]
 ```
 
-# 🌍 Multi‑Environment Architecture (Planned)
+# 🌍 Multi‑Environment Architecture
 
-This framework is designed to support multiple execution environments as it grows:
+The framework includes a JSON‑based ConfigManager that supports multiple execution environments with system‑property and `.env` overrides.
 
 ```mermaid
 flowchart LR
@@ -303,14 +499,53 @@ It includes detailed test steps, attachments, environment metadata, and executio
 This project demonstrates real-world automation engineering skills, not just basic Selenium usage:
 
 - **Scalable architecture** using Page Object Model and layered design
-- **Stable, flake‑resistant tests** built with explicit waits and clean synchronization
-- **Data-driven testing** powered by CSV utilities and TestNG DataProviders
-- **Thread-safe WebDriver management** using a BaseTest + ThreadLocal design
-- **CI/CD integration** with GitHub Actions for automated, headless execution
-- **Professional reporting** through Allure with steps, metadata, and artifacts
-- **Portable configuration** using a centralized ConfigManager for browser and environment control
+- **Unified interaction model** with explicit waits, retrying click, and resilient find()
+- **Enterprise‑grade logging** with step numbering, duration tracking, and MDC‑routed per‑test logs
+- **Production‑ready artifact system** with per‑test directories, run‑level summaries, and retention policy
+- **Data‑driven testing** powered by CSV utilities and TestNG DataProviders
+- **Thread‑safe WebDriver management** using a dedicated WebDriverFactory
+- **JSON‑based multi‑environment configuration** with overrides
+- **CI/CD integration** with GitHub Actions for automated, headless, parallel execution
+- **Multi‑browser and remote execution** (Chrome, Edge, Firefox, Selenium Grid)
 
 This framework mirrors the structure and practices used in enterprise QA automation teams.
+
+---
+
+# 🧩 Enterprise‑Grade Enhancements (Days 25–30)
+
+The final phase of the framework focused on transforming it from a functional automation suite into a production‑grade, enterprise‑ready platform. These enhancements strengthened architecture, stability, observability, and reporting.
+
+## High‑Value Enhancements (Days 25–26)
+- WebDriverFactory extraction with multi‑browser + headless + remote support
+- Per‑test artifact directories with logs, screenshots, page source, and metadata
+- Unified `find()` wrapper and resilient interaction model
+- Retrying click with JS fallback
+- Allure screenshot helper
+- loginExpectingFailure() and error‑message assertion helpers
+- Network‑idle wait support
+- Centralized timeout architecture (page load, script, implicit=0)
+
+## Medium‑Value Enhancements (Days 27–28)
+- Step‑numbered BasePage logging with duration metrics
+- Unified logback pattern across console, global logs, and per‑test logs
+- Hover helper, waitForText, waitForAttribute
+- getPasswordFieldType(), clearUsername(), clearPassword()
+- submitWithEnterKey()
+- @Step‑annotated navigation helpers
+- Standalone negative tests
+- Browser console log exposure
+- Page load timeout + implicitWait=0 enforcement
+
+## Low‑Value Polish (Days 29–30)
+- Highlight‑element debug helper
+- waitForErrorMessage()
+- getTestName() helper
+- Test start timestamp
+- Additional Allure metadata (Description, Severity, Owner)
+- Final synchronization of TestListener, BasePage, and step‑counter architecture
+
+These enhancements collectively elevate the framework to a senior‑level automation standard.
 
 ---
 
@@ -320,18 +555,24 @@ This framework mirrors the structure and practices used in enterprise QA automat
 |--------|-------------|
 | 🧱 Page Object Model | Clean, maintainable, scalable architecture |
 | 🔄 Data‑Driven Tests | CSV‑powered TestNG DataProviders |
-| 🧪 Stable Test Execution | Explicit waits, no flakiness, consistent behavior |
-| 🌐 Multi‑Browser Support | Chrome, Edge, Firefox (local + CI) |
+| 🧪 Stable Test Execution | Explicit waits, retrying click, unified find(), network‑idle waits |
+| 🌐 Multi‑Browser Support | Chrome, Edge, Firefox (local + CI + remote) |
 | 🧵 Thread‑Safe WebDriver | Parallel‑ready design using ThreadLocal |
-| 📊 Allure Reporting | Steps, metadata, history, and visual analytics |
-| ⚙️ ConfigManager | Centralized environment + browser configuration |
-| 🚀 CI/CD Ready | GitHub Actions workflow with headless execution |
+| ⚡ Parallel Execution | TestNG + Maven Surefire parallel suite support |
+| 🔁 Retry Logic | RetryAnalyzer + RetryListener for flaky‑test handling |
+| 📊 Allure Reporting | Steps, metadata, logs, screenshots, page source, history |
+| 📝 Enterprise Logging | SLF4J + Logback + MDC + per‑test logs + step numbering |
+| 📁 Artifact System | Per‑test directories, run‑level summary, retention policy |
+| 🧭 Navigation Helpers | @Step‑annotated flows, Enter‑key submission, clear helpers |
+| 🌍 Environment‑Aware Config | JSON‑based multi‑environment configuration with overrides |
+| 🧪 Modules | Login, Exceptions, Table, Frames, iFrame, Dynamic Controls |
+| 🖥️ Remote Execution | Selenium Grid / remote WebDriver support |
 
 ---
 
 ## 📄 Data‑Driven Testing (CSV‑Powered)
 
-This framework uses CSV files to drive login scenarios through TestNG DataProviders. Test logic stays clean and focused while the data lives in a simple, editable file.
+This framework uses CSV files to drive the Login module’s positive and negative scenarios through TestNG DataProviders.
 
 ### How it works
 - `loginData.csv` stores all username/password combinations and expected outcomes.
@@ -351,18 +592,23 @@ wrongUser,Password123,failure
 
 # 📌 Current Scope (Aligned With the Real UI)
 
-The Practice page currently includes:
+This framework automates real UI modules across two applications:
 
+### Practice Test Automation
 - **Test Login Page**
 - **Test Exceptions**
-- **Test Table** (coming soon)
+- **Test Table**
 
-Removed modules (no longer present on the site):
+### The‑Internet Herokuapp
+- **Frames**
+- **iFrame**
+- **Dynamic Controls** (stabilized and validated)
 
+### Removed modules (no longer present on the site)
 - Test Inputs
 - Test Alerts
 
-This keeps the framework aligned with the real application under test.
+This keeps the framework aligned with the real applications under test.
 
 ---
 
@@ -391,53 +637,88 @@ This keeps the framework aligned with the real application under test.
 - ConfigManager now controls all driver paths
 - Fully portable + CI‑ready
 
+### ✔ Module Expansion (Days 18–23)
+- Added full Exceptions module with five real‑world exception scenarios
+- Added Table module with dynamic filtering, sorting, and DOM‑aware parsing
+- Added Frames and iFrame modules with stable TinyMCE editor handling
+- Added Dynamic Controls stabilization and loading‑indicator synchronization
+- All modules validated under Maven and parallel TestNG execution
+
+### ✔ Architecture Upgrades (Days 25–30)
+- Extracted WebDriverFactory with local, headless, and remote support
+- Added per‑test artifact directories and run‑level summaries
+- Implemented JSON‑based ConfigManager with overrides
+- Added step‑numbered BasePage logging with duration tracking
+- Added unified logback pattern across all logs
+- Added browser console log exposure
+- Added retention policy for artifact runs
+- Synchronized TestListener, BasePage, and global step‑counter architecture
+
 ---
 
 # 📁 Project Structure
 
 ```
 src
+├── main
+│   ├── java
+│   │   ├── config
+│   │   │   └── ConfigManager.java
+│   │   ├── exceptions
+│   │   │   ├── CsvParsingException.java
+│   │   │   ├── ElementNotFoundException.java
+│   │   │   ├── FrameworkInitializationException.java
+│   │   │   ├── InvalidTestDataException.java
+│   │   │   └── PageNavigationException.java
+│   │   ├── factory
+│   │   │   └── WebDriverFactory.java
+│   │   ├── pages
+│   │   │   ├── BasePage.java
+│   │   │   ├── DynamicControlsPage.java
+│   │   │   ├── ExceptionsPage.java
+│   │   │   ├── FramesPage.java
+│   │   │   ├── HomePage.java
+│   │   │   ├── IFramePage.java
+│   │   │   ├── LoginPage.java
+│   │   │   ├── NestedFramesPage.java
+│   │   │   ├── SuccessfulLoginPage.java
+│   │   │   └── TablePage.java
+│   │   └── utils
+│   │       ├── ArtifactManager.java
+│   │       ├── CSVUtils.java
+│   │       └── TableUtils.java
+│   └── resources
+│       └── config.json
+│
 └── test
-├── java
-│   ├── base
-│   │   └── BaseTest.java
-│   ├── config
-│   │   └── ConfigManager.java
-│   ├── dataproviders
-│   │   └── LoginDataProvider.java
-│   ├── exceptions
-│   │   ├── ElementNotFoundException.java
-│   │   ├── FrameworkInitializationException.java
-│   │   ├── InvalidTestDataException.java
-│   │   ├── PageNavigationException.java
-│   ├── helpers
-│   │   └── AssertionHelper.java
-│   ├── listeners
-│   │   ├── RetryAnalyzer.java
-│   │   ├── RetryListener.java
-│   │   └── TestListener.java
-│   ├── pages
-│   │   ├── BasePage.java
-│   │   ├── ExceptionsPage.java
-│   │   ├── HomePage.java
-│   │   ├── LoginPage.java
-│   │   └── SuccessfulLoginPage.java
-│   ├── tests
-│   │   ├── ExceptionsTest.java
-│   │   └── LoginTest.java
-│   └── utils
-│       ├── CsvParsingException.java
-│       └── CSVUtils.java
-└── resources
-├── testData
-│   └── loginData.csv
-├── categories.json
-├── config.properties
-├── environment.properties
+    ├── java
+    │   ├── base
+    │   │   └── BaseTest.java
+    │   ├── dataproviders
+    │   │   └── LoginDataProvider.java
+    │   ├── helpers
+    │   │   └── AssertionHelper.java
+    │   ├── listeners
+    │   │   ├── RetryAnalyzer.java
+    │   │   ├── RetryListener.java
+    │   │   └── TestListener.java
+    │   └── tests
+    │       ├── DynamicControlsTest.java
+    │       ├── ExceptionsTest.java
+    │       ├── FramesTest.java
+    │       ├── LoginTest.java
+    │       └── TableTest.java
+    └── resources
+        ├── testData
+        │   └── loginData.csv
+        ├── categories.json
+        └── logback-test.xml
+
 allure-report-example.png
 pom.xml
-README.md
 testng.xml
+logs/
+allure-results/
 ```
 
 ---
@@ -445,574 +726,647 @@ testng.xml
 # 🏁 How to Run
 
 ### Run full suite:
-
+```
 mvn clean test
-
-### Run a specific test:
-
+```
+### Run a specific test class:
+```
 mvn -Dtest=LoginTest test
-
+```
 ### Override browser:
-
+```
 mvn clean test -Dbrowser=edge
-
 mvn clean test -Dbrowser=firefox
-
 mvn clean test -Dbrowser=chrome
-
-
-### Run headless:
-
+```
+### Run in headless mode:
+```
 mvn clean test -Dheadless=true
+```
 
-### **Execution Methods Overview**
+### Execution methods
 
-| Execution Method | Command | Description |
-|------------------|---------|-------------|
-| **Maven (Surefire + TestNG Suite)** | `mvn clean test` | Executes the entire suite using `testng.xml`, applies listeners, parallel execution, and generates Allure results. |
-| **TestNG Suite (IDE Run)** | Right‑click `testng.xml` → Run | Runs the suite directly from the IDE with all listeners and parallel settings applied. |
-| **Single Test Class** | Run test class in IDE | Useful for debugging or validating a specific module without running the full suite. |
-| **Single Test Method** | Run method in IDE | Fastest way to isolate and debug a specific scenario. |
-| **Allure Report** | `allure serve target/allure-results` | Generates and opens a full Allure report with steps, attachments, retries, and labels. |
+| Method | Command / Action | Description |
+|--------|------------------|-------------|
+| **Maven (Surefire + TestNG)** | `mvn clean test` | Runs the full suite using `testng.xml`, applies listeners, parallel execution, and generates Allure results. |
+| **TestNG Suite (IDE)** | Right‑click `testng.xml` → Run | Executes the suite directly from the IDE with all listeners and parallel settings. |
+| **Single Test Class (IDE)** | Run class | Useful for debugging or validating a specific module. |
+| **Single Test Method (IDE)** | Run method | Fastest way to isolate and debug a scenario. |
+| **System‑Property Overrides** | `mvn clean test -Dbrowser=edge -Dheadless=true -Denv=local` | Overrides browser, headless mode, and environment at runtime. |
+| **Parallel Execution** | `mvn clean test` *(parallel defined in `testng.xml`)* | Executes tests in parallel using TestNG + Surefire configuration. |
+| **Retry‑Enabled Execution** | `mvn clean test -Dretry=true` *(if configured)* | Enables RetryAnalyzer + RetryListener for flaky‑test handling. |
+| **Remote Execution (Selenium Grid)** | `mvn clean test -Dremote=true -DgridUrl=http://localhost:4444` | Runs tests against a remote WebDriver or Selenium Grid. |
+| **Allure Report** | `allure serve target/allure-results` | Opens a full Allure report with steps, logs, screenshots, and metadata. |
 
 ---
 
 # 🏗️ How to Run in CI
 
-This framework is fully CI‑ready and supports:
+This framework is CI‑ready and supports:
 
 - Multi‑browser execution
 - Headless mode
 - Environment‑driven configuration
 - Allure reporting
 
-### Basic CI command:
+### Basic CI command
 
 mvn clean test -Denv=local -Dbrowser=chrome -Dheadless=true
 
 ---
 
-### 📅 Day-by-Day Progress Log
+# 📅 Day‑by‑Day Index
+
+[Day 3](#day-3) ·
+[Day 5](#day-5) ·
+[Day 7](#day-7) ·
+[Day 8](#day-8) ·
+[Day 9](#day-9) ·
+[Day 10](#day-10) ·
+[Day 11](#day-11) ·
+[Day 12](#day-12) ·
+[Day 13](#day-13) ·
+[Day 14](#day-14) ·
+[Day 15](#day-15) ·
+[Day 16](#day-16) ·
+[Day 17](#day-17) ·
+[Day 18](#day-18) ·
+[Day 19](#day-19) ·
+[Day 20](#day-20) ·
+[Day 21](#day-21) ·
+[Day 22](#day-22) ·
+[Day 23](#day-23) ·
+[Day 24](#day-24) ·
+[Day 25](#day-25) ·
+[Day 26](#day-26) ·
+[Day 27](#day-27) ·
+[Day 28](#day-28) ·
+[Day 29](#day-29) ·
+[Day 30](#day-30) ·
+[Day 31](#day-31) ·
+[Day 32](#day-32)
 
 ---
 
-### Day 3 — First Working Selenium + TestNG Login Automation
-
-- Built initial BaseTest
-- Created first LoginTest
-- Validated environment + WebDriver setup
+# 📅 Day‑by‑Day Progress Log
 
 ---
 
-### Day 5 — Explicit Waits + Stability
+## **Day 3 — First Working Selenium + TestNG Login Automation**
 
-- Added WebDriverWait
-- Replaced all direct interactions with explicit waits
-- Eliminated flakiness
+**Key Achievements**
+- Built initial `BaseTest`
+- Created first `LoginTest`
+- Validated environment and WebDriver setup
 
----
-
-### Day 7 — Page Object Model (POM)
-
-- Added LoginPage + HomePage
-- Clean locators + explicit waits
-- Tests rewritten to use POM
+**Outcome**  
+The framework successfully executed its first automated test, establishing the foundation for all future modules.
 
 ---
 
-### Day 8 — Multi‑Page Navigation
+## **Day 5 — Explicit Waits + Stability**
 
-- Added SuccessfulLoginPage
-- Added full login flow test
-- Improved readability + maintainability
+**Key Achievements**
+- Added `WebDriverWait`
+- Replaced direct interactions with explicit waits
+- Eliminated flakiness in early tests
+
+**Outcome**  
+The framework became stable and predictable, enabling reliable test execution.
 
 ---
 
-### Day 9 — Assertions + Allure + Stability
+## **Day 7 — Page Object Model (POM)**
 
-- Added AssertionHelper
-- Added TestListener
-- Cleaned pom.xml
+**Key Achievements**
+- Added `LoginPage` and `HomePage`
+- Implemented clean locators and explicit waits
+- Rewrote tests to use Page Objects
+
+**Outcome**  
+The framework gained structure, readability, and maintainability.
+
+---
+
+## **Day 8 — Multi‑Page Navigation**
+
+**Key Achievements**
+- Added `SuccessfulLoginPage`
+- Implemented full login flow test
+- Improved navigation clarity
+
+**Outcome**  
+The framework now supported multi‑page flows with clean abstractions.
+
+---
+
+## **Day 9 — Assertions + Allure + Stability**
+
+**Key Achievements**
+- Added `AssertionHelper`
+- Added `TestListener`
+- Cleaned `pom.xml`
 - Achieved full green run
 
+**Outcome**  
+Assertions, reporting, and stability reached a professional baseline.
+
 ---
 
-### Day 10 — Flow-Based Scenarios
+## **Day 10 — Flow‑Based Scenarios**
 
-- Added navigation + logout flow tests
+**Key Achievements**
+- Added navigation and logout flow tests
 - Added missing helper methods
 - Improved Allure structure
 
+**Outcome**  
+The framework supported end‑to‑end flows with clean reporting.
+
 ---
 
-### Day 11 — Login Module Refactor
+## **Day 11 — Login Module Refactor**
 
+**Key Achievements**
 - Removed legacy tests
 - Updated Page Objects
 - Added Inputs module (later removed)
 - Achieved full green suite
 
+**Outcome**  
+The login module became clean, modern, and fully stable.
+
 ---
 
-### Day 12 — Alerts Testing + Full Validation
+## **Day 12 — Alerts Testing + Full Validation**
 
+**Key Achievements**
 - Added Alerts module (later removed)
 - Validated entire framework
 - Added Allure environment metadata
 
+**Outcome**  
+The framework gained environment awareness and improved reporting.
+
 ---
 
-### Day 13 — Framework Cleanup
+## **Day 13 — Framework Cleanup**
 
-- Removed Inputs + Alerts
+**Key Achievements**
+- Removed Inputs and Alerts modules
 - Cleaned navigation
-- Updated HomePage
-- Full green run
+- Updated `HomePage`
+- Achieved full green run
+
+**Outcome**  
+The framework returned to a clean, stable baseline.
 
 ---
 
-### Day 14 — Multi‑Browser + ConfigManager Upgrade
+## **Day 14 — Multi‑Browser + ConfigManager Upgrade**
 
-- Added Edge + Firefox support
+**Key Achievements**
+- Added Edge and Firefox support
 - Added manual driver paths
 - Updated ConfigManager
-- Framework now fully portable + CI‑ready
+- Improved portability
+
+**Outcome**  
+The framework became fully cross‑browser and CI‑ready.
 
 ---
 
-### Day 15 — README Enhancements + Architecture Planning
-
-Updated README.md with major improvements:
-
-- Added Allure Report screenshot section
-- Added “Why This Framework Matters” engineering justification
-- Added “Features at a Glance” visual grid
-- Added Multi‑Environment Architecture diagram (planned design)
-- Added Roadmap with GitHub‑style checkboxes
-- Added Contributing and License sections
-- Cleaned formatting, spacing, and section flow
-- Ensured screenshot and diagrams render correctly on GitHub
-
-This completes the documentation milestone for Day 15 and prepares the framework for upcoming multi‑environment and stability enhancements.
-
----
-
-### **Day 16 — Parallel Execution + TestNG Suite Integration**
-Today’s focus was on scaling the framework for real‑world execution patterns. I introduced a dedicated `testng.xml` suite file and configured Maven Surefire to run the suite directly. This allowed the framework to support parallel execution, listener registration, and structured test grouping.
+## **Day 15 — README Enhancements + Architecture Planning**
 
 **Key Achievements**
-- Added `testng.xml` with suite, test, and listener configuration
-- Enabled parallel execution (`parallel="methods"`, `thread-count=2`)
-- Verified stable parallel runs across all Login tests
-- Ensured Allure reporting works seamlessly with suite‑based execution
-- Cleaned up test grouping (`smoke`, `regression`) for CI‑ready organization
+- Added Allure screenshot section
+- Added engineering justification
+- Added Features grid
+- Added architecture diagram
+- Added roadmap, contributing, and license sections
 
-**Outcome:**  
-The framework now executes tests in parallel with clean reporting, predictable structure, and full listener support — a major step toward CI/CD readiness.
+**Outcome**  
+Documentation reached a professional, recruiter‑ready standard.
 
 ---
 
-### **Day 17 — Retry Logic, Listener Architecture, and Stability Validation**
-Today I implemented a professional‑grade retry mechanism using TestNG’s `IRetryAnalyzer` and `IAnnotationTransformer`. This included wiring a custom `RetryListener` and integrating flaky‑test labeling into Allure.
-
-After validating the architecture, I removed the intentional failure and restored the suite to full stability.
+## **Day 16 — Parallel Execution + TestNG Suite Integration**
 
 **Key Achievements**
-- Added `RetryAnalyzer` and `RetryListener` for controlled retry logic
-- Integrated flaky‑test labeling and retry steps into Allure
-- Ensured listeners load correctly through `testng.xml`
-- Restored parallel execution after validation
-- Achieved a fully stable, 100% passing suite with clean Allure reporting
+- Added `testng.xml`
+- Enabled parallel execution
+- Verified stable parallel runs
+- Ensured Allure compatibility
 
-**Outcome:**  
-Retry logic is now part of the framework’s architecture — available when needed, invisible when not. The suite runs cleanly in parallel with zero flakiness and full reporting fidelity.
+**Outcome**  
+The framework now executed in parallel with clean reporting and structure.
 
 ---
 
-### **Day 18 — Exceptions Module + Full Framework Polish**
-Today’s focus was on expanding the framework beyond login testing by implementing the full Exceptions module and validating it end‑to‑end. This included building a complete Page Object, creating five exception‑focused test cases, and performing a full consistency sweep across the entire project.
+## **Day 17 — Retry Logic, Listener Architecture, and Stability**
 
 **Key Achievements**
-- Added `ExceptionsPage` with full support for delayed elements, dynamic DOM changes, disabled inputs, and short‑timeout behavior
-- Implemented `ExceptionsTest` with five real‑world exception scenarios: NoSuchElementException, ElementNotInteractableException, InvalidElementStateException, StaleElementReferenceException, and TimeoutException
-- Ensured all interactions use explicit waits and Allure step annotations for clarity and reporting
-- Performed a full framework polish to align formatting, naming, comments, and structure across all modules
-- Executed the entire suite (8 Login tests + 5 Exceptions tests) with **100% passing results** and no flakiness
-- Updated README with a dedicated CSV‑Driven Testing section to document the data layer of the framework
+- Added `RetryAnalyzer` and `RetryListener`
+- Integrated flaky‑test labeling
+- Ensured listener loading
+- Restored full stability
 
-**Outcome:**  
-The Exceptions module is now fully integrated, stable, and production‑ready. The framework has grown from a single‑module login suite into a multi‑module automation project with clean architecture, consistent style, and complete documentation.
+**Outcome**  
+Retry logic became available on demand without affecting clean runs.
 
 ---
 
-### **Day 19 — Exceptions Module Enhancements + Framework Consistency Upgrades**
-Today’s work focused on elevating the Exceptions module from “functionally complete” to “architecturally consistent” with the rest of the framework. This meant aligning all Page Object interactions with the BasePage API, expanding BasePage with missing universal helpers, and refining the exception‑simulation test to behave exactly as Selenium does in real‑world scenarios.
-
-A key part of today’s work was ensuring that the framework could intentionally reproduce Selenium exceptions *without* compromising the safety and consistency of normal interactions. To achieve this, a new `rawClick()` method was added to BasePage, allowing the framework to bypass wait conditions only when explicitly required for exception testing.
+## **Day 18 — Exceptions Module + Full Framework Polish**
 
 **Key Achievements**
-- Added three foundational helpers to `BasePage` (`clear`, `getAttribute`, `isElementPresent`) to ensure full consistency across all Page Objects
-- Introduced `rawClick()` to safely simulate Selenium exceptions without affecting standard click behavior
-- Updated `ExceptionsPage` to use the new helpers and expose a clean `clickInvisibleSaveButton()` method for controlled exception testing
-- Updated `ExceptionsTest` to rely solely on Page Object methods, maintaining proper encapsulation and avoiding protected BasePage calls
-- Validated all five exception scenarios with accurate Selenium behavior, including the corrected `ElementNotInteractableException` test
-- Executed the full suite with **100% passing tests** and verified clean Allure reporting
-- Confirmed Allure report generation via both Maven (`allure:aggregate`) and CLI (`allure serve target/allure-results`)
+- Added `ExceptionsPage`
+- Added five exception‑focused tests
+- Ensured explicit waits and Allure steps
+- Performed full consistency sweep
 
-**Outcome:**  
-The Exceptions module is now fully aligned with the framework’s architecture, using consistent BasePage utilities and clean Page Object abstractions. Exception simulation is accurate, intentional, and isolated, while normal test flows remain safe and stable. With all enhancements complete, the framework now demonstrates production‑grade consistency, clarity, and maintainability across every module.
+**Outcome**  
+The framework expanded into multi‑module testing with clean architecture.
 
 ---
 
-### **Day 20 — Professional Logging Layer (SLF4J + Logback + MDC + Per‑Test Logs)**
-
-Today’s milestone focused on implementing a production‑grade logging system that mirrors the architecture used in real enterprise automation frameworks. The goal was to create a logging layer that is clean, parallel‑safe, test‑scoped, and fully integrated with Allure reporting. This required coordinated updates across `BaseTest`, `BasePage`, `TestListener`, and a new `logback-test.xml` configuration.
+## **Day 19 — Exceptions Enhancements + BasePage Consistency**
 
 **Key Achievements**
-- Added a complete SLF4J + Logback logging layer with consistent formatting and patterns
-- Implemented MDC (Mapped Diagnostic Context) to tag every log line with the active test name
-- Added a SiftingAppender to automatically generate per‑test log files in `/logs/<TestName>.log`
-- Updated `BaseTest` to set and clear MDC for each test method, ensuring thread‑safe parallel execution
-- Removed legacy lifecycle logging from BaseTest so TestListener fully owns test lifecycle events
-- Updated `TestListener` to use SLF4J instead of `System.out.println`, ensuring MDC is applied everywhere
-- Integrated per‑test log files as Allure attachments for complete debugging visibility
-- Ensured all Page Object actions log through BasePage with consistent, readable formatting
-- Validated parallel execution—each test now produces clean, isolated logs with no cross‑thread contamination
-- Confirmed that `framework.log` rolls daily and captures global framework activity
-- Executed the full suite with 100% passing tests and verified that every log line includes the correct MDC tag
+- Added `clear`, `getAttribute`, `isElementPresent`
+- Added `rawClick()` for controlled exception simulation
+- Updated Page Objects
+- Validated all exception scenarios
 
-**Outcome:**  
-The framework now includes a senior‑level, enterprise‑grade logging system that supports parallel execution, clean debugging, and rich Allure reporting. Every test produces its own dedicated log file, lifecycle events are consistently captured, and the entire logging architecture is now aligned with real‑world automation engineering standards.
+**Outcome**  
+Exception testing became accurate, intentional, and fully encapsulated.
 
-### **Day 21 — Table Module: Dynamic UI, Custom Dropdowns, and Full Data Validation**
+---
 
-Today’s milestone expanded the framework with a complete Table module, covering dynamic filtering, sorting, and data‑driven validation against a live HTML table. This required building a robust `TablePage` with support for custom dropdown widgets, asynchronous UI updates, and dynamic DOM behavior. The work also included stabilizing the module under parallel execution and Maven Surefire.
+## **Day 20 — Professional Logging Layer (SLF4J + Logback + MDC)**
 
 **Key Achievements**
-- Implemented a full `TablePage` with clean locators for language filters, level checkboxes, custom dropdowns, and sorting controls
-- Added `TableTest` with eight real‑world scenarios: language filtering, level filtering, minimum enrollments, combined filters, no‑results state, reset behavior, and sorting by multiple columns
-- Built a generic table‑parsing utility with support for semantic column extraction (`data-col` attributes)
-- Added safe parsing logic to ignore placeholder/empty rows created during UI transitions
-- Implemented custom wait conditions to synchronize with asynchronous table updates
-- Validated the entire module under Maven (`mvn clean test`) with **100% passing tests**
-- Ensured full Allure integration with step‑level reporting and clean parallel execution
+- Added full logging architecture
+- Implemented MDC for per‑test tagging
+- Added per‑test log files
+- Integrated logs into Allure
+- Validated parallel execution
 
-**Outcome:**  
-The Table module is now fully integrated and production‑ready. It demonstrates advanced Selenium capabilities—custom dropdown handling, dynamic waits, DOM‑driven parsing, and multi‑filter validation—while maintaining the framework’s architectural consistency and stability.
+**Outcome**  
+The framework gained enterprise‑grade observability and debugging clarity.
 
 ---
 
-### **Day 22 — Table Module Stabilization + Full Maven Validation**
-
-Today focused on elevating the Table module from “functionally complete” to “enterprise‑stable.” This required refining synchronization logic, improving DOM‑aware parsing, and ensuring the module behaved consistently across IntelliJ, Maven Surefire, and parallel TestNG execution.
+## **Day 21 — Table Module: Dynamic UI + Data Validation**
 
 **Key Achievements**
-- Added robust empty‑row filtering to prevent `NumberFormatException` during async table updates
-- Strengthened `waitForTableToUpdate()` and `waitForLanguageToBe()` to guarantee DOM stability before assertions
-- Finalized custom dropdown handling for the Min Enrollments filter (`#enrollDropdown`)
-- Ensured all table interactions use BasePage helpers for consistent logging and Allure step reporting
-- Validated the entire framework (Login + Exceptions + Table) under `mvn clean test` with **100% passing tests**
-- Confirmed parallel execution stability across all modules
-- Verified clean Allure reporting with accurate step traces, logs, and attachments
+- Built full `TablePage`
+- Added eight real‑world table tests
+- Added table‑parsing utility
+- Implemented async‑safe waits
 
-**Outcome:**  
-The Table module is now fully hardened for CI/CD execution. With all synchronization, parsing, and interaction logic stabilized, the framework delivers consistent, deterministic results across environments. This completes the multi‑module expansion phase and sets the stage for Day 23’s new modules and Day 24’s Allure dashboard + CI integration work.
+**Outcome**  
+The framework handled complex dynamic UI and data‑driven validation.
 
 ---
 
-### **Day 23 — Table Module Enhancements + iFrame Stability + Full Suite Green**
-
-Today’s milestone focused on stabilizing the final moving parts of the framework and ensuring every module behaves consistently under real‑world execution conditions. This included hardening the Table module, completing the environment‑based navigation architecture, and implementing a robust solution for the TinyMCE iFrame editor—one of the most complex UI components in the entire project.
-
-The day ended with a full Maven run (`mvn clean test`) showing **29/29 passing tests**, clean Allure reporting, and complete architectural consistency across all Page Objects.
+## **Day 22 — Table Module Stabilization**
 
 **Key Achievements**
-- Finalized environment‑based URL resolution in `ConfigManager`, enabling clean multi‑environment navigation (`local.base.url`, `stage.base.url`, `prod.base.url`)
-- Updated all Page Objects to use Option‑C navigation for consistent routing across PracticeTestAutomation and Herokuapp modules
-- Implemented a production‑grade TinyMCE iFrame handling strategy:
-    - Closed the read‑only popup safely
-    - Re‑entered the iframe after TinyMCE reloads
-    - Added waits for iframe presence, editor body visibility, and asynchronous text injection
-    - Ensured stable retrieval of the default editor text (“Your content goes here.”)
-- Hardened the Table module with final synchronization and DOM‑stability improvements
-- Validated the entire framework under parallel TestNG execution with **100% passing tests**
-- Confirmed Allure report generation with accurate step traces, logs, and attachments
+- Added empty‑row filtering
+- Strengthened wait conditions
+- Finalized dropdown handling
+- Validated full suite under Maven
 
-**Outcome:**  
-The framework is now fully stable across all modules—Login, Exceptions, Table, Frames, and iFrame. With environment‑based navigation complete and the TinyMCE editor fully stabilized, the project has reached a new level of reliability and architectural polish. This completes the final stabilization milestone before moving into Day 24’s Allure dashboard and CI/CD integration work.
+**Outcome**  
+The Table module became CI‑stable and deterministic.
 
 ---
 
-### **Day 24 — Allure Dashboard Integration + Multi‑Environment Config + Framework Stabilization**
-
-Today’s milestone focused on upgrading the framework’s configuration architecture, integrating a modern JSON‑based ConfigManager, and validating the entire suite under the new system. This included replacing the legacy `config.properties` file, implementing environment‑aware navigation, and ensuring all modules remained stable after the migration. The day ended with a full Maven run showing **29/29 passing tests**, clean Allure reporting, and a fully modernized configuration layer.
-
-#### **Key Achievements**
-- Replaced legacy `config.properties` with a production‑grade `config.json` stored in `src/main/resources`
-- Implemented a new JSON‑based `ConfigManager` using Jackson with support for:
-  - `local`, `stage`, and `prod` environment blocks
-  - System property overrides
-  - `.env` overrides
-  - Cached JSON tree for fast lookups
-- Updated BaseTest and BasePage to use the new configuration system without requiring any code changes
-- Removed the old `.properties` file and validated the framework under the new architecture
-- Executed the full suite (`mvn clean test`) with **100% passing tests** and verified:
-  - Allure report generation
-  - Parallel execution stability
-  - Clean logging and per‑test artifacts
-- Finalized the resource structure by moving `categories.json` and `config.json` into `src/main/resources` for a unified configuration layout
-
-#### **Outcome**
-The framework now uses a modern, scalable, environment‑aware configuration system that aligns with enterprise automation standards. With the JSON migration complete and the suite fully stable, the project is ready for the Day 25–30 enhancement sprint that will polish the architecture before expanding into new test modules.
-
----
-
-### **Day 25 — Artifact System, Summary Metadata, and Retention Policy**
-
-Today’s milestone focused on building a complete, production‑grade artifact system capable of capturing every test’s logs, screenshots, page source, browser logs, and metadata in a clean, timestamped run directory. This required coordinated updates across `TestListener`, `ArtifactManager`, and the configuration layer to ensure the system worked seamlessly under parallel execution.
+## **Day 23 — iFrame Stability + Environment Navigation**
 
 **Key Achievements**
-- Implemented a global run‑level artifact directory under `target/artifacts/<timestamp>`
-- Added automatic creation of per‑test artifact folders with full isolation
-- Captured all major artifact types:
-  - Per‑test logs (via SLF4J + MDC)
-  - Screenshots on failure
-  - Page source snapshots
-  - Browser console logs
-  - metadata.json for each test
-- Added run‑level `summary.json` capturing environment, browser, timestamps, and test counts
-- Implemented automatic zipping of the entire run folder (`run.zip`) for CI/CD consumption
-- Added a retention policy that keeps the last **10** runs and deletes older ones
-- Validated the entire artifact pipeline under `mvn clean test` with parallel execution enabled
+- Finalized environment‑based URL resolution
+- Updated all Page Objects
+- Implemented robust TinyMCE iFrame handling
+- Validated full suite (29/29 passing)
 
-**Outcome:**  
-The framework now produces a complete, structured, and CI‑ready artifact package for every test run. With run‑level metadata, per‑test isolation, and automatic cleanup, the system mirrors the architecture used in enterprise automation pipelines.
+**Outcome**  
+The framework stabilized across all modules and environments.
 
 ---
 
-### **Day 26 — WebDriverFactory Extraction, BasePage Upgrade, and Timeout Architecture**
-
-Today’s work focused on strengthening the core architecture of the framework by extracting a dedicated `WebDriverFactory`, upgrading `BasePage` with unified interaction helpers, and completing the new timeout system introduced in the JSON‑based ConfigManager. The goal was to modernize driver creation, stabilize interactions, and ensure consistent behavior across all modules.
+## **Day 24 — Allure Dashboard + JSON Config Migration**
 
 **Key Achievements**
-- Extracted a full `WebDriverFactory` with support for:
-  - Chrome, Firefox, and Edge
-  - Headless mode
-  - Remote WebDriver (Selenium Grid / cloud providers)
-  - Unified window sizing and CI‑safe flags
-- Added centralized timeout application (page load, script, implicit=0) for all drivers
-- Upgraded `BasePage` with:
-  - Unified `find()` wrapper
-  - Retrying click with JS fallback
-  - Consistent explicit waits
-  - Defensive coding for stale/dynamic elements
-  - Clean SLF4J logging for every interaction
-- Cleaned all Page Objects to remove brittle direct WebDriver calls
-- Updated ConfigManager to support safe defaults for all timeout values
-- Fixed DynamicControls and Exceptions modules to align with the new interaction model
-- Executed a full parallel Maven run with **29/29 passing tests** and clean Allure reporting
+- Replaced `config.properties` with `config.json`
+- Added environment blocks and overrides
+- Updated BaseTest and BasePage
+- Validated full suite under new config
 
-**Outcome:**  
-The framework now has a modern, scalable driver‑creation architecture and a consistent, resilient interaction layer. With BasePage unified and WebDriverFactory extracted, the system is stable, maintainable, and ready for the advanced enhancements planned for Days 27–30.
+**Outcome**  
+The configuration system became modern, scalable, and enterprise‑ready.
 
 ---
 
-### **Day 27 — Logging Architecture Overhaul, BasePage Step Tracing, and Logback Modernization**
-
-Today’s milestone focused on transforming the framework’s logging system into a clean, structured, and enterprise‑grade observability layer. This required coordinated updates across `BasePage`, `Logback`, and the MDC‑driven per‑test logging pipeline to ensure every interaction, wait, navigation, and frame switch is captured with clarity and precision. The result is a fully modernized logging architecture that produces readable, timestamped, step‑numbered traces across console output, global logs, and per‑test artifacts.
+## **Day 25 — Artifact System + Summary Metadata**
 
 **Key Achievements**
-- Upgraded `BasePage` with a production‑grade step‑logging system:
-  - Added step numbering (`[01]`, `[02]`, …) for narrative‑style execution traces
-  - Added duration tracking for every action (e.g., `(142 ms)`)
-  - Implemented clean locator formatting (`[id=username]`, `[xpath=//button]`)
-  - Unified all interactions under `step()` and `stepReturn()` wrappers
-  - Ensured consistent logging across FIND, CLICK, TYPE, WAIT, JS actions, and frame switching
-- Modernized `logback-test.xml` with a unified, aligned pattern:
-  - Timestamp, log level, thread, MDC test name, logger, and message now align cleanly
-  - Console, global `framework.log`, and per‑test logs now share a single pattern
-  - MDC test names are visible in all logs for parallel execution clarity
-- Validated MDC‑routed per‑test logging:
-  - Each test now produces an isolated `<testName>.log` with step‑level detail
-  - Global `framework.log` captures cross‑test activity for debugging
-  - `test.log` remains a clean lifecycle summary (start/pass/fail)
-- Integrated the new logging system with the artifact pipeline:
-  - Per‑test logs copied into each test’s artifact folder
-  - Global logs included for cross‑test debugging
-  - Step‑numbered BasePage logs now appear in all artifact bundles
-- Performed a full framework validation run confirming:
-  - Clean console output
-  - Correct MDC routing
-  - Accurate step numbering and durations
-  - No regressions in Page Objects or TestListener behavior
+- Added global run‑level artifact directory
+- Added per‑test artifact folders
+- Captured logs, screenshots, page source, browser logs
+- Added `summary.json` and retention policy
 
-**Outcome:**  
-The framework now features a polished, professional logging architecture that mirrors the structure used in enterprise automation systems. With step‑numbered traces, duration metrics, unified patterns, and MDC‑driven per‑test logs, the system provides exceptional clarity during debugging and CI/CD analysis. This completes the observability foundation required for the final Days 28–30 enhancements and positions the framework for long‑term maintainability and recruiter‑ready presentation.
+**Outcome**  
+The framework now produces complete, CI‑ready artifact packages.
 
 ---
 
-### **Day 28 — Browser Console Log Exposure, Cross‑Browser Validation, and Framework Stability Confirmation**
-
-Today’s focus was on expanding the framework’s observability layer by introducing a clean, reusable mechanism for exposing browser console logs during test execution. This enhancement adds a valuable debugging capability to the framework, enabling deeper insight into client‑side behavior, JavaScript errors, and runtime warnings that may not surface through UI interactions alone. The work centered on implementing a safe, optional console‑log retrieval method, integrating it with Allure reporting, and validating its behavior across multiple browsers.
+## **Day 26 — WebDriverFactory Extraction + BasePage Upgrade**
 
 **Key Achievements**
-- Added a dedicated console‑log retrieval method to `BasePage`:
-  - Implemented a clean, optional API for collecting browser console logs
-  - Ensured the method integrates seamlessly with the existing step‑logging system
-  - Added an Allure attachment step for improved debugging visibility
-- Added a public wrapper method in `LoginPage`:
-  - Exposed the console‑log feature through a clear, page‑level action
-  - Annotated with `@Step` for consistent reporting and traceability
-- Integrated console‑log capture into a real test flow:
-  - Added `attachBrowserConsoleLogs()` to the `userCanLoginThroughNavigationFlow` test
-  - Confirmed the method executes at the correct point in the test lifecycle
-- Performed cross‑browser validation:
-  - Chrome 145: Confirmed Selenium DevTools mismatch prevents log retrieval (expected)
-  - Firefox: Confirmed WebDriver log retrieval is unsupported (expected)
-  - Both outcomes validated that the framework’s implementation is correct and the limitations are browser‑specific, not architectural
-- Completed a full `mvn clean test` run:
-  - All 33 tests passed successfully
-  - No regressions introduced by the new feature
-  - Allure report generated cleanly with no errors
+- Extracted full WebDriverFactory
+- Added cross‑browser + headless + remote support
+- Unified BasePage interactions
+- Updated timeouts and defaults
 
-**Outcome:**  
-The framework now includes a robust, optional console‑log exposure feature that enhances debugging capabilities without impacting stability or test behavior. Although modern browser limitations restrict log retrieval in certain environments, the implementation itself is correct, safe, and ready for future expansion as browser and Selenium versions evolve. With the full suite passing and the logging pipeline intact, the framework remains stable, maintainable, and aligned with enterprise‑grade expectations as it moves into the final Days 29–30 enhancements.
+**Outcome**  
+Driver creation and interaction layers became modern and resilient.
 
 ---
 
-### **Day 29 — Step‑Counter Architecture Validation, Listener Synchronization, and Maven Parallel Execution Alignment**
-
-Today’s work focused on stabilizing and validating the framework’s execution‑tracking architecture by ensuring consistent, predictable step numbering across the entire test run. This included synchronizing the TestListener, BasePage, and BaseTest lifecycle interactions, aligning Maven Surefire behavior with TestNG’s parallel configuration, and confirming that the global step‑counter model functions cleanly across sequential and parallel execution modes.
+## **Day 27 — Logging Architecture Overhaul**
 
 **Key Achievements**
-- Validated the global step‑counter architecture:
-  - Confirmed that step numbers increment continuously across the entire run
-  - Ensured no cross‑test contamination through proper ThreadLocal isolation
-  - Verified that this model improves debugging clarity by providing a single, unambiguous step index for the entire suite
-- Synchronized TestListener, BasePage, and BaseTest:
-  - Ensured TestListener lifecycle events fire consistently before page‑level actions
-  - Confirmed MDC routing is correct for all tests and threads
-  - Validated that per‑test artifact directories, metadata, and logs are created reliably
-- Updated Maven Surefire configuration:
-  - Enabled parallel execution to match TestNG’s configuration
-  - Ensured consistent behavior between IntelliJ and Maven runs
-  - Preserved compatibility with Allure, logging, and artifact generation
-- Re‑validated Day 28 enhancements:
-  - Confirmed browser console‑log exposure works as designed
-  - Verified Allure attachments for screenshots, page source, browser logs, and per‑test logs
-  - Ensured no regressions after listener and lifecycle updates
-- Completed a full `mvn clean test` run:
-  - All 33 tests passed successfully
-  - Step numbering, logging, and artifacts behaved consistently across the suite
-  - Allure report generated cleanly with environment metadata and per‑test attachments
+- Added step numbering and durations
+- Unified log patterns
+- Validated MDC routing
+- Integrated logs into artifact pipeline
 
-**Outcome:**  
-The framework now has a fully validated, enterprise‑grade execution‑tracking model with synchronized lifecycle events, predictable step numbering, and stable parallel behavior across both IntelliJ and Maven. This global step‑counter approach enhances debugging clarity, improves communication when reporting failures, and provides a clean chronological trace of the entire run. With Days 28–29 complete, the framework is positioned for final polish and documentation in Day 30.
+**Outcome**  
+The framework gained clean, readable, step‑level execution traces.
 
 ---
 
-### **Day 30 — Final Polish, Full‑Suite Validation, and Completion of Days 25–30 Enhancements**
-
-Today’s work focused on completing the final round of polish across the framework and validating that all enhancements from Days 25–30 function cohesively under a full end‑to‑end execution. With the architectural upgrades, medium‑value helpers, and low‑value refinements now fully integrated, the framework has reached a stable, production‑ready state that reflects the standards of a senior‑level automation platform.
+## **Day 28 — Browser Console Log Exposure**
 
 **Key Achievements**
-- Completed the final low‑value polish items:
-  - Verified highlight‑element debug helper remains optional and non‑intrusive
-  - Confirmed `waitForErrorMessage()` behaves consistently across login flows
-  - Ensured `getTestName()` is used cleanly across TestListener, MDC, and artifact paths
-  - Validated per‑test timestamps and MDC routing for all lifecycle events
-  - Ensured Allure metadata (Description, Severity, Story, Feature, Epic) is consistent across all modules
-- Performed a full framework validation pass:
-  - All 33 tests passed with **0 failures**, **0 errors**, and **0 skips**
-  - Dynamic Controls tests ran without flakiness, confirming stability of loading‑indicator logic
-  - Login positive and negative flows behaved consistently, including Enter‑key submission and error‑message assertions
-  - CSV‑driven tests validated the correctness of `CSVUtils`, data providers, and exception handling
-- Confirmed artifact and reporting pipeline stability:
-  - Per‑test directories created reliably with logs, screenshots, page source, browser logs, and metadata
-  - Global run summary generated and zipped cleanly
-  - Allure report built successfully with complete attachments and environment metadata
-- Re‑validated listener, logging, and lifecycle synchronization:
-  - MDC isolation confirmed for all tests and threads
-  - Step counter, timestamps, and per‑test logs behaved predictably across the suite
-  - No regressions introduced by Days 28–29 lifecycle updates
+- Added console‑log retrieval API
+- Integrated Allure attachments
+- Performed cross‑browser validation
+- Validated full suite (33/33 passing)
 
-**Outcome:**  
-The framework is now fully polished and stable, with all enhancements from Days 25–30 implemented, validated, and functioning cohesively. The system reflects a mature, enterprise‑grade architecture with clean logging, reliable synchronization, expressive Page Objects, robust test modules, and a complete artifact pipeline. With the technical work complete, the framework is now ready for the final documentation pass in Day 31, where the README will be rewritten to reflect the finished architecture and professional polish of the completed system.
+**Outcome**  
+The framework gained deeper debugging visibility without instability.
 
 ---
 
-### 🚧 Upcoming Enhancements (Planned)
+## **Day 29 — Step‑Counter Validation + Listener Sync**
 
-### Table Module
-Table parsing utilities  
-Sorting/filtering tests
+**Key Achievements**
+- Validated global step‑counter architecture
+- Synchronized lifecycle events
+- Updated Maven Surefire parallel config
+- Re‑validated artifact and reporting pipeline
 
-### Framework Enhancements
-Allure screenshots on failure  
-.env support for secrets  
-Multi‑environment execution  
-README visuals + architecture diagram
+**Outcome**  
+Execution tracking became predictable, synchronized, and CI‑aligned.
 
 ---
 
-### 🗺️ Roadmap
+## **Day 30 — Final Polish + Full‑Suite Validation**
+
+**Key Achievements**
+- Completed final polish items
+- Validated all modules
+- Confirmed artifact and reporting stability
+- Ensured consistent metadata and logging
+
+**Outcome**  
+The framework reached a fully polished, production‑ready state with **33/33 passing tests** and complete architectural consistency.
+
+---
+
+## **Day 31 — AI‑Augmented QA Strategy Integration**
+
+**Key Achievements**
+- Added a dedicated section outlining how AI‑assisted testing fits into the framework
+- Documented industry‑aligned AI practices (test generation, locator healing, flakiness analysis)
+- Defined a clear learning plan based on leading QA organizations and conferences
+- Outlined future AI‑driven enhancements planned for Weeks 7–8
+- Ensured the README reflects the long‑term direction of the framework
+
+**Outcome**  
+The project now includes a forward‑looking AI strategy that aligns with modern QA trends and positions the framework for future AI‑driven enhancements.
+
+---
+
+## **Day 32 — Final README Enhancements + Documentation Polish**
+
+**Key Achievements**
+- Added missing high‑value documentation sections to the README
+- Improved structure, spacing, and visual hierarchy
+- Added architecture diagram, module overview, tech stack, and roadmap timeline
+- Ensured consistent header formatting and anchor links
+- Polished language and clarified engineering intent across sections
+
+**Outcome**  
+The README is now complete, polished, and recruiter‑ready, with clear architecture, module summaries, and a professional visual roadmap.
+
+---
+
+# 🤖 AI‑Augmented QA Strategy (Day 31)
+
+Modern QA is rapidly evolving toward AI‑assisted testing, and this framework is intentionally designed to grow alongside those changes. As part of my 60‑day upskilling plan, I am incorporating AI‑augmented QA practices that complement—not replace—traditional automation engineering.
+
+## 🌟 How AI Enhances QA
+AI is reshaping quality engineering through capabilities such as:
+
+- AI‑generated test cases and scenario expansion
+- AI‑driven exploratory testing insights
+- Defect clustering and root‑cause pattern detection
+- Locator‑healing and flakiness reduction
+- Synthetic test data generation
+- Risk‑based test prioritization
+
+These enhancements strengthen coverage, reduce maintenance, and accelerate feedback loops.
+
+## 📘 My AI‑QA Learning Plan
+I am actively following industry‑leading QA organizations to stay aligned with modern testing practices:
+
+- **Coveros** — DevOps/QA research, webinars, and whitepapers
+- **TechWell / StickyMinds** — articles, case studies, and conference talks
+- **STAR East / STAR West** — keynote sessions on AI in testing
+
+This ensures my AI‑QA approach is grounded in real industry trends.
+
+## 🔧 Future AI Integration Into This Framework
+The framework’s clean architecture makes it ideal for future AI‑driven enhancements, including:
+
+- AI‑generated test data feeding into TestNG DataProviders
+- AI‑assisted locator healing for dynamic UI changes
+- AI‑based flakiness analysis using TestListener logs
+- AI‑suggested positive, negative, and edge‑case scenarios
+- AI‑enhanced exploratory testing notes and heuristics
+
+These enhancements will be explored during Weeks 7–8 of the 60‑day plan.
+
+---
+
+# 🛠️ Upcoming Enhancements (Updated Roadmap)
+
+## Short‑Term (Weeks 5–6)
+- Dynamic Controls module
+- Drag‑and‑Drop module
+- File Upload module
+- Shadow DOM module
+- Table module expansion (sorting + pagination, if UI updates)
+
+## Mid‑Term (Weeks 7–8)
+- AI‑generated test data integration
+- AI‑assisted locator healing prototype
+- AI‑driven flakiness analysis
+- AI‑suggested scenario generation for Login + Table modules
+
+## Long‑Term (Weeks 9–10)
+- API testing layer (REST Assured)
+- Multi‑environment execution (local, QA, stage, prod)
+- Parallel execution profiles (local vs CI)
+- Allure dashboards + history server
+- CI/CD pipeline expansion (matrix builds, nightly runs)
+
+---
+
+# 🚀 Future Enhancements
+
+Planned improvements for the next phase:
+
+- REST Assured API layer
+- Shadow DOM support
+- Drag‑and‑Drop module
+- GitHub Pages Allure history publishing
+- AI‑assisted locator healing
+- AI‑generated test data expansion
+
+---
+
+# 🗺️ Roadmap
 
 A clear view of what’s coming next for this framework:
 
-### Core Enhancements
+## Core Enhancements
 - [x] Exceptions module (page object + validation tests)
-- [ ] Table module (table parsing utilities + sorting/filtering tests)
+- [x] Table module (parsing utilities + sorting/filtering tests)
 - [ ] Allure screenshots on failure
-- [ ] Multi‑environment execution (local, qa, stage)
-- [ ] .env support for secrets and environment variables
+- [ ] Multi‑environment execution (local, QA, stage) — execution profiles + CI switching
+- [ ] `.env` support for secrets and environment variables
 
-### Architecture & Stability
-- [ ] Retry logic for flaky CI environments
-- [ ] Logging improvements (SLF4J or Log4j2)
-- [ ] Parallel execution support
-- [ ] Enhanced ConfigManager with typed properties
+## Architecture & Stability
+- [ ] Retry logic for flaky CI environments (CI‑specific profiles + analytics)
+- [x] Logging improvements (SLF4J + Logback + MDC + step logging)
+- [x] Parallel execution support (TestNG + Maven Surefire)
+- [ ] Enhanced JSON ConfigManager (typed accessors + schema validation)
 
-### CI/CD & Reporting
+## CI/CD & Reporting
 - [ ] Allure history tracking in CI
-- [ ] Allure categories.json for failure grouping
-- [ ] Upload Allure report as a GitHub Pages artifact
-- [ ] Add CI matrix for multi‑browser runs
+- [ ] `categories.json` for failure grouping
+- [ ] Publish Allure report via GitHub Pages
+- [ ] CI matrix for multi‑browser runs
 
-### Documentation & Developer Experience
-- [ ] Add demo GIF of test execution
-- [ ] Add Contributing guidelines
-- [ ] Add full API documentation for utilities
-- [ ] Add architecture diagram for multi‑environment setup
-
----
-
-### 🤝 Contributing
-
-Contributions are welcome!
-
-If you’d like to improve the framework, add new modules, or enhance documentation:
-
-Fork the repository
-
-Create a feature branch
-
-Commit your changes with clear messages
-
-Open a pull request describing your update
-
-Please ensure your changes follow the existing project structure and coding style.
+## Documentation & Developer Experience
+- [ ] Demo GIF of test execution
+- [ ] Contributing guidelines
+- [ ] Full API documentation for utilities
+- [ ] Multi‑environment architecture diagram
 
 ---
 
-### 📄 License
+# 📊 Visual Roadmap Timeline
 
-This project is licensed under the MIT License.
+A high‑level view of the framework’s planned evolution across the 60‑day journey.
 
-You are free to use, modify, and distribute this framework for personal or commercial purposes.
+```
+Days 1–10  | Foundations
+-----------|---------------------------------------------------------
+           | Selenium + TestNG setup
+           | Page Object Model (POM)
+           | Explicit waits + stability
+           | Assertions + Allure integration
+           | Multi‑page flows + cleanup
+
+Days 11–20 | Architecture & New Modules
+-----------|---------------------------------------------------------
+           | Login module refactor
+           | Exceptions module (5 scenarios)
+           | Table module (dynamic UI + parsing)
+           | iFrame + TinyMCE stabilization
+           | Parallel execution (TestNG + Surefire)
+           | Retry logic + listener architecture
+           | Professional logging layer (SLF4J + Logback + MDC)
+
+Days 21–30 | Enterprise‑Grade Enhancements
+-----------|---------------------------------------------------------
+           | JSON‑based ConfigManager
+           | Environment‑aware navigation
+           | WebDriverFactory extraction
+           | Unified BasePage interaction layer
+           | Artifact system (logs, screenshots, metadata)
+           | Browser console log exposure
+           | Step‑counter architecture
+           | Full‑suite validation (33/33 passing)
+
+Days 31–40 | AI‑Augmented QA (Current Phase)
+-----------|---------------------------------------------------------
+           | AI‑generated test data
+           | AI‑assisted locator healing
+           | AI‑driven flakiness analysis
+           | AI‑suggested scenario expansion
+           | Exploratory testing insights
+
+Days 41–50 | Advanced Modules & API Layer
+-----------|---------------------------------------------------------
+           | Dynamic Controls module
+           | Drag‑and‑Drop module
+           | File Upload module
+           | Shadow DOM module
+           | REST Assured API testing layer
+
+Days 51–60 | CI/CD, Reporting & Final Polish
+-----------|---------------------------------------------------------
+           | Multi‑environment execution profiles
+           | `.env` secrets support
+           | Allure history server
+           | GitHub Pages report publishing
+           | CI matrix (multi‑browser)
+           | Documentation polish + demo GIF
+           | Final recruiter‑ready packaging
+```
 
 ---
 
-👤 Author: 
-Adam Brouwer    
+# 🤝 Contributing
+
+Contributions are welcome.
+
+To contribute:
+
+1. Fork the repository
+2. Create a feature branch
+3. Commit changes with clear, descriptive messages
+4. Open a pull request summarizing your update
+
+Please follow the existing project structure and coding style.
+
+---
+
+# 📄 License
+
+This project is licensed under the **MIT License**.  
+You may use, modify, and distribute this framework for personal or commercial purposes.
+
+---
+
+# 👤 Author
+
+**Adam Brouwer**  
 QA Analyst / SDET in training  
 Building a full automation framework as part of a structured 60‑day upskilling plan.
