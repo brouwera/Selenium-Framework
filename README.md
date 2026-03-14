@@ -1427,6 +1427,21 @@ The project now includes a forward‑looking AI strategy that aligns with modern
 **Outcome**  
 The README is now complete, polished, and recruiter‑ready, with clear architecture, module summaries, and a professional visual roadmap.
 
+---
+
+## **Day 33 — CI Pipeline Fixes + README Polish + Allure History Support**
+
+**Key Achievements**
+- Fixed the GitHub Actions CI pipeline, including Chrome installation, headless execution, and driver autodetection
+- Added Allure history support with persistent trend data across CI runs
+- Updated README with new sections (Environment Configuration, CI Pipeline, Allure Reporting)
+- Added Back to Top links across all major sections for improved navigation
+- Cleaned up spacing, separators, and code block formatting throughout the README
+- Added LinkedIn link to the Author section and refreshed the Allure report screenshot
+
+**Outcome**  
+The framework is now fully CI‑ready with stable headless execution, Allure history retention, and a polished, professional README that reflects the complete architecture and capabilities of the project.
+
 <p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
 
 ---
