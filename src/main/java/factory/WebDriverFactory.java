@@ -58,8 +58,8 @@ public class WebDriverFactory {
 
     private static WebDriver createChromeDriver(boolean headless) {
 
-        // Match ChromeDriver to GitHub Actions Chrome version
-        WebDriverManager.chromedriver().browserVersion("stable").setup();
+        // Auto-detect installed Chrome version (fixes CI mismatch)
+        WebDriverManager.chromedriver().setup();
 
         ChromeOptions options = buildChromeOptions(headless);
 
