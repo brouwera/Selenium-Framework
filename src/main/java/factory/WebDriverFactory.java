@@ -57,9 +57,18 @@ public class WebDriverFactory {
     // ============================================================
 
     private static WebDriver createChromeDriver(boolean headless) {
-        WebDriverManager.chromedriver().setup();
+
+        // --- CI FIX: Force WebDriverManager to match GitHub Actions Chrome ---
+        WebDriverManager.chromedriver().browserVersion("stable").setup();
 
         ChromeOptions options = buildChromeOptions(headless);
+
+        // --- CI FIX: Explicitly set Chrome binary when running in GitHub Actions ---
+        if (isCiEnvironment()) {
+            log.info("Detected CI environment — setting Chrome binary to /usr/bin/google-chrome");
+            options.setBinary("/usr/bin/google-chrome");
+        }
+
         ChromeDriver driver = new ChromeDriver(options);
 
         applyTimeouts(driver);
@@ -195,7 +204,6 @@ public class WebDriverFactory {
         driver.manage().timeouts().pageLoadTimeout(pageLoad);
         driver.manage().timeouts().scriptTimeout(script);
 
-        // Enforce implicitWait=0 as a best practice
         driver.manage().timeouts().implicitlyWait(Duration.ZERO);
     }
 
@@ -226,5 +234,13 @@ public class WebDriverFactory {
     private static void applyWindowSize(FirefoxOptions options) {
         options.addArguments("--width=" + WINDOW_WIDTH);
         options.addArguments("--height=" + WINDOW_HEIGHT);
+    }
+
+    // ============================================================
+    // CI environment detection
+    // ============================================================
+
+    private static boolean isCiEnvironment() {
+        return System.getenv("GITHUB_ACTIONS") != null;
     }
 }
