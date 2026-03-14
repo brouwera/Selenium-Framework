@@ -117,6 +117,15 @@
             <version>${logback.version}</version>
         </dependency>
 
+        <!-- ========================================================= -->
+        <!--                     JSON FOR API TESTS                   -->
+        <!-- ========================================================= -->
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20231013</version>
+        </dependency>
+
     </dependencies>
 
     <!-- ========================================================= -->
@@ -162,23 +171,24 @@
                 </executions>
             </plugin>
 
-            <!-- Surefire Plugin (UPDATED WITH PARALLEL EXECUTION) -->
+            <!-- Surefire Plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${surefire.version}</version>
                 <configuration>
 
-                    <!-- ⭐ ENABLE PARALLEL EXECUTION ⭐ -->
+                    <!-- Parallel execution -->
                     <parallel>methods</parallel>
                     <threadCount>2</threadCount>
                     <useUnlimitedThreads>false</useUnlimitedThreads>
 
-                    <!-- ⭐ REQUIRED FOR LOGGING + ALLURE ⭐ -->
+                    <!-- Required for logging + Allure -->
                     <useSystemClassLoader>false</useSystemClassLoader>
 
+                    <!-- Default suite: run UI + API together -->
                     <suiteXmlFiles>
-                        <suiteXmlFile>testng.xml</suiteXmlFile>
+                        <suiteXmlFile>combined-suite.xml</suiteXmlFile>
                     </suiteXmlFiles>
 
                     <systemPropertyVariables>
@@ -189,5 +199,75 @@
 
         </plugins>
     </build>
+
+    <!-- ========================================================= -->
+    <!--                         PROFILES                          -->
+    <!-- ========================================================= -->
+    <profiles>
+
+        <!-- UI TESTS -->
+        <profile>
+            <id>ui</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <suiteXmlFiles>
+                                <suiteXmlFile>testng.xml</suiteXmlFile>
+                            </suiteXmlFiles>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- API TESTS -->
+        <profile>
+            <id>api</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <suiteXmlFiles>
+                                <suiteXmlFile>api-suite.xml</suiteXmlFile>
+                            </suiteXmlFiles>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <!-- UI + API TESTS -->
+        <profile>
+            <id>all</id>
+            <activation>
+                <activeByDefault>false</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <suiteXmlFiles>
+                                <suiteXmlFile>combined-suite.xml</suiteXmlFile>
+                            </suiteXmlFiles>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+    </profiles>
 
 </project>

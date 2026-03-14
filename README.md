@@ -1,5 +1,5 @@
 <h1 align="center">Selenium Test Automation Framework</h1>
-<h3 align="center">Enterprise‑Grade UI Automation with Selenium, TestNG, Allure, and GitHub Actions</h3>
+<h3 align="center">Enterprise‑Grade UI + API Automation with Selenium, TestNG, Allure, and GitHub Actions</h3>
 
 A clean, maintainable, and professional Selenium + TestNG automation framework built for the **Practice Test Automation** site as part of a structured 60‑day QA Automation Upskill Plan.
 
@@ -22,6 +22,18 @@ A clean, maintainable, and professional Selenium + TestNG automation framework b
   <!-- Allure History -->
   <img src="https://img.shields.io/badge/Allure-History-blue?style=flat-square" alt="Allure History">
 
+  <!-- API Testing -->
+  <img src="https://img.shields.io/badge/API-Testing-blue?style=flat-square" alt="API Testing">
+
+  <!-- Maven Build -->
+  <img src="https://img.shields.io/badge/Maven-Build-orange?style=flat-square" alt="Maven Build">
+
+  <!-- Maven Profiles -->
+  <img src="https://img.shields.io/badge/Maven-Profiles-success?style=flat-square" alt="Maven Profiles">
+
+  <!-- Tests Passing -->
+  <img src="https://img.shields.io/badge/Tests-35%20Passing-brightgreen?style=flat-square" alt="Tests Passing">
+
   <!-- Java -->
   <img src="https://img.shields.io/badge/Java-17-blue?style=flat-square" alt="Java 17">
 
@@ -38,7 +50,7 @@ A clean, maintainable, and professional Selenium + TestNG automation framework b
 
 <p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
 
-~~---
+---
 
 # 📚 Table of Contents
 
@@ -65,12 +77,16 @@ A clean, maintainable, and professional Selenium + TestNG automation framework b
 21. [Completed Features](#-completed-features)
 22. [Project Structure](#-project-structure)
 23. [How to Run](#-how-to-run)
-24. [How to Run in CI](#-how-to-run-in-ci)
-25. [AI‑Augmented QA Strategy](#-ai-augmented-qa-strategy-day-31)
-26. [Day‑by‑Day Progress Log](#-day-by-day-progress-log)
-27. [Upcoming Enhancements](#-upcoming-enhancements-updated-roadmap)
-28. [Future Enhancements](#-future-enhancements)
-29. [Author](#-author)
+24. [Running Tests with Maven Profiles](#-running-tests-with-maven-profiles)
+25. [How to Run in CI](#-how-to-run-in-ci)
+26. [AI‑Augmented QA Strategy](#-ai-augmented-qa-strategy-day-31)
+27. [Day‑by‑Day Progress Log](#-day-by-day-progress-log)
+28. [Upcoming Enhancements](#-upcoming-enhancements-updated-roadmap)
+29. [Future Enhancements](#-future-enhancements)
+30. [Visual Roadmap Timeline](#-visual-roadmap-timeline)
+31. [Contributing](#-contributing)
+32. [License](#-license)
+33. [Author](#-author)
 
 <p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
 
@@ -89,8 +105,9 @@ This 30‑day engineering log documents the evolution of a modern, enterprise‑
 - Modules covering Login, Exceptions, Dynamic Controls, Frames, iFrame, and Table testing
 - A hardened WebDriverFactory with cross‑browser and headless support
 - A unified BasePage interaction layer with step numbering, durations, and defensive waits
+- A lightweight API testing layer with JSON parsing, status validation, and dedicated Maven profiles
 
-Across 30 days, the framework matured through iterative enhancements, architectural refactors, stability passes, and CI‑ready validation — culminating in **33/33 passing tests**, clean Allure reports, and a fully modernized automation platform aligned with real enterprise standards.
+Across 30 days, the framework matured through iterative enhancements, architectural refactors, stability passes, and CI‑ready validation — culminating in **35/35 passing tests** (UI + API), clean Allure reports, and a fully modernized automation platform aligned with real enterprise standards.
 
 <p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
 
@@ -116,9 +133,10 @@ It demonstrates:
 - Step‑numbered logging with SLF4J + Logback + MDC
 - Per‑test artifact directories with logs, screenshots, and metadata
 - Multi‑browser execution (Chrome, Edge, Firefox) + remote WebDriver support
+- Lightweight API testing layer with JSON parsing and status/body validation
 - CI/CD readiness with GitHub Actions
 
-All 33 tests across Login, Exceptions, Table, Frames, and iFrame modules currently pass with **zero failures** across all supported browsers.
+All 35 tests across UI and API modules currently pass with **zero failures** across all supported browsers.
 
 <p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
 
@@ -146,16 +164,17 @@ This framework is built using a modern, industry-standard automation stack:
 - **Java 17** — primary programming language
 - **Selenium WebDriver 4.18.1** — browser automation
 - **TestNG 7.10** — test runner + annotations
-- **Maven** — build + dependency management
-- **Allure Reports** — rich test reporting
+- **Maven** — build + dependency management with UI/API profiles
+- **Allure Reports** — rich test reporting with steps, logs, screenshots, and history
 - **WebDriverManager** — automatic driver resolution
 - **WebDriverFactory** — centralized driver creation (local, headless, remote)
 - **Logback + SLF4J + MDC** — enterprise‑grade logging and per‑test log routing
 - **JSON‑based ConfigManager** — multi‑environment configuration with overrides
-- **GitHub Actions** — CI/CD pipeline
-- **Page Object Model (POM)** — maintainable architecture
+- **GitHub Actions** — CI/CD pipeline with headless Chrome execution
+- **Page Object Model (POM)** — maintainable UI architecture
 - **ThreadLocal WebDriver** — parallel‑ready design
-- **CSV Test Data** — data-driven testing
+- **CSV Test Data** — data-driven testing for UI flows
+- **Lightweight API Layer** — ApiClient, ApiBaseTest, and JSON parsing for REST validation
 
 <p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
 
@@ -170,7 +189,8 @@ This framework uses a JSON‑based configuration system designed for clarity, po
 ## Key Settings (config.json)
 - **browser** — chrome, edge, firefox
 - **headless** — local GUI mode by default
-- **baseUrl** — application under test
+- **baseUrl** — UI application under test
+- **apiBaseUrl** — API endpoint base URL
 - **timeouts** — page load + script timeouts
 - **remote** — enable Selenium Grid execution
 
@@ -207,7 +227,18 @@ mvn clean test -Denv=local
 mvn clean test -Dremote=true -DgridUrl=http://localhost:4444
 ```
 
-This makes the framework fully environment‑agnostic and CI‑ready.
+---
+
+## Profile‑Aware Configuration
+Maven profiles automatically select the correct suite:
+
+```
+mvn clean test -Pui     # UI suite
+mvn clean test -Papi    # API suite
+mvn clean test -Pall    # Combined UI + API suite
+```
+
+This makes the framework fully environment‑agnostic, profile‑aware, and CI‑ready.
 
 <p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
 
@@ -237,12 +268,14 @@ Version upgrades follow a controlled process:
 The framework follows a layered testing strategy:
 
 - **UI Tests** validate real user flows across Login, Exceptions, Table, Frames, iFrame, and Dynamic Controls.
+- **API Tests** validate REST endpoints using a lightweight API client, JSON parsing, and status/body assertions.
 - **Data‑Driven Tests** ensure broad coverage of positive and negative scenarios.
 - **Resilient Interactions** prevent flakiness through explicit waits, retrying click, and unified find().
-- **Parallel Execution** increases throughput and validates thread safety.
+- **Parallel Execution** increases throughput and validates thread safety across UI and API layers.
+- **Profile‑Based Execution** allows running UI‑only, API‑only, or combined suites via Maven profiles.
 - **Artifact‑Driven Debugging** ensures every failure is diagnosable through logs, screenshots, and metadata.
 
-This approach mirrors real enterprise QA practices and ensures both stability and scalability.
+This approach mirrors real enterprise QA practices and ensures both stability and scalability across UI and API layers.
 
 <p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
 
@@ -259,6 +292,7 @@ flowchart TD
         TT[TableTest]
         FT[FramesTest]
         IFT[iFrameTest]
+        AT[ApiTests]
     end
 
     subgraph DataLayer[Data Layer]
@@ -268,12 +302,18 @@ flowchart TD
 
     subgraph BaseLayer[Base Layer]
         BT[BaseTest]
+        ABT[ApiBaseTest]
         TL[TestListener]
         RA[RetryAnalyzer]
         RL[RetryListener]
         CM[ConfigManager (JSON)]
         WF[WebDriverFactory]
         AM[ArtifactManager]
+    end
+
+    subgraph ApiLayer[API Layer]
+        AC[ApiClient]
+        AR[ApiResponse]
     end
 
     subgraph PageObjects[Page Objects]
@@ -292,20 +332,30 @@ flowchart TD
         EX[CsvParsingException]
     end
 
+    %% UI Test → Data
     LT --> DP
     DP --> CSV
 
+    %% UI Tests → BaseTest
     LT --> BT
     ET --> BT
     TT --> BT
     FT --> BT
     IFT --> BT
 
+    %% API Tests → ApiBaseTest
+    AT --> ABT
+
+    %% Base Layer Dependencies
     BT --> CM
     BT --> TL
     BT --> WF
     TL --> AM
 
+    ABT --> AC
+    ABT --> AR
+
+    %% Page Object Dependencies
     LT --> LP
     LP --> BP
     HP --> BP
@@ -323,31 +373,32 @@ flowchart TD
     IFT --> IFP
     IFP --> BP
 
+    %% Utils
     LT --> Utils
     ET --> Utils
     TT --> Utils
     FT --> Utils
     IFT --> Utils
+    AT --> Utils
 ```
-
-<p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
 
 ---
 
 # 📝 Logging Architecture
 
-This framework includes a production‑grade logging system built with **SLF4J + Logback**, designed for clarity, debuggability, and parallel execution. It uses **Mapped Diagnostic Context (MDC)** and a **SiftingAppender** to generate clean, isolated logs for every test method.
+This framework includes a production‑grade logging system built with **SLF4J + Logback**, designed for clarity, debuggability, and parallel execution. It uses **Mapped Diagnostic Context (MDC)** and a **SiftingAppender** to generate clean, isolated logs for every test method across both UI and API layers.
 
 ---
 
 ## 🔹 Key Capabilities
 
 - Per‑test log files automatically created in `/logs/<TestName>.log`
-- MDC tagging ensures every log line is associated with the correct test
+- MDC tagging ensures every log line is associated with the correct test (UI or API)
 - Thread‑safe logging for parallel TestNG execution
 - Action‑level logging from every Page Object method
+- Request/response logging for API tests through `ApiBaseTest` and `ApiClient`
 - Lifecycle logging from TestListener (start, pass, fail, skip)
-- Allure attachments for screenshots, page source, browser logs, and per‑test logs
+- Allure attachments for screenshots, page source, browser logs, API responses, and per‑test logs
 - Rolling `framework.log` capturing global framework activity
 
 ---
@@ -361,7 +412,7 @@ Every BasePage action is logged with:
 - Clean locator formatting (`[id=username]`, `[xpath=//button]`)
 - Unified patterns across console, framework.log, and per‑test logs
 
-This creates a readable, narrative‑style execution trace for every test.
+API tests also follow the same MDC pattern, with request/response logs grouped under the test’s MDC tag.
 
 ---
 
@@ -376,7 +427,7 @@ All logs now share a single, modernized pattern including:
 - Logger
 - Message
 
-This ensures consistent formatting across all log destinations.
+This ensures consistent formatting across UI and API logs.
 
 ---
 
@@ -387,6 +438,7 @@ The logging system is fully integrated with the artifact pipeline:
 - Per‑test logs copied into each test’s artifact directory
 - Global logs included in the run‑level summary
 - Step‑numbered logs appear in all zipped artifact bundles
+- API tests include request/response logs in their artifact folders
 - Retention policy keeps the last 10 runs
 
 This mirrors enterprise‑grade CI/CD debugging workflows.
@@ -400,9 +452,10 @@ Each test method receives a unique MDC value:
 ```
 LoginTest.loginDataDrivenTest
 ExceptionsTest.testEditRow1
+ApiTests.getUserDetails
 ```
 
-This is set in `BaseTest`:
+This is set in `BaseTest` and `ApiBaseTest`:
 
 ```java
 String testName = this.getClass().getSimpleName() + "." + method.getName();
@@ -415,17 +468,19 @@ Every log line includes the MDC tag:
 
 ```
 21:34:53.651 INFO  [TestNG-test-All Tests-1] [LoginTest.loginDataDrivenTest] pages.HomePage - Clicking element...
+21:34:53.652 INFO  [TestNG-test-All Tests-2] [ApiTests.getUserDetails] api.ApiClient - Sending GET /users/1
 ```
 
 ---
 
 ## 🔹 Per‑Test Log Files (SiftingAppender)
 
-Logback’s `SiftingAppender` automatically routes logs into separate files based on MDC:
+Logback’s SiftingAppender automatically routes logs into separate files based on MDC:
 
 ```
 logs/LoginTest.loginDataDrivenTest.log
 logs/ExceptionsTest.testEditRow1.log
+logs/ApiTests.getUserDetails.log
 ```
 
 This makes debugging extremely fast—each test has a clean, isolated log.
@@ -438,12 +493,13 @@ This makes debugging extremely fast—each test has a clean, isolated log.
 
 - Test start/end logging
 - Pass/fail/skip events
-- Screenshot attachments
-- Page source attachments
-- Browser console logs
+- Screenshot attachments (UI tests)
+- Page source attachments (UI tests)
+- Browser console logs (UI tests)
 - Per‑test log file attachments
+- API request/response logs (API tests)
 
-All lifecycle logs flow through Logback (no `System.out.println`), ensuring MDC is always applied.
+All lifecycle logs flow through Logback (no System.out.println), ensuring MDC is always applied.
 
 Example lifecycle log:
 
@@ -453,22 +509,24 @@ Example lifecycle log:
 
 ---
 
-## 🔹 Page Object Action Logging
+## 🔹 Page Object & API Action Logging
 
-Every BasePage action logs:
+UI actions log:
 
-- The page class
-- The locator
-- The action performed
-- The MDC test name
+- Page class
+- Locator
+- Action performed
+- MDC test name
 
-Example:
+API actions log:
 
-```
-[LoginTest.loginDataDrivenTest] pages.LoginPage - Typing 'student' into element: By.id: username
-```
+- HTTP method
+- Endpoint
+- Request body (if applicable)
+- Response status and body
+- MDC test name
 
-This produces a readable, step‑by‑step execution trace for every test.
+This produces a readable, step‑by‑step execution trace for every UI and API test.
 
 ---
 
@@ -479,6 +537,7 @@ A global `framework.log` captures:
 - Driver setup
 - Navigation
 - Environment configuration
+- API client initialization
 - High‑level framework events
 
 This file rolls daily and keeps 7 days of history.
@@ -490,7 +549,7 @@ This file rolls daily and keeps 7 days of history.
 This logging system demonstrates:
 
 - Senior‑level automation architecture
-- Parallel‑safe design
+- Parallel‑safe design across UI and API layers
 - Real‑world debugging practices
 - Clean separation of concerns
 - CI/CD readiness
@@ -600,7 +659,8 @@ flowchart LR
     subgraph ConfigManager
         BROWSER[Browser]
         HEADLESS[Headless Mode]
-        BASEURL[Base URL]
+        BASEURL[UI Base URL]
+        APIURL[API Base URL]
         TIMEOUTS[Timeouts]
     end
 
@@ -697,6 +757,7 @@ This project demonstrates real-world automation engineering skills, not just bas
 - **Data‑driven testing** powered by CSV utilities and TestNG DataProviders
 - **Thread‑safe WebDriver management** using a dedicated WebDriverFactory
 - **JSON‑based multi‑environment configuration** with overrides
+- **Lightweight API testing layer** with HTTP client, JSON parsing, and status/body validation
 - **CI/CD integration** with GitHub Actions for automated, headless, parallel execution
 - **Multi‑browser and remote execution** (Chrome, Edge, Firefox, Selenium Grid)
 
@@ -751,7 +812,7 @@ These enhancements collectively elevate the framework to a senior‑level automa
 
 ---
 
-# ✨ Features at a Glance
+# ✨# ✨ Features at a Glance
 
 | Feature | Description |
 |--------|-------------|
@@ -768,6 +829,8 @@ These enhancements collectively elevate the framework to a senior‑level automa
 | 🧭 Navigation Helpers | @Step‑annotated flows, Enter‑key submission, clear helpers |
 | 🌍 Environment‑Aware Config | JSON‑based multi‑environment configuration with overrides |
 | 🧪 Modules | Login, Exceptions, Table, Frames, iFrame, Dynamic Controls |
+| 🛜 API Testing Support | Lightweight HTTP client, JSON parsing, status/body validation |
+| 🧩 Profile‑Based Execution | UI‑only, API‑only, or combined suite via Maven profiles |
 | 🖥️ Remote Execution | Selenium Grid / remote WebDriver support |
 
 ---
@@ -800,7 +863,7 @@ wrongUser,Password123,failure
 
 # 📌 Current Scope (Aligned With the Real UI)
 
-This framework automates real UI modules across two applications:
+This framework automates real UI modules across two applications and includes a lightweight API testing layer.
 
 ---
 
@@ -815,6 +878,13 @@ This framework automates real UI modules across two applications:
 - **Frames**
 - **iFrame**
 - **Dynamic Controls** (stabilized and validated)
+
+---
+
+### API Testing
+- **GET endpoints** with status/body validation
+- **JSON parsing** via lightweight API client
+- **Profile‑based execution** (`-Papi`, `-Pall`)
 
 ---
 
@@ -868,6 +938,15 @@ This keeps the framework aligned with the real applications under test.
 
 ---
 
+### ✔ API Testing Layer (Day 31)
+- Added lightweight `ApiClient` for GET requests
+- Added `ApiBaseTest` with MDC logging and Allure integration
+- Added `ApiResponse` wrapper for status/body validation
+- Added `api-suite.xml` and Maven profiles (`-Papi`, `-Pall`)
+- Fully integrated into CI pipeline
+
+---
+
 ### ✔ Architecture Upgrades (Days 25–30)
 - Extracted WebDriverFactory with local, headless, and remote support
 - Added per‑test artifact directories and run‑level summaries
@@ -918,6 +997,11 @@ src
 │
 └── test
     ├── java
+    │   ├── api
+    │   │   ├── ApiBaseTest.java
+    │   │   ├── ApiClient.java
+    │   │   ├── ApiResponse.java
+    │   │   └── ApiTests.java
     │   ├── base
     │   │   └── BaseTest.java
     │   ├── dataproviders
@@ -955,7 +1039,7 @@ allure-results/
 
 ---
 
-### Run full suite:
+### Run full suite (UI + API):
 
 ```
 mvn clean test
@@ -971,7 +1055,7 @@ mvn -Dtest=LoginTest test
 
 ---
 
-### Override browser:
+### Override browser (applies to UI portion of the combined suite):
 
 ```
 mvn clean test -Dbrowser=edge
@@ -1007,6 +1091,59 @@ mvn clean test -Dheadless=true
 
 ---
 
+# 🧪 Running Tests with Maven Profiles
+
+This framework includes dedicated Maven profiles that allow you to run UI tests, API tests, or both together. Each profile overrides the TestNG suite used by Surefire, enabling targeted execution without modifying configuration files.
+
+---
+
+### 🔹 UI Tests Only
+Runs the standard UI automation suite (`testng.xml`):
+
+```
+mvn clean test -Pui
+```
+
+---
+
+### 🔹 API Tests Only
+Runs the API suite (`api-suite.xml`) without launching a browser:
+
+```
+mvn test -Papi
+```
+
+---
+
+### 🔹 Combined UI + API Suite
+Runs both UI and API tests in a single execution using `combined-suite.xml`:
+
+```
+mvn test -Pall
+```
+
+---
+
+### 🔹 Default Behavior (No Profile)
+If no profile is specified, Maven now uses the **combined suite** and runs **both UI and API tests**:
+
+```
+mvn clean test
+```
+
+---
+
+### 🔹 Why Profiles Matter
+- Clean separation of UI and API layers
+- Faster targeted runs during development
+- Combined suite for full‑coverage validation
+- CI pipelines can choose the appropriate profile
+- No need to modify suite files manually
+
+<p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
+
+---
+
 # 🏗️ How to Run in CI
 
 This framework is CI‑ready and supports:
@@ -1015,6 +1152,7 @@ This framework is CI‑ready and supports:
 - Headless mode
 - Environment‑driven configuration
 - Allure reporting
+- Combined UI + API execution by default
 
 ---
 
@@ -1058,7 +1196,8 @@ mvn clean test -Denv=local -Dbrowser=chrome -Dheadless=true
 [Day 30](#day-30) ·
 [Day 31](#day-31) ·
 [Day 32](#day-32) ·
-[Day 33](#day-33)
+[Day 33](#day-33) ·
+[Day 34](#day-34)
 
 <p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
 
@@ -1443,6 +1582,23 @@ The README is now complete, polished, and recruiter‑ready, with clear architec
 **Outcome**  
 The framework is now fully CI‑ready with stable headless execution, Allure history retention, and a polished, professional README that reflects the complete architecture and capabilities of the project.
 
+---
+
+## **Day 34 — Combined Suite Integration + README Updates**
+
+**Key Achievements**
+- Updated Surefire configuration so the default `mvn clean test` command now runs the full combined UI + API suite (35 tests)
+- Validated successful execution of all 35 tests with a clean Allure report and artifact bundle
+- Updated README sections to reflect the new default behavior:
+  - How to Run
+  - Running Tests with Maven Profiles
+  - How to Run in CI
+- Synced descriptions, anchors, and terminology across the README to ensure consistency after the suite change
+- Prepared for a refreshed Allure report screenshot to reflect the combined-suite execution
+
+**Outcome**  
+The framework now defaults to full‑coverage execution with both UI and API layers included, and the README accurately reflects the updated behavior. This ensures clarity for recruiters, contributors, and CI environments while maintaining a polished, professional presentation.
+
 <p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
 
 ---
@@ -1527,7 +1683,7 @@ These enhancements will be explored during Weeks 7–8 of the 60‑day plan.
 
 Planned improvements for the next phase:
 
-- REST Assured API layer
+- REST Assured upgrade for the existing API layer
 - Shadow DOM support
 - Drag‑and‑Drop module
 - GitHub Pages Allure history publishing
@@ -1547,7 +1703,8 @@ A clear view of what’s coming next for this framework:
 ## Core Enhancements
 - [x] Exceptions module (page object + validation tests)
 - [x] Table module (parsing utilities + sorting/filtering tests)
-- [ ] Allure screenshots on failure
+- [x] API testing layer (lightweight HTTP client + JSON parsing)
+- [ ] REST Assured upgrade for API testing
 - [ ] Multi‑environment execution (local, QA, stage) — execution profiles + CI switching
 - [ ] `.env` support for secrets and environment variables
 
@@ -1613,21 +1770,23 @@ Days 21–30 | Enterprise‑Grade Enhancements
            | Step‑counter architecture
            | Full‑suite validation (33/33 passing)
 
-Days 31–40 | AI‑Augmented QA (Current Phase)
+Days 31–40 | AI‑Augmented QA + API Layer
 -----------|---------------------------------------------------------
-           | AI‑generated test data
-           | AI‑assisted locator healing
+           | Lightweight API testing layer (GET endpoints)
+           | ApiClient + ApiBaseTest + ApiResponse
+           | API suite + Maven profiles (ui, api, all)
+           | AI‑generated test data exploration
+           | AI‑assisted locator healing prototype
            | AI‑driven flakiness analysis
            | AI‑suggested scenario expansion
-           | Exploratory testing insights
 
-Days 41–50 | Advanced Modules & API Layer
+Days 41–50 | Advanced Modules & API Upgrade
 -----------|---------------------------------------------------------
            | Dynamic Controls module
            | Drag‑and‑Drop module
            | File Upload module
            | Shadow DOM module
-           | REST Assured API testing layer
+           | REST Assured upgrade for API testing
 
 Days 51–60 | CI/CD, Reporting & Final Polish
 -----------|---------------------------------------------------------
