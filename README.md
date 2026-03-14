@@ -1057,7 +1057,8 @@ mvn clean test -Denv=local -Dbrowser=chrome -Dheadless=true
 [Day 29](#day-29) ·
 [Day 30](#day-30) ·
 [Day 31](#day-31) ·
-[Day 32](#day-32)
+[Day 32](#day-32) ·
+[Day 33](#day-33)
 
 <p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
 
