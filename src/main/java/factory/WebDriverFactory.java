@@ -58,14 +58,14 @@ public class WebDriverFactory {
 
     private static WebDriver createChromeDriver(boolean headless) {
 
-        // --- CI FIX: Force WebDriverManager to match GitHub Actions Chrome ---
+        // Match ChromeDriver to GitHub Actions Chrome version
         WebDriverManager.chromedriver().browserVersion("stable").setup();
 
         ChromeOptions options = buildChromeOptions(headless);
 
-        // --- CI FIX: Explicitly set Chrome binary when running in GitHub Actions ---
+        // Force correct Chrome binary in CI
         if (isCiEnvironment()) {
-            log.info("Detected CI environment — setting Chrome binary to /usr/bin/google-chrome");
+            log.info("CI detected — using Chrome binary at /usr/bin/google-chrome");
             options.setBinary("/usr/bin/google-chrome");
         }
 
@@ -81,7 +81,13 @@ public class WebDriverFactory {
 
         options.setPageLoadStrategy(PageLoadStrategy.NORMAL);
 
+        // Local headless mode (from config.json)
         if (headless) {
+            options.addArguments("--headless=new");
+        }
+
+        // CI must ALWAYS run headless
+        if (isCiEnvironment()) {
             options.addArguments("--headless=new");
         }
 
@@ -111,7 +117,13 @@ public class WebDriverFactory {
 
         options.setPageLoadStrategy(PageLoadStrategy.NORMAL);
 
+        // Local headless
         if (headless) {
+            options.addArguments("-headless");
+        }
+
+        // CI headless override
+        if (isCiEnvironment()) {
             options.addArguments("-headless");
         }
 
@@ -139,7 +151,13 @@ public class WebDriverFactory {
 
         options.setPageLoadStrategy(PageLoadStrategy.NORMAL);
 
+        // Local headless
         if (headless) {
+            options.addArguments("--headless=new");
+        }
+
+        // CI headless override
+        if (isCiEnvironment()) {
             options.addArguments("--headless=new");
         }
 
@@ -150,7 +168,7 @@ public class WebDriverFactory {
     }
 
     // ============================================================
-    // Remote WebDriver (Selenium Grid / BrowserStack / Sauce Labs)
+    // Remote WebDriver
     // ============================================================
 
     private static WebDriver createRemoteDriver(String browser, boolean headless) {
@@ -203,7 +221,6 @@ public class WebDriverFactory {
 
         driver.manage().timeouts().pageLoadTimeout(pageLoad);
         driver.manage().timeouts().scriptTimeout(script);
-
         driver.manage().timeouts().implicitlyWait(Duration.ZERO);
     }
 
@@ -237,7 +254,7 @@ public class WebDriverFactory {
     }
 
     // ============================================================
-    // CI environment detection
+    // CI detection
     // ============================================================
 
     private static boolean isCiEnvironment() {
