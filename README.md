@@ -1,4 +1,6 @@
-# Selenium Test Automation Framework
+<h1 align="center">Selenium Test Automation Framework</h1>
+<h3 align="center">Enterprise‑Grade UI Automation with Selenium, TestNG, Allure, and GitHub Actions</h3>
+
 A clean, maintainable, and professional Selenium + TestNG automation framework built for the **Practice Test Automation** site as part of a structured 60‑day QA Automation Upskill Plan.
 
 ---
@@ -17,6 +19,9 @@ A clean, maintainable, and professional Selenium + TestNG automation framework b
   <!-- Allure -->
   <img src="https://img.shields.io/badge/Allure-Reporting-ff69b4?style=flat-square" alt="Allure Reporting">
 
+  <!-- Allure History -->
+  <img src="https://img.shields.io/badge/Allure-History-blue?style=flat-square" alt="Allure History">
+
   <!-- Java -->
   <img src="https://img.shields.io/badge/Java-17-blue?style=flat-square" alt="Java 17">
 
@@ -31,7 +36,9 @@ A clean, maintainable, and professional Selenium + TestNG automation framework b
 
 </p>
 
----
+<p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
+
+~~---
 
 # 📚 Table of Contents
 
@@ -39,28 +46,33 @@ A clean, maintainable, and professional Selenium + TestNG automation framework b
 2. [Project Overview](#-project-overview)
 3. [Design Principles](#-design-principles)
 4. [Tech Stack](#-tech-stack)
-5. [Dependency & Versioning Strategy](#-dependency--versioning-strategy)
-6. [Test Strategy](#-test-strategy)
-7. [Framework Architecture](#-framework-architecture)
-8. [Logging Architecture](#-logging-architecture)
-9. [Performance Considerations](#-performance-considerations)
-10. [CI Pipeline Architecture](#-ci-pipeline-architecture)
-11. [Multi‑Environment Architecture](#-multi-environment-architecture)
-12. [Allure Report Preview](#-allure-report-preview)
-13. [Why This Framework Matters](#-why-this-framework-matters)
-14. [Enterprise‑Grade Enhancements (Days 25–30)](#-enterprisegrade-enhancements-days-25–30)
-15. [Features at a Glance](#-features-at-a-glance)
-16. [Data‑Driven Testing](#-data-driven-testing-csv-powered)
-17. [Current Scope](#-current-scope-aligned-with-the-real-ui)
-18. [Completed Features](#-completed-features)
-19. [Project Structure](#-project-structure)
-20. [How to Run](#-how-to-run)
-21. [How to Run in CI](#-how-to-run-in-ci)
-22. [AI‑Augmented QA Strategy](#-ai-augmented-qa-strategy-day-31)
-23. [Day‑by‑Day Progress Log](#-day-by-day-progress-log)
-24. [Upcoming Enhancements](#-upcoming-enhancements-updated-roadmap)
-25. [Future Enhancements](#-future-enhancements)
-26. [Author](#-author)
+5. [Environment Configuration](#-environment-configuration)
+6. [Dependency & Versioning Strategy](#-dependency--versioning-strategy)
+7. [Test Strategy](#-test-strategy)
+8. [Framework Architecture](#-framework-architecture)
+9. [Logging Architecture](#-logging-architecture)
+10. [Performance Considerations](#-performance-considerations)
+11. [CI Pipeline Architecture](#-ci-pipeline-architecture)
+12. [CI Pipeline](#-ci-pipeline)
+13. [Multi‑Environment Architecture](#-multi-environment-architecture)
+14. [Allure Report Preview](#-allure-report-preview)
+15. [Allure Reporting](#-allure-reporting)
+16. [Why This Framework Matters](#-why-this-framework-matters)
+17. [Enterprise‑Grade Enhancements (Days 25–30)](#-enterprisegrade-enhancements-days-25–30)
+18. [Features at a Glance](#-features-at-a-glance)
+19. [Data‑Driven Testing](#-data-driven-testing-csv-powered)
+20. [Current Scope](#-current-scope-aligned-with-the-real-ui)
+21. [Completed Features](#-completed-features)
+22. [Project Structure](#-project-structure)
+23. [How to Run](#-how-to-run)
+24. [How to Run in CI](#-how-to-run-in-ci)
+25. [AI‑Augmented QA Strategy](#-ai-augmented-qa-strategy-day-31)
+26. [Day‑by‑Day Progress Log](#-day-by-day-progress-log)
+27. [Upcoming Enhancements](#-upcoming-enhancements-updated-roadmap)
+28. [Future Enhancements](#-future-enhancements)
+29. [Author](#-author)
+
+<p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
 
 ---
 
@@ -79,6 +91,8 @@ This 30‑day engineering log documents the evolution of a modern, enterprise‑
 - A unified BasePage interaction layer with step numbering, durations, and defensive waits
 
 Across 30 days, the framework matured through iterative enhancements, architectural refactors, stability passes, and CI‑ready validation — culminating in **33/33 passing tests**, clean Allure reports, and a fully modernized automation platform aligned with real enterprise standards.
+
+<p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
 
 ---
 
@@ -106,6 +120,8 @@ It demonstrates:
 
 All 33 tests across Login, Exceptions, Table, Frames, and iFrame modules currently pass with **zero failures** across all supported browsers.
 
+<p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
+
 ---
 
 # 🧠 Design Principles
@@ -118,6 +134,8 @@ This framework is built around a set of engineering principles that ensure long�
 - **Environment Independence** — configuration, drivers, and test data are fully decoupled from the codebase.
 - **Parallel Safety** — ThreadLocal WebDriver, MDC logging, and isolated artifacts ensure clean parallel execution.
 - **Scalability First** — architecture supports new modules, environments, and CI/CD pipelines without refactoring.
+
+<p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
 
 ---
 
@@ -139,6 +157,60 @@ This framework is built using a modern, industry-standard automation stack:
 - **ThreadLocal WebDriver** — parallel‑ready design
 - **CSV Test Data** — data-driven testing
 
+<p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
+
+---
+
+# 🌐 Environment Configuration
+
+This framework uses a JSON‑based configuration system designed for clarity, portability, and CI‑safety. All environment settings are loaded through `ConfigManager`, with optional overrides via system properties.
+
+---
+
+## Key Settings (config.json)
+- **browser** — chrome, edge, firefox
+- **headless** — local GUI mode by default
+- **baseUrl** — application under test
+- **timeouts** — page load + script timeouts
+- **remote** — enable Selenium Grid execution
+
+---
+
+## Local vs CI Behavior
+Local runs use the values in `config.json`:
+
+```
+"browser": "chrome",
+"headless": false
+```
+
+CI runs automatically enforce:
+- **headless mode** (regardless of config.json)
+- **Chrome binary path** (`/usr/bin/google-chrome`)
+- **ChromeDriver autodetection**
+
+This ensures:
+- GUI mode locally
+- Headless mode in CI
+- Zero driver mismatches
+- Fully stable GitHub Actions execution
+
+---
+
+## Runtime Overrides
+You can override any setting at runtime:
+
+```
+mvn clean test -Dbrowser=edge
+mvn clean test -Dheadless=true
+mvn clean test -Denv=local
+mvn clean test -Dremote=true -DgridUrl=http://localhost:4444
+```
+
+This makes the framework fully environment‑agnostic and CI‑ready.
+
+<p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
+
 ---
 
 # 📦 Dependency & Versioning Strategy
@@ -156,6 +228,8 @@ Version upgrades follow a controlled process:
 3. Review Allure history for regressions
 4. Merge only after stability is confirmed
 
+<p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
+
 ---
 
 # 🧪 Test Strategy
@@ -169,6 +243,8 @@ The framework follows a layered testing strategy:
 - **Artifact‑Driven Debugging** ensures every failure is diagnosable through logs, screenshots, and metadata.
 
 This approach mirrors real enterprise QA practices and ensures both stability and scalability.
+
+<p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
 
 ---
 
@@ -253,6 +329,8 @@ flowchart TD
     FT --> Utils
     IFT --> Utils
 ```
+
+<p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
 
 ---
 
@@ -420,6 +498,8 @@ This logging system demonstrates:
 
 It mirrors the logging approach used in enterprise QA automation frameworks.
 
+<p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
+
 ---
 
 # ⚡ Performance Considerations
@@ -433,6 +513,8 @@ The framework is optimized for fast, reliable execution:
 - Minimal implicit waits (set to 0) ensure deterministic timing.
 
 These optimizations keep the suite fast while maintaining stability.
+
+<p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
 
 ---
 
@@ -461,6 +543,49 @@ flowchart TD
     J --> L[View Surefire Reports in Artifacts]
 ```
 
+<p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
+
+---
+
+# 🧪 CI Pipeline
+
+This project includes a fully automated CI pipeline powered by GitHub Actions. Every push to `main` triggers a complete test run in a clean Linux environment using headless Chrome.
+
+---
+
+## What the Pipeline Does
+- Checks out the repository
+- Installs JDK 17
+- Installs Google Chrome
+- Runs the full Maven + TestNG suite in headless mode
+- Generates Allure results and Surefire XML reports
+- Uploads both as downloadable CI artifacts
+- Enforces ChromeDriver autodetection to prevent version mismatches
+- Ensures stable, parallel execution in a headless environment
+
+---
+
+## CI Artifacts
+Each run produces two downloadable bundles:
+
+- **allure-results.zip** — raw Allure data (steps, logs, screenshots, metadata)
+- **surefire-reports.zip** — TestNG XML summaries for debugging
+
+These appear at the bottom of each workflow run under **Artifacts**.
+
+---
+
+## CI Status Badge
+The badge at the top of this README reflects the latest CI run:
+
+https://img.shields.io/github/actions/workflow/status/brouwera/Selenium-Framework/ci.yml?style=flat-square&label=CI%20Build
+
+This provides instant visibility into the health of the framework.
+
+<p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
+
+---
+
 # 🌍 Multi‑Environment Architecture
 
 The framework includes a JSON‑based ConfigManager that supports multiple execution environments with system‑property and `.env` overrides.
@@ -485,12 +610,79 @@ flowchart LR
     ConfigManager --> Prod
 ```
 
+<p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
+
+---
+
 # 📊 Allure Report Preview
 
 Below is an example of the Allure report generated by this framework.  
 It includes detailed test steps, attachments, environment metadata, and execution history.
 
 ![Allure Report Screenshot](allure-report-example.png)
+
+<p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
+
+---
+
+# 🧾 Allure Reporting
+
+This framework includes full Allure reporting with step‑level tracing, screenshots, page source, browser logs, environment metadata, and per‑test artifacts. Allure is generated both locally and in CI.
+
+---
+
+## Local Allure Report
+To view the report locally after a test run:
+
+```
+allure serve target/allure-results
+```
+
+This builds a temporary HTML report and opens it in your browser with:
+- Step‑by‑step execution traces
+- Screenshots and page source
+- Browser console logs
+- Per‑test logs
+- Environment metadata
+
+---
+
+## CI Allure Report
+GitHub Actions automatically:
+- Generates Allure results during the test run
+- Uploads them as **allure-results.zip** under the **Artifacts** section
+- Preserves all attachments (screenshots, logs, metadata)
+
+To view the CI report:
+1. Open the latest workflow run
+2. Scroll to **Artifacts**
+3. Download `allure-results.zip`
+4. Extract it locally
+5. Run:
+
+```
+allure serve /path/to/extracted/allure-results
+```
+
+This displays the exact same report generated in CI.
+
+---
+
+## What Allure Provides
+- Clean, readable execution history
+- Step‑numbered actions from BasePage
+- Screenshots on failure
+- Page source snapshots
+- Browser console logs
+- Per‑test log files
+- Environment metadata
+- Trend graphs (when history is enabled)
+
+Allure makes debugging fast, visual, and production‑grade.
+
+> **Note:** Allure trend graphs and execution history appear automatically after two consecutive CI runs with history enabled.
+
+<p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
 
 ---
 
@@ -510,11 +702,15 @@ This project demonstrates real-world automation engineering skills, not just bas
 
 This framework mirrors the structure and practices used in enterprise QA automation teams.
 
+<p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
+
 ---
 
 # 🧩 Enterprise‑Grade Enhancements (Days 25–30)
 
 The final phase of the framework focused on transforming it from a functional automation suite into a production‑grade, enterprise‑ready platform. These enhancements strengthened architecture, stability, observability, and reporting.
+
+---
 
 ## High‑Value Enhancements (Days 25–26)
 - WebDriverFactory extraction with multi‑browser + headless + remote support
@@ -525,6 +721,8 @@ The final phase of the framework focused on transforming it from a functional au
 - loginExpectingFailure() and error‑message assertion helpers
 - Network‑idle wait support
 - Centralized timeout architecture (page load, script, implicit=0)
+
+---
 
 ## Medium‑Value Enhancements (Days 27–28)
 - Step‑numbered BasePage logging with duration metrics
@@ -537,6 +735,8 @@ The final phase of the framework focused on transforming it from a functional au
 - Browser console log exposure
 - Page load timeout + implicitWait=0 enforcement
 
+---
+
 ## Low‑Value Polish (Days 29–30)
 - Highlight‑element debug helper
 - waitForErrorMessage()
@@ -546,6 +746,8 @@ The final phase of the framework focused on transforming it from a functional au
 - Final synchronization of TestListener, BasePage, and step‑counter architecture
 
 These enhancements collectively elevate the framework to a senior‑level automation standard.
+
+<p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
 
 ---
 
@@ -574,11 +776,15 @@ These enhancements collectively elevate the framework to a senior‑level automa
 
 This framework uses CSV files to drive the Login module’s positive and negative scenarios through TestNG DataProviders.
 
+---
+
 ### How it works
 - `loginData.csv` stores all username/password combinations and expected outcomes.
 - `CSVUtils` loads the file and converts each row into a map of key/value pairs.
 - `LoginDataProvider` feeds each row into the test as an individual execution.
 - `LoginTest` validates the login flow using the supplied data.
+
+---
 
 ### Example CSV snippet
 ```csv
@@ -588,27 +794,37 @@ student,WrongPassword,failure
 wrongUser,Password123,failure
 ```
 
+<p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
+
 ---
 
 # 📌 Current Scope (Aligned With the Real UI)
 
 This framework automates real UI modules across two applications:
 
+---
+
 ### Practice Test Automation
 - **Test Login Page**
 - **Test Exceptions**
 - **Test Table**
+
+---
 
 ### The‑Internet Herokuapp
 - **Frames**
 - **iFrame**
 - **Dynamic Controls** (stabilized and validated)
 
+---
+
 ### Removed modules (no longer present on the site)
 - Test Inputs
 - Test Alerts
 
 This keeps the framework aligned with the real applications under test.
+
+<p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
 
 ---
 
@@ -623,12 +839,16 @@ This keeps the framework aligned with the real applications under test.
 - ThreadLocal WebDriver
 - Allure step annotations
 
+---
+
 ### ✔ Framework Cleanup (Day 13)
 - Removed deprecated modules
 - Cleaned HomePage to match real UI
 - Updated testng.xml
 - Full green suite with `mvn clean test`
 - TestListener integrated
+
+---
 
 ### ✔ Multi‑Browser Support (Day 14)
 - Chrome via WebDriverManager
@@ -637,12 +857,16 @@ This keeps the framework aligned with the real applications under test.
 - ConfigManager now controls all driver paths
 - Fully portable + CI‑ready
 
+---
+
 ### ✔ Module Expansion (Days 18–23)
 - Added full Exceptions module with five real‑world exception scenarios
 - Added Table module with dynamic filtering, sorting, and DOM‑aware parsing
 - Added Frames and iFrame modules with stable TinyMCE editor handling
 - Added Dynamic Controls stabilization and loading‑indicator synchronization
 - All modules validated under Maven and parallel TestNG execution
+
+---
 
 ### ✔ Architecture Upgrades (Days 25–30)
 - Extracted WebDriverFactory with local, headless, and remote support
@@ -653,6 +877,8 @@ This keeps the framework aligned with the real applications under test.
 - Added browser console log exposure
 - Added retention policy for artifact runs
 - Synchronized TestListener, BasePage, and global step‑counter architecture
+
+<p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
 
 ---
 
@@ -721,28 +947,47 @@ logs/
 allure-results/
 ```
 
+<p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
+
 ---
 
 # 🏁 How to Run
 
+---
+
 ### Run full suite:
+
 ```
 mvn clean test
 ```
+
+---
+
 ### Run a specific test class:
+
 ```
 mvn -Dtest=LoginTest test
 ```
+
+---
+
 ### Override browser:
+
 ```
 mvn clean test -Dbrowser=edge
 mvn clean test -Dbrowser=firefox
 mvn clean test -Dbrowser=chrome
 ```
+
+---
+
 ### Run in headless mode:
+
 ```
 mvn clean test -Dheadless=true
 ```
+
+---
 
 ### Execution methods
 
@@ -758,6 +1003,8 @@ mvn clean test -Dheadless=true
 | **Remote Execution (Selenium Grid)** | `mvn clean test -Dremote=true -DgridUrl=http://localhost:4444` | Runs tests against a remote WebDriver or Selenium Grid. |
 | **Allure Report** | `allure serve target/allure-results` | Opens a full Allure report with steps, logs, screenshots, and metadata. |
 
+<p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
+
 ---
 
 # 🏗️ How to Run in CI
@@ -769,9 +1016,15 @@ This framework is CI‑ready and supports:
 - Environment‑driven configuration
 - Allure reporting
 
+---
+
 ### Basic CI command
 
+```
 mvn clean test -Denv=local -Dbrowser=chrome -Dheadless=true
+```
+
+<p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
 
 ---
 
@@ -805,6 +1058,8 @@ mvn clean test -Denv=local -Dbrowser=chrome -Dheadless=true
 [Day 30](#day-30) ·
 [Day 31](#day-31) ·
 [Day 32](#day-32)
+
+<p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
 
 ---
 
@@ -1172,11 +1427,15 @@ The project now includes a forward‑looking AI strategy that aligns with modern
 **Outcome**  
 The README is now complete, polished, and recruiter‑ready, with clear architecture, module summaries, and a professional visual roadmap.
 
+<p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
+
 ---
 
 # 🤖 AI‑Augmented QA Strategy (Day 31)
 
 Modern QA is rapidly evolving toward AI‑assisted testing, and this framework is intentionally designed to grow alongside those changes. As part of my 60‑day upskilling plan, I am incorporating AI‑augmented QA practices that complement—not replace—traditional automation engineering.
+
+---
 
 ## 🌟 How AI Enhances QA
 AI is reshaping quality engineering through capabilities such as:
@@ -1190,6 +1449,8 @@ AI is reshaping quality engineering through capabilities such as:
 
 These enhancements strengthen coverage, reduce maintenance, and accelerate feedback loops.
 
+---
+
 ## 📘 My AI‑QA Learning Plan
 I am actively following industry‑leading QA organizations to stay aligned with modern testing practices:
 
@@ -1198,6 +1459,8 @@ I am actively following industry‑leading QA organizations to stay aligned with
 - **STAR East / STAR West** — keynote sessions on AI in testing
 
 This ensures my AI‑QA approach is grounded in real industry trends.
+
+---
 
 ## 🔧 Future AI Integration Into This Framework
 The framework’s clean architecture makes it ideal for future AI‑driven enhancements, including:
@@ -1210,6 +1473,8 @@ The framework’s clean architecture makes it ideal for future AI‑driven enhan
 
 These enhancements will be explored during Weeks 7–8 of the 60‑day plan.
 
+<p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
+
 ---
 
 # 🛠️ Upcoming Enhancements (Updated Roadmap)
@@ -1221,11 +1486,15 @@ These enhancements will be explored during Weeks 7–8 of the 60‑day plan.
 - Shadow DOM module
 - Table module expansion (sorting + pagination, if UI updates)
 
+---
+
 ## Mid‑Term (Weeks 7–8)
 - AI‑generated test data integration
 - AI‑assisted locator healing prototype
 - AI‑driven flakiness analysis
 - AI‑suggested scenario generation for Login + Table modules
+
+---
 
 ## Long‑Term (Weeks 9–10)
 - API testing layer (REST Assured)
@@ -1233,6 +1502,8 @@ These enhancements will be explored during Weeks 7–8 of the 60‑day plan.
 - Parallel execution profiles (local vs CI)
 - Allure dashboards + history server
 - CI/CD pipeline expansion (matrix builds, nightly runs)
+
+<p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
 
 ---
 
@@ -1247,11 +1518,15 @@ Planned improvements for the next phase:
 - AI‑assisted locator healing
 - AI‑generated test data expansion
 
+<p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
+
 ---
 
 # 🗺️ Roadmap
 
 A clear view of what’s coming next for this framework:
+
+---
 
 ## Core Enhancements
 - [x] Exceptions module (page object + validation tests)
@@ -1260,11 +1535,15 @@ A clear view of what’s coming next for this framework:
 - [ ] Multi‑environment execution (local, QA, stage) — execution profiles + CI switching
 - [ ] `.env` support for secrets and environment variables
 
+---
+
 ## Architecture & Stability
 - [ ] Retry logic for flaky CI environments (CI‑specific profiles + analytics)
 - [x] Logging improvements (SLF4J + Logback + MDC + step logging)
 - [x] Parallel execution support (TestNG + Maven Surefire)
 - [ ] Enhanced JSON ConfigManager (typed accessors + schema validation)
+
+---
 
 ## CI/CD & Reporting
 - [ ] Allure history tracking in CI
@@ -1272,11 +1551,15 @@ A clear view of what’s coming next for this framework:
 - [ ] Publish Allure report via GitHub Pages
 - [ ] CI matrix for multi‑browser runs
 
+---
+
 ## Documentation & Developer Experience
 - [ ] Demo GIF of test execution
 - [ ] Contributing guidelines
 - [ ] Full API documentation for utilities
 - [ ] Multi‑environment architecture diagram
+
+<p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
 
 ---
 
@@ -1341,6 +1624,8 @@ Days 51–60 | CI/CD, Reporting & Final Polish
            | Final recruiter‑ready packaging
 ```
 
+<p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
+
 ---
 
 # 🤝 Contributing
@@ -1356,6 +1641,8 @@ To contribute:
 
 Please follow the existing project structure and coding style.
 
+<p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
+
 ---
 
 # 📄 License
@@ -1363,10 +1650,15 @@ Please follow the existing project structure and coding style.
 This project is licensed under the **MIT License**.  
 You may use, modify, and distribute this framework for personal or commercial purposes.
 
+<p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
+
 ---
 
 # 👤 Author
 
 **Adam Brouwer**  
 QA Analyst / SDET in training  
-Building a full automation framework as part of a structured 60‑day upskilling plan.
+Building a full automation framework as part of a structured 60‑day upskilling plan.  
+[LinkedIn](https://www.linkedin.com/in/adam-brouwer-40842222b/)
+
+<p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>

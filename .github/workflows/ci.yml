@@ -22,9 +22,22 @@ jobs:
       - name: Install Chrome
         uses: browser-actions/setup-chrome@v1
 
+      # -------------------------------
+      # Download previous Allure history
+      # -------------------------------
+      - name: Download Allure History
+        uses: actions/download-artifact@v4
+        with:
+          name: allure-history
+          path: allure-history
+        continue-on-error: true
+
       - name: Run tests
         run: mvn clean test
 
+      # -------------------------------
+      # Upload Allure results
+      # -------------------------------
       - name: Upload Allure Results
         uses: actions/upload-artifact@v4
         if: always()
@@ -32,9 +45,33 @@ jobs:
           name: allure-results
           path: target/allure-results
 
+      # -------------------------------
+      # Upload Surefire results
+      # -------------------------------
       - name: Upload Surefire Reports
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: surefire-reports
           path: target/surefire-reports
+
+      # -------------------------------
+      # Prepare updated Allure history
+      # -------------------------------
+      - name: Prepare Allure History
+        if: always()
+        run: |
+          mkdir -p target/allure-results/history
+          if [ -d "allure-history" ]; then
+            cp -R allure-history/* target/allure-results/history || true
+          fi
+
+      # -------------------------------
+      # Upload updated Allure history
+      # -------------------------------
+      - name: Upload Allure History
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: allure-history
+          path: target/allure-results/history
