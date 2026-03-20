@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft-07/schema#",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "username": { "type": "string" },
+      "password": { "type": "string" },
+      "expectedResult": {
+        "type": "string",
+        "enum": ["success", "failure"]
+      }
+    },
+    "required": ["username", "password", "expectedResult"],
+    "additionalProperties": false
+  }
+}

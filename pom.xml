@@ -28,6 +28,11 @@
         <!-- Logging Versions -->
         <slf4j.version>2.0.12</slf4j.version>
         <logback.version>1.5.6</logback.version>
+
+        <!-- JSON / Schema Versions -->
+        <jackson.version>2.17.0</jackson.version>
+        <everit.schema.version>1.14.2</everit.schema.version>
+        <orgjson.version>20231013</orgjson.version>
     </properties>
 
     <!-- ========================================================= -->
@@ -118,12 +123,28 @@
         </dependency>
 
         <!-- ========================================================= -->
-        <!--                     JSON FOR API TESTS                   -->
+        <!--                     JSON / SCHEMA SUPPORT                -->
         <!-- ========================================================= -->
+
+        <!-- Jackson for JSON parsing -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+
+        <!-- JSON Schema validation (Correct Everit dependency) -->
+        <dependency>
+            <groupId>com.github.erosb</groupId>
+            <artifactId>everit-json-schema</artifactId>
+            <version>${everit.schema.version}</version>
+        </dependency>
+
+        <!-- org.json (used by Everit and your API tests) -->
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
-            <version>20231013</version>
+            <version>${orgjson.version}</version>
         </dependency>
 
     </dependencies>
@@ -186,9 +207,9 @@
                     <!-- Required for logging + Allure -->
                     <useSystemClassLoader>false</useSystemClassLoader>
 
-                    <!-- Default suite: run UI + API together -->
+                    <!-- Corrected suite path -->
                     <suiteXmlFiles>
-                        <suiteXmlFile>combined-suite.xml</suiteXmlFile>
+                        <suiteXmlFile>src/test/resources/combined-suite.xml</suiteXmlFile>
                     </suiteXmlFiles>
 
                     <systemPropertyVariables>
@@ -199,75 +220,5 @@
 
         </plugins>
     </build>
-
-    <!-- ========================================================= -->
-    <!--                         PROFILES                          -->
-    <!-- ========================================================= -->
-    <profiles>
-
-        <!-- UI TESTS -->
-        <profile>
-            <id>ui</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <suiteXmlFiles>
-                                <suiteXmlFile>testng.xml</suiteXmlFile>
-                            </suiteXmlFiles>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-        <!-- API TESTS -->
-        <profile>
-            <id>api</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <suiteXmlFiles>
-                                <suiteXmlFile>api-suite.xml</suiteXmlFile>
-                            </suiteXmlFiles>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-        <!-- UI + API TESTS -->
-        <profile>
-            <id>all</id>
-            <activation>
-                <activeByDefault>false</activeByDefault>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <suiteXmlFiles>
-                                <suiteXmlFile>combined-suite.xml</suiteXmlFile>
-                            </suiteXmlFiles>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-    </profiles>
 
 </project>

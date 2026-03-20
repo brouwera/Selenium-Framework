@@ -1197,7 +1197,8 @@ mvn clean test -Denv=local -Dbrowser=chrome -Dheadless=true
 [Day 31](#day-31) ·
 [Day 32](#day-32) ·
 [Day 33](#day-33) ·
-[Day 34](#day-34)
+[Day 34](#day-34) ·
+[Day 39](#day-39)
 
 <p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
 
@@ -1598,6 +1599,20 @@ The framework is now fully CI‑ready with stable headless execution, Allure his
 
 **Outcome**  
 The framework now defaults to full‑coverage execution with both UI and API layers included, and the README accurately reflects the updated behavior. This ensures clarity for recruiters, contributors, and CI environments while maintaining a polished, professional presentation.
+
+---
+
+## **Day 39 — Environment-Aware JSON Pipeline + Schema Validation Fix**
+
+**Key Achievements**
+- Implemented a robust JSON schema validation flow that correctly validates full arrays of test data rather than individual objects
+- Updated `TestDataManager` to validate environment-specific JSON datasets as a single unit, ensuring alignment with the schema’s root-level array definition
+- Corrected the default environment behavior in `ConfigManager` to prevent silent fallbacks and guarantee deterministic test data resolution
+- Validated clean execution of all 38 tests across UI and API layers with fully schema-validated JSON inputs
+- Confirmed stability through a complete CI run, including Allure report generation and artifact bundling
+
+**Outcome**  
+The framework now enforces strict, environment-aware JSON validation with a clean, predictable data-loading pipeline. This eliminates an entire class of schema mismatch issues and ensures that future test data changes remain safe, intentional, and fully validated. With all 38 tests passing and CI producing a clean Allure report, the system is more resilient, maintainable, and production-ready heading into Day 40.
 
 <p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
 

@@ -2,6 +2,7 @@ package tests;
 
 import base.BaseTest;
 import dataproviders.LoginDataProvider;
+import dataproviders.JsonDataProvider;
 import helpers.AssertionHelper;
 import io.qameta.allure.*;
 import org.testng.annotations.Test;
@@ -26,9 +27,9 @@ public class LoginTest extends BaseTest {
     }
 
     // ============================================================
-    // Data-Driven Login Test
+    // CSV-Driven Login Test
     // ============================================================
-    @Story("Data-driven login validation")
+    @Story("Data-driven login validation (CSV)")
     @Severity(SeverityLevel.CRITICAL)
     @Owner("Adam Brouwer")
     @Description("Validates login behavior using CSV-driven test data for both positive and negative scenarios.")
@@ -77,9 +78,26 @@ public class LoginTest extends BaseTest {
             }
 
             default -> throw new IllegalArgumentException(
-                    "Invalid expectedResult value in CSV: " + expectedResult
+                    "Invalid expectedResult value in test data: " + expectedResult
             );
         }
+    }
+
+    // ============================================================
+    // JSON-Driven Login Test (Environment + Schema Validated)
+    // ============================================================
+    @Story("Data-driven login validation (JSON)")
+    @Severity(SeverityLevel.CRITICAL)
+    @Owner("Adam Brouwer")
+    @Description("Validates login behavior using JSON-driven test data (environment-specific + schema validated).")
+    @Test(
+            groups = {"regression"},
+            dataProvider = "loginDataJson",
+            dataProviderClass = JsonDataProvider.class
+    )
+    public void loginDataDrivenTestJson(Map<String, String> data) {
+        // Reuse the CSV-driven logic for consistency and maintainability
+        loginDataDrivenTest(data);
     }
 
     // ============================================================

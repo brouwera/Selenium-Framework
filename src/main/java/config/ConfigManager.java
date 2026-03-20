@@ -110,7 +110,7 @@ public final class ConfigManager {
     public static String getEnvironment() {
         String override = getOverride("env");
         if (override != null) return override.toLowerCase();
-        return "local";
+        return "qa";   // ⭐ Updated default environment
     }
 
     // ============================================================
