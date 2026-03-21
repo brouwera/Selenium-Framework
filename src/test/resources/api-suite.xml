@@ -3,7 +3,9 @@
 
     <test name="API Tests">
         <classes>
-            <class name="api.ApiTests"/>
+            <class name="tests.api.ApiTests"/>
+            <class name="tests.api.NegativeApiTests"/>
+            <class name="tests.api.ContractTests"/>
         </classes>
     </test>
 

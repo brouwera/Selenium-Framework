@@ -3,19 +3,20 @@
 
     <test name="UI Tests">
         <classes>
-            <class name="tests.LoginTest"/>
-            <class name="tests.ExceptionsTest"/>
-            <class name="tests.DynamicControlsTest"/>
-            <class name="tests.FramesTest"/>
-            <class name="tests.TableTest"/>
-            <!-- Add other UI test classes here -->
+            <class name="tests.ui.LoginTest"/>
+            <class name="tests.ui.ExceptionsTest"/>
+            <class name="tests.ui.DynamicControlsTest"/>
+            <class name="tests.ui.FramesTest"/>
+            <class name="tests.ui.TableTest"/>
+            <class name="tests.ui.SchemaValidationTest"/>
         </classes>
     </test>
 
     <test name="API Tests">
         <classes>
-            <class name="api.ApiTests"/>
-            <!-- Add other API test classes here -->
+            <class name="tests.api.ApiTests"/>
+            <class name="tests.api.NegativeApiTests"/>
+            <class name="tests.api.ContractTests"/>
         </classes>
     </test>
 

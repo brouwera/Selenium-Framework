@@ -1,5 +1,6 @@
 package dataproviders;
 
+import io.qameta.allure.Step;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.testng.annotations.DataProvider;
@@ -25,8 +26,9 @@ public final class LoginDataProvider {
     }
 
     // ============================================================
-    // Data Provider
+    // CSV Data Provider
     // ============================================================
+    @Step("Load CSV login test data from: " + LOGIN_DATA_PATH)
     @DataProvider(name = "loginData")
     public static Object[][] loginData() {
 
@@ -39,6 +41,11 @@ public final class LoginDataProvider {
                     "CSV file '" + LOGIN_DATA_PATH + "' returned no data rows. " +
                             "Verify that the file exists, is not empty, and is correctly formatted."
             );
+        }
+
+        // Optional row-level debug logging
+        for (int i = 0; i < data.length; i++) {
+            log.info("CSV ROW {}: {}", i, data[i][0]);
         }
 
         log.info("Loaded {} rows from {}", data.length, LOGIN_DATA_PATH);

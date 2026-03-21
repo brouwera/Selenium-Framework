@@ -2,6 +2,7 @@
   "local": {
     "practiceBaseUrl": "https://practicetestautomation.com/practice/",
     "herokuBaseUrl": "https://the-internet.herokuapp.com/",
+    "apiBaseUrl": "https://jsonplaceholder.typicode.com/",
     "browser": "chrome",
     "headless": false,
     "timeouts": {
@@ -20,6 +21,7 @@
   "qa": {
     "practiceBaseUrl": "https://practicetestautomation.com/practice/",
     "herokuBaseUrl": "https://the-internet.herokuapp.com/",
+    "apiBaseUrl": "https://jsonplaceholder.typicode.com/",
     "browser": "chrome",
     "headless": false,
     "timeouts": {
@@ -38,6 +40,7 @@
   "stage": {
     "practiceBaseUrl": "https://practicetestautomation.com/practice/",
     "herokuBaseUrl": "https://the-internet.herokuapp.com/",
+    "apiBaseUrl": "https://jsonplaceholder.typicode.com/",
     "browser": "firefox",
     "headless": false,
     "timeouts": {
@@ -56,6 +59,7 @@
   "prod": {
     "practiceBaseUrl": "https://practicetestautomation.com/practice/",
     "herokuBaseUrl": "https://the-internet.herokuapp.com/",
+    "apiBaseUrl": "https://jsonplaceholder.typicode.com/",
     "browser": "firefox",
     "headless": false,
     "timeouts": {

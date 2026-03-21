@@ -32,7 +32,7 @@ A clean, maintainable, and professional Selenium + TestNG automation framework b
   <img src="https://img.shields.io/badge/Maven-Profiles-success?style=flat-square" alt="Maven Profiles">
 
   <!-- Tests Passing -->
-  <img src="https://img.shields.io/badge/Tests-35%20Passing-brightgreen?style=flat-square" alt="Tests Passing">
+  <img src="https://img.shields.io/badge/Tests-105%20Passing-brightgreen?style=flat-square" alt="Tests Passing">
 
   <!-- Java -->
   <img src="https://img.shields.io/badge/Java-17-blue?style=flat-square" alt="Java 17">
@@ -59,34 +59,38 @@ A clean, maintainable, and professional Selenium + TestNG automation framework b
 3. [Design Principles](#-design-principles)
 4. [Tech Stack](#-tech-stack)
 5. [Environment Configuration](#-environment-configuration)
-6. [Dependency & Versioning Strategy](#-dependency--versioning-strategy)
-7. [Test Strategy](#-test-strategy)
-8. [Framework Architecture](#-framework-architecture)
-9. [Logging Architecture](#-logging-architecture)
-10. [Performance Considerations](#-performance-considerations)
-11. [CI Pipeline Architecture](#-ci-pipeline-architecture)
-12. [CI Pipeline](#-ci-pipeline)
-13. [Multi‑Environment Architecture](#-multi-environment-architecture)
-14. [Allure Report Preview](#-allure-report-preview)
-15. [Allure Reporting](#-allure-reporting)
-16. [Why This Framework Matters](#-why-this-framework-matters)
-17. [Enterprise‑Grade Enhancements (Days 25–30)](#-enterprisegrade-enhancements-days-25–30)
-18. [Features at a Glance](#-features-at-a-glance)
-19. [Data‑Driven Testing](#-data-driven-testing-csv-powered)
-20. [Current Scope](#-current-scope-aligned-with-the-real-ui)
-21. [Completed Features](#-completed-features)
-22. [Project Structure](#-project-structure)
-23. [How to Run](#-how-to-run)
-24. [Running Tests with Maven Profiles](#-running-tests-with-maven-profiles)
-25. [How to Run in CI](#-how-to-run-in-ci)
-26. [AI‑Augmented QA Strategy](#-ai-augmented-qa-strategy-day-31)
-27. [Day‑by‑Day Progress Log](#-day-by-day-progress-log)
-28. [Upcoming Enhancements](#-upcoming-enhancements-updated-roadmap)
-29. [Future Enhancements](#-future-enhancements)
-30. [Visual Roadmap Timeline](#-visual-roadmap-timeline)
-31. [Contributing](#-contributing)
-32. [License](#-license)
-33. [Author](#-author)
+6. [Test Data Manager](#-test-data-manager-day-40)
+7. [Schema Validation](#-schema-validation-days-41–42)
+8. [API Suite Structure](#-api-suite-structure)
+9. [Dependency & Versioning Strategy](#-dependency--versioning-strategy)
+10. [Test Strategy](#-test-strategy)
+11. [Framework Architecture](#-framework-architecture)
+12. [API Architecture](#-api-architecture-days-40–42)
+13. [Logging Architecture](#-logging-architecture)
+14. [Performance Considerations](#-performance-considerations)
+15. [CI Pipeline Architecture](#-ci-pipeline-architecture)
+16. [CI Pipeline](#-ci-pipeline)
+17. [Multi‑Environment Architecture](#-multi-environment-architecture)
+18. [Allure Report Preview](#-allure-report-preview)
+19. [Allure Reporting](#-allure-reporting)
+20. [Why This Framework Matters](#-why-this-framework-matters)
+21. [Enterprise‑Grade Enhancements (Days 25–30)](#-enterprisegrade-enhancements-days-25–30)
+22. [Features at a Glance](#-features-at-a-glance)
+23. [Data‑Driven Testing](#-data-driven-testing-csv-powered)
+24. [Current Scope](#-current-scope-aligned-with-the-real-ui)
+25. [Completed Features](#-completed-features)
+26. [Project Structure](#-project-structure)
+27. [How to Run](#-how-to-run)
+28. [Running Tests with Maven Profiles](#-running-tests-with-maven-profiles)
+29. [How to Run in CI](#-how-to-run-in-ci)
+30. [AI‑Augmented QA Strategy](#-ai-augmented-qa-strategy-day-31)
+31. [Day‑by‑Day Progress Log](#-day-by-day-progress-log)
+32. [Upcoming Enhancements](#-upcoming-enhancements-updated-roadmap)
+33. [Future Enhancements](#-future-enhancements)
+34. [Visual Roadmap Timeline](#-visual-roadmap-timeline)
+35. [Contributing](#-contributing)
+36. [License](#-license)
+37. [Author](#-author)
 
 <p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
 
@@ -168,13 +172,17 @@ This framework is built using a modern, industry-standard automation stack:
 - **Allure Reports** — rich test reporting with steps, logs, screenshots, and history
 - **WebDriverManager** — automatic driver resolution
 - **WebDriverFactory** — centralized driver creation (local, headless, remote)
-- **Logback + SLF4J + MDC** — enterprise‑grade logging and per‑test log routing
+- **Logback + SLF4J + MDC** — enterprise‑grade logging and per‑test log routing (UI + API)
 - **JSON‑based ConfigManager** — multi‑environment configuration with overrides
+- **TestDataManager** — unified, environment‑aware JSON/CSV test data loading with schema validation
+- **JSON Schema Validation** — Everit JSON Schema for API contracts and test data schemas
+- **API Service Layer** — `UsersApi`, `PostsApi`, `CommentsApi`, `AuthApi` on top of `ApiClient`
+- **AssertionHelper** — reusable, readable assertions for UI and API tests
 - **GitHub Actions** — CI/CD pipeline with headless Chrome execution
 - **Page Object Model (POM)** — maintainable UI architecture
 - **ThreadLocal WebDriver** — parallel‑ready design
-- **CSV Test Data** — data-driven testing for UI flows
-- **Lightweight API Layer** — ApiClient, ApiBaseTest, and JSON parsing for REST validation
+- **CSV + JSON Test Data** — data-driven testing for UI and API flows
+- **Lightweight API Layer** — `ApiClient`, `ApiBaseTest`, and `ApiResponse` for REST validation
 
 <p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
 
@@ -244,6 +252,212 @@ This makes the framework fully environment‑agnostic, profile‑aware, and CI�
 
 ---
 
+# 📂 Test Data Manager (Day 40)
+
+The framework includes a unified, environment‑aware Test Data Manager that centralizes all JSON and CSV test data loading. This ensures consistency, schema validation, and clean separation between test logic and test data.
+
+---
+
+## 🔹 Key Capabilities
+
+### **Environment‑Aware JSON Loading**
+`TestDataManager` automatically selects the correct dataset based on:
+- `-Denv=local`
+- `-Denv=qa`
+- `-Denv=stage`
+
+Example:
+
+```
+loginData.local.json
+loginData.qa.json
+```
+
+### **CSV + JSON Support**
+The manager loads:
+- CSV files (e.g., `loginData.csv`)
+- JSON arrays and objects (e.g., `loginData.json`)
+
+### **Schema Validation**
+Every JSON dataset is validated against a matching schema:
+- `loginData.schema.json`
+- `post-schema.json`
+- `user-schema.json`
+- `comment-schema.json`
+
+This prevents malformed or drifting test data from entering the suite.
+
+### **Centralized Access**
+All tests and DataProviders load data through:
+
+```java
+JSONArray loginData = TestDataManager.loadJsonArray("login/loginData.json");
+```
+
+This ensures:
+
+- No duplicated file paths
+- No hard‑coded resource lookups
+- Consistent behavior across UI + API tests
+
+---
+
+## 🔹 Benefits
+
+- Eliminates brittle, scattered file loading
+- Guarantees valid test data before execution
+- Supports multi‑environment test data strategies
+- Reduces maintenance overhead
+- Integrates cleanly with TestNG DataProviders
+
+The Test Data Manager is now a core part of the framework’s architecture, powering both UI and API test flows with clean, validated, environment‑aware data.
+
+<p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
+
+---
+
+# 📜 Schema Validation (Days 41–42)
+
+The framework includes full JSON Schema validation for both API responses and test data. This ensures structural correctness, prevents regressions, and guarantees that all data consumed by the framework is valid before tests run.
+
+---
+
+## 🔹 What Schema Validation Covers
+
+### **1. API Contract Validation**
+Every API response is validated against a JSON Schema stored under:
+
+```
+src/test/resources/schemas/
+```
+
+Schemas include:
+- `post-schema.json`
+- `user-schema.json`
+- `comment-schema.json`
+
+Used in Contract Tests:
+
+```java
+SchemaValidator.validate("post-schema.json", response.getBody());
+```
+
+This ensures:
+- Required fields exist
+- Field types match expectations
+- No unexpected structural changes occur
+
+---
+
+### **2. Test Data Schema Validation**
+All JSON test data is validated before being consumed by tests.
+
+Schemas include:
+- `loginData.schema.json`
+- (additional schemas as needed)
+
+This prevents:
+- Missing fields
+- Incorrect data types
+- Corrupted or drifting test data
+
+---
+
+## 🔹 How It Works
+
+The `SchemaValidator` uses Everit JSON Schema to validate JSON objects and arrays:
+
+```java
+SchemaValidator.validate("user-schema.json", jsonResponse);
+```
+
+Validation runs:
+- During API tests
+- During TestDataManager JSON loading
+
+If validation fails, the test fails immediately with a clear, readable error message.
+
+---
+
+## 🔹 Benefits
+
+- Enforces strict API contracts
+- Prevents silent data drift
+- Catches structural regressions early
+- Ensures test data is always valid
+- Improves reliability of both UI + API tests
+
+Schema validation is now a core part of the framework’s stability and correctness strategy.
+
+<p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
+
+---
+
+# 🧪 API Suite Structure
+
+The API test layer is organized into three focused TestNG classes, each covering a different aspect of API behavior. These classes are executed through `api-suite.xml` or as part of the combined UI + API suite.
+
+---
+
+## 🔹 Test Classes
+
+### **1. ApiTests**
+Covers functional, happy‑path API behavior:
+- Status code validation
+- JSON field validation
+- Response time checks
+- Basic contract expectations
+
+### **2. NegativeApiTests**
+Covers error and edge‑case behavior:
+- Invalid IDs
+- Missing resources
+- Bad payloads
+- Non‑existent endpoints
+- Auth failures (via `AuthApi`)
+
+### **3. ContractTests**
+Validates API responses against JSON Schemas:
+- `post-schema.json`
+- `user-schema.json`
+- `comment-schema.json`
+
+Ensures structural correctness and prevents regressions.
+
+---
+
+## 🔹 How the Suites Run
+
+### **API‑Only Execution**
+Triggered via Maven profile:
+
+```java
+mvn clean test -Papi
+```
+
+Runs:
+
+- `ApiTests`
+- `NegativeApiTests`
+- `ContractTests`
+
+### **Combined UI + API Execution**
+Triggered via:
+
+```java
+mvn clean test -Pall
+```
+
+Runs:
+
+- Full UI suite
+- Full API suite
+- Shared reporting + logging
+
+<p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
+
+---
+
 # 📦 Dependency & Versioning Strategy
 
 The framework uses pinned, stable versions of all critical dependencies to ensure reproducible builds:
@@ -286,20 +500,33 @@ This approach mirrors real enterprise QA practices and ensures both stability an
 ```mermaid
 flowchart TD
 
+    %% ============================
+    %% Test Layer
+    %% ============================
     subgraph TestLayer[Test Layer]
         LT[LoginTest]
         ET[ExceptionsTest]
         TT[TableTest]
         FT[FramesTest]
         IFT[iFrameTest]
+
         AT[ApiTests]
+        NAT[NegativeApiTests]
+        CT[ContractTests]
     end
 
+    %% ============================
+    %% Data Layer
+    %% ============================
     subgraph DataLayer[Data Layer]
         DP[LoginDataProvider]
         CSV[loginData.csv]
+        TDM[TestDataManager]
     end
 
+    %% ============================
+    %% Base Layer
+    %% ============================
     subgraph BaseLayer[Base Layer]
         BT[BaseTest]
         ABT[ApiBaseTest]
@@ -309,13 +536,25 @@ flowchart TD
         CM[ConfigManager (JSON)]
         WF[WebDriverFactory]
         AM[ArtifactManager]
+        SV[SchemaValidator]
     end
 
+    %% ============================
+    %% API Layer
+    %% ============================
     subgraph ApiLayer[API Layer]
         AC[ApiClient]
         AR[ApiResponse]
+
+        UAPI[UsersApi]
+        PAPI[PostsApi]
+        CAPI[CommentsApi]
+        AAPI[AuthApi]
     end
 
+    %% ============================
+    %% Page Objects
+    %% ============================
     subgraph PageObjects[Page Objects]
         LP[LoginPage]
         HP[HomePage]
@@ -327,14 +566,22 @@ flowchart TD
         BP[BasePage]
     end
 
+    %% ============================
+    %% Utilities
+    %% ============================
     subgraph Utils[Utilities]
         CSVU[CSVUtils]
         EX[CsvParsingException]
     end
 
+    %% ============================
+    %% Relationships
+    %% ============================
+
     %% UI Test → Data
     LT --> DP
     DP --> CSV
+    DP --> TDM
 
     %% UI Tests → BaseTest
     LT --> BT
@@ -345,6 +592,8 @@ flowchart TD
 
     %% API Tests → ApiBaseTest
     AT --> ABT
+    NAT --> ABT
+    CT --> ABT
 
     %% Base Layer Dependencies
     BT --> CM
@@ -354,6 +603,18 @@ flowchart TD
 
     ABT --> AC
     ABT --> AR
+
+    %% API Services → ApiClient
+    UAPI --> AC
+    PAPI --> AC
+    CAPI --> AC
+    AAPI --> AC
+
+    %% Contract Tests → SchemaValidator
+    CT --> SV
+
+    %% TestDataManager → SchemaValidator
+    TDM --> SV
 
     %% Page Object Dependencies
     LT --> LP
@@ -380,7 +641,98 @@ flowchart TD
     FT --> Utils
     IFT --> Utils
     AT --> Utils
+    NAT --> Utils
+    CT --> Utils
 ```
+
+---
+
+
+# 🔌 API Architecture (Days 40–42)
+
+The framework includes a lightweight but powerful API testing layer that is fully integrated with logging, data management, schema validation, and TestNG suite execution. It follows the same architectural principles as the UI layer: clarity, modularity, and maintainability.
+
+---
+
+## 🧱 Core Components
+
+### **ApiClient**
+A reusable HTTP client that supports:
+- GET, POST, PUT, DELETE
+- JSON request/response handling
+- Automatic header injection
+- Request/response logging (MDC‑aware)
+- Allure attachments for debugging
+
+### **ApiResponse**
+A simple wrapper containing:
+- `statusCode`
+- `headers`
+- `body`
+- `responseTimeMs`
+
+Used across all API tests for consistent, readable assertions.
+
+### **ApiBaseTest**
+Provides:
+- MDC test name initialization
+- Allure metadata
+- Shared setup for all API tests
+- Unified logging behavior across UI + API layers
+
+### **Service Classes**
+Each endpoint group has its own dedicated service class:
+
+- `UsersApi`
+- `PostsApi`
+- `CommentsApi`
+- `AuthApi` (mocked endpoints for negative testing)
+
+These classes encapsulate endpoint URLs and request logic, keeping tests clean and focused on behavior rather than HTTP plumbing.
+
+---
+
+## 🧪 API Test Types
+
+### **Functional Tests**
+Validate:
+- Status codes
+- Response bodies
+- JSON fields
+- Basic contract expectations
+
+### **Negative Tests**
+Validate:
+- Invalid IDs
+- Missing resources
+- Bad payloads
+- Non‑existent auth endpoints
+
+### **Contract Tests**
+Validate API responses against JSON schemas:
+- `post-schema.json`
+- `user-schema.json`
+- `comment-schema.json`
+
+This ensures structural correctness and prevents regressions.
+
+---
+
+## 🧩 Integration with the Framework
+
+The API layer is fully integrated with:
+
+- **MDC logging** → per‑test log files
+- **TestDataManager** → environment‑aware JSON test data
+- **SchemaValidator** → JSON Schema contract enforcement
+- **Allure** → request/response attachments
+- **TestNG suites** → `api-suite.xml` and `combined-suite.xml`
+
+This creates a unified, enterprise‑grade automation platform across UI + API layers.
+
+---
+
+<p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
 
 ---
 
@@ -812,12 +1164,12 @@ These enhancements collectively elevate the framework to a senior‑level automa
 
 ---
 
-# ✨# ✨ Features at a Glance
+# ✨ Features at a Glance
 
 | Feature | Description |
 |--------|-------------|
 | 🧱 Page Object Model | Clean, maintainable, scalable architecture |
-| 🔄 Data‑Driven Tests | CSV‑powered TestNG DataProviders |
+| 🔄 Data‑Driven Tests | CSV + JSON‑powered TestNG DataProviders |
 | 🧪 Stable Test Execution | Explicit waits, retrying click, unified find(), network‑idle waits |
 | 🌐 Multi‑Browser Support | Chrome, Edge, Firefox (local + CI + remote) |
 | 🧵 Thread‑Safe WebDriver | Parallel‑ready design using ThreadLocal |
@@ -828,8 +1180,10 @@ These enhancements collectively elevate the framework to a senior‑level automa
 | 📁 Artifact System | Per‑test directories, run‑level summary, retention policy |
 | 🧭 Navigation Helpers | @Step‑annotated flows, Enter‑key submission, clear helpers |
 | 🌍 Environment‑Aware Config | JSON‑based multi‑environment configuration with overrides |
-| 🧪 Modules | Login, Exceptions, Table, Frames, iFrame, Dynamic Controls |
-| 🛜 API Testing Support | Lightweight HTTP client, JSON parsing, status/body validation |
+| 🧪 UI Modules | Login, Exceptions, Table, Frames, iFrame, Dynamic Controls |
+| 🛜 API Testing Layer | ApiClient, ApiBaseTest, ApiResponse, service classes |
+| 📐 JSON Schema Validation | Contract testing for API + test data schemas |
+| 📂 Test Data Manager | Unified JSON/CSV loader with environment routing |
 | 🧩 Profile‑Based Execution | UI‑only, API‑only, or combined suite via Maven profiles |
 | 🖥️ Remote Execution | Selenium Grid / remote WebDriver support |
 
@@ -967,6 +1321,14 @@ This keeps the framework aligned with the real applications under test.
 src
 ├── main
 │   ├── java
+│   │   ├── api
+│   │   │   ├── ApiClient.java
+│   │   │   ├── ApiResponse.java
+│   │   │   ├── BaseApi.java
+│   │   │   ├── AuthApi.java
+│   │   │   ├── UsersApi.java
+│   │   │   ├── PostsApi.java
+│   │   │   └── CommentsApi.java
 │   │   ├── config
 │   │   │   └── ConfigManager.java
 │   │   ├── exceptions
@@ -991,7 +1353,10 @@ src
 │   │   └── utils
 │   │       ├── ArtifactManager.java
 │   │       ├── CSVUtils.java
-│   │       └── TableUtils.java
+│   │       ├── JsonUtils.java
+│   │       ├── SchemaValidator.java
+│   │       ├── TableUtils.java
+│   │       └── TestDataManager.java
 │   └── resources
 │       └── config.json
 │
@@ -999,12 +1364,14 @@ src
     ├── java
     │   ├── api
     │   │   ├── ApiBaseTest.java
-    │   │   ├── ApiClient.java
-    │   │   ├── ApiResponse.java
-    │   │   └── ApiTests.java
+    │   │   ├── ApiTests.java
+    │   │   ├── NegativeApiTests.java
+    │   │   └── ContractTests.java
     │   ├── base
     │   │   └── BaseTest.java
     │   ├── dataproviders
+    │   │   ├── ApiDataProviders.java
+    │   │   ├── JsonDataProvider.java
     │   │   └── LoginDataProvider.java
     │   ├── helpers
     │   │   └── AssertionHelper.java
@@ -1013,22 +1380,46 @@ src
     │   │   ├── RetryListener.java
     │   │   └── TestListener.java
     │   └── tests
-    │       ├── DynamicControlsTest.java
-    │       ├── ExceptionsTest.java
-    │       ├── FramesTest.java
-    │       ├── LoginTest.java
-    │       └── TableTest.java
+    │       ├── ui
+    │       │   ├── DynamicControlsTest.java
+    │       │   ├── ExceptionsTest.java
+    │       │   ├── FramesTest.java
+    │       │   ├── LoginTest.java
+    │       │   ├── SchemaValidationTest.java
+    │       │   └── TableTest.java
+    │       └── api
+    │           ├── ApiTests.java
+    │           ├── NegativeApiTests.java
+    │           └── ContractTests.java
     └── resources
+        ├── schema
+        │   ├── comment-schema.json
+        │   ├── loginData.schema.json
+        │   ├── post-schema.json
+        │   └── user-schema.json
         ├── testData
-        │   └── loginData.csv
+        │   ├── loginData.csv
+        │   ├── prod
+        │   │   └── loginData.json
+        │   ├── qa
+        │   │   └── loginData.json
+        │   └── stage
+        │       └── loginData.json
+        ├── api-suite.xml
+        ├── combined-suite.xml
         ├── categories.json
-        └── logback-test.xml
+        ├── logback-test.xml
+        └── testng.xml
 
+.github/
+├── workflows/
+│   └── ci.yml
+
+allure-results/
+logs/
 allure-report-example.png
 pom.xml
-testng.xml
-logs/
-allure-results/
+README.md
 ```
 
 <p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
@@ -1073,19 +1464,24 @@ mvn clean test -Dheadless=true
 
 ---
 
-### Execution methods
+### Execution Methods
 
 | Method | Command / Action | Description |
 |--------|------------------|-------------|
 | **Maven (Surefire + TestNG)** | `mvn clean test` | Runs the full suite using `testng.xml`, applies listeners, parallel execution, and generates Allure results. |
-| **TestNG Suite (IDE)** | Right‑click `testng.xml` → Run | Executes the suite directly from the IDE with all listeners and parallel settings. |
+| **UI‑Only Execution** | `mvn clean test -Pui` | Runs only the UI suite using `ui-suite.xml`. |
+| **API‑Only Execution** | `mvn clean test -Papi` | Runs API functional, negative, and contract tests. |
+| **Combined UI + API Execution** | `mvn clean test -Pall` | Runs both UI and API suites with unified reporting and logging. |
+| **TestNG Suite (IDE)** | Right‑click `testng.xml` → Run | Executes the full suite directly from the IDE with all listeners and parallel settings. |
 | **Single Test Class (IDE)** | Run class | Useful for debugging or validating a specific module. |
 | **Single Test Method (IDE)** | Run method | Fastest way to isolate and debug a scenario. |
-| **System‑Property Overrides** | `mvn clean test -Dbrowser=edge -Dheadless=true -Denv=local` | Overrides browser, headless mode, and environment at runtime. |
+| **System‑Property Overrides** | `mvn clean test -Dbrowser=edge -Dheadless=true -Denv=qa` | Overrides browser, headless mode, and environment at runtime. |
+| **Environment‑Specific Test Data** | `mvn clean test -Denv=stage` | Loads JSON/CSV test data from the correct environment folder. |
 | **Parallel Execution** | `mvn clean test` *(parallel defined in `testng.xml`)* | Executes tests in parallel using TestNG + Surefire configuration. |
-| **Retry‑Enabled Execution** | `mvn clean test -Dretry=true` *(if configured)* | Enables RetryAnalyzer + RetryListener for flaky‑test handling. |
+| **Retry‑Enabled Execution** | `mvn clean test -Dretry=true` | Enables RetryAnalyzer + RetryListener for flaky‑test handling. |
 | **Remote Execution (Selenium Grid)** | `mvn clean test -Dremote=true -DgridUrl=http://localhost:4444` | Runs tests against a remote WebDriver or Selenium Grid. |
-| **Allure Report** | `allure serve target/allure-results` | Opens a full Allure report with steps, logs, screenshots, and metadata. |
+| **Schema Validation Run** | Included in API + TestDataManager flows | Validates API responses and test data against JSON schemas. |
+| **Allure Report (Local)** | `allure serve target/allure-results` | Opens a full Allure report with steps, logs, screenshots, and metadata. |
 
 <p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
 
@@ -1115,12 +1511,24 @@ mvn test -Papi
 
 ---
 
+Includes:
+- Functional API tests
+- Negative API tests
+- JSON Schema contract tests
+
+---
+
 ### 🔹 Combined UI + API Suite
 Runs both UI and API tests in a single execution using `combined-suite.xml`:
 
 ```
 mvn test -Pall
 ```
+
+Useful for:
+- Full regression runs
+- CI pipelines
+- Unified Allure reporting
 
 ---
 
@@ -1133,12 +1541,21 @@ mvn clean test
 
 ---
 
+This ensures:
+- Consistent local behavior
+- Full coverage by default
+- No accidental partial runs
+
+---
+
 ### 🔹 Why Profiles Matter
 - Clean separation of UI and API layers
 - Faster targeted runs during development
 - Combined suite for full‑coverage validation
 - CI pipelines can choose the appropriate profile
 - No need to modify suite files manually
+- Supports environment‑aware test data (`-Denv=qa`, `-Denv=stage`, etc.)
+- Ensures schema validation runs automatically for API + test data
 
 <p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
 
@@ -1198,7 +1615,10 @@ mvn clean test -Denv=local -Dbrowser=chrome -Dheadless=true
 [Day 32](#day-32) ·
 [Day 33](#day-33) ·
 [Day 34](#day-34) ·
-[Day 39](#day-39)
+[Day 39](#day-39) ·
+[Day 40](#day-40) ·
+[Day 41](#day-41) ·
+[Day 42](#day-42)
 
 <p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
 
@@ -1614,6 +2034,44 @@ The framework now defaults to full‑coverage execution with both UI and API lay
 **Outcome**  
 The framework now enforces strict, environment-aware JSON validation with a clean, predictable data-loading pipeline. This eliminates an entire class of schema mismatch issues and ensures that future test data changes remain safe, intentional, and fully validated. With all 38 tests passing and CI producing a clean Allure report, the system is more resilient, maintainable, and production-ready heading into Day 40.
 
+---
+
+### **Day 40 — Test Data Manager (Environment‑Aware JSON + CSV Loader)**
+Implemented a unified Test Data Manager to centralize all JSON and CSV test data loading.  
+Key achievements:
+- Added environment‑aware routing (`local`, `qa`, `stage`, `prod`)
+- Implemented JSON + CSV loading with clean, reusable APIs
+- Integrated schema validation for all JSON datasets
+- Replaced scattered file lookups with centralized access patterns
+- Updated DataProviders to use TestDataManager for consistent behavior
+
+This upgrade eliminated brittle file paths, improved maintainability, and aligned the framework with enterprise‑grade data management practices.
+
+---
+
+### **Day 41 — JSON Schema Validation (Test Data Contracts)**
+Introduced full JSON Schema validation for all test data consumed by the framework.  
+Key achievements:
+- Added `loginData.schema.json` and supporting schema files
+- Integrated schema validation into TestDataManager
+- Ensured all JSON test data is validated before test execution
+- Added clear, readable error messages for schema violations
+
+This guarantees that malformed or drifting test data cannot enter the suite, improving reliability and long‑term stability.
+
+---
+
+### **Day 42 — API Contract Testing + Schema Enforcement**
+Expanded schema validation to API responses and formalized the API testing layer.  
+Key achievements:
+- Added `post-schema.json`, `user-schema.json`, and `comment-schema.json`
+- Implemented ContractTests using Everit JSON Schema
+- Integrated schema validation into API flows (`ApiClient` + service classes)
+- Updated API suite structure (functional, negative, contract tests)
+- Added environment‑aware API base URLs and config updates
+
+This completed the API architecture, ensuring strict contract enforcement and production‑grade API validation.
+
 <p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
 
 ---
@@ -1670,6 +2128,7 @@ These enhancements will be explored during Weeks 7–8 of the 60‑day plan.
 - Dynamic Controls module
 - Drag‑and‑Drop module
 - File Upload module
+- File Download module
 - Shadow DOM module
 - Table module expansion (sorting + pagination, if UI updates)
 
@@ -1684,8 +2143,8 @@ These enhancements will be explored during Weeks 7–8 of the 60‑day plan.
 ---
 
 ## Long‑Term (Weeks 9–10)
-- API testing layer (REST Assured)
-- Multi‑environment execution (local, QA, stage, prod)
+- REST Assured upgrade for API testing layer
+- Full multi‑environment execution (config + data + suite routing)
 - Parallel execution profiles (local vs CI)
 - Allure dashboards + history server
 - CI/CD pipeline expansion (matrix builds, nightly runs)
@@ -1720,7 +2179,7 @@ A clear view of what’s coming next for this framework:
 - [x] Table module (parsing utilities + sorting/filtering tests)
 - [x] API testing layer (lightweight HTTP client + JSON parsing)
 - [ ] REST Assured upgrade for API testing
-- [ ] Multi‑environment execution (local, QA, stage) — execution profiles + CI switching
+- [ ] Full multi‑environment execution (config + data + suite routing + CI switching)
 - [ ] `.env` support for secrets and environment variables
 
 ---
@@ -1729,12 +2188,12 @@ A clear view of what’s coming next for this framework:
 - [ ] Retry logic for flaky CI environments (CI‑specific profiles + analytics)
 - [x] Logging improvements (SLF4J + Logback + MDC + step logging)
 - [x] Parallel execution support (TestNG + Maven Surefire)
-- [ ] Enhanced JSON ConfigManager (typed accessors + schema validation)
+- [ ] Enhanced JSON ConfigManager (typed accessors + config schema validation)
 
 ---
 
 ## CI/CD & Reporting
-- [ ] Allure history tracking in CI
+- [ ] Allure history tracking in CI (retention + history server)
 - [ ] `categories.json` for failure grouping
 - [ ] Publish Allure report via GitHub Pages
 - [ ] CI matrix for multi‑browser runs
@@ -1790,18 +2249,21 @@ Days 31–40 | AI‑Augmented QA + API Layer
            | Lightweight API testing layer (GET endpoints)
            | ApiClient + ApiBaseTest + ApiResponse
            | API suite + Maven profiles (ui, api, all)
+           | TestDataManager (JSON + CSV + env routing)
+           | JSON Schema validation for test data
            | AI‑generated test data exploration
            | AI‑assisted locator healing prototype
            | AI‑driven flakiness analysis
-           | AI‑suggested scenario expansion
 
 Days 41–50 | Advanced Modules & API Upgrade
 -----------|---------------------------------------------------------
+           | Contract testing (JSON Schema for API responses)
+           | post-schema.json, user-schema.json, comment-schema.json
            | Dynamic Controls module
            | Drag‑and‑Drop module
            | File Upload module
            | Shadow DOM module
-           | REST Assured upgrade for API testing
+           | REST Assured upgrade for API testing (planned)
 
 Days 51–60 | CI/CD, Reporting & Final Polish
 -----------|---------------------------------------------------------

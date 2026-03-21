@@ -16,6 +16,9 @@ public final class ConfigManager {
 
     private ConfigManager() {}
 
+    // ============================================================
+    // Static Initialization
+    // ============================================================
     static {
         loadDotEnv();
         loadJsonConfig();
@@ -110,7 +113,7 @@ public final class ConfigManager {
     public static String getEnvironment() {
         String override = getOverride("env");
         if (override != null) return override.toLowerCase();
-        return "qa";   // ⭐ Updated default environment
+        return "qa";   // Default environment
     }
 
     // ============================================================
@@ -122,6 +125,10 @@ public final class ConfigManager {
 
     public static String getHerokuBaseUrl() {
         return getConfigValue("heroku.base.url", "herokuBaseUrl");
+    }
+
+    public static String getApiBaseUrl() {
+        return getConfigValue("api.base.url", "apiBaseUrl");
     }
 
     // ============================================================

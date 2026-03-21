@@ -13,11 +13,20 @@
 
     <test name="All Tests">
         <classes>
-            <class name="tests.LoginTest"/>
-            <class name="tests.ExceptionsTest"/>
-            <class name="tests.TableTest"/>
-            <class name="tests.FramesTest"/>
-            <class name="tests.DynamicControlsTest"/>
+
+            <!-- UI Tests -->
+            <class name="tests.ui.LoginTest"/>
+            <class name="tests.ui.ExceptionsTest"/>
+            <class name="tests.ui.TableTest"/>
+            <class name="tests.ui.FramesTest"/>
+            <class name="tests.ui.DynamicControlsTest"/>
+            <class name="tests.ui.SchemaValidationTest"/>
+
+            <!-- API Tests -->
+            <class name="tests.api.ApiTests"/>
+            <class name="tests.api.NegativeApiTests"/>
+            <class name="tests.api.ContractTests"/>
+
         </classes>
     </test>
 
