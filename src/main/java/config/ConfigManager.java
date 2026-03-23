@@ -187,4 +187,17 @@ public final class ConfigManager {
     public static String getArtifactRoot() {
         return getConfigValue("artifact.root", "artifactRoot");
     }
+
+    // ============================================================
+    // Logging Settings (NEW FOR DAY 43)
+    // ============================================================
+    public static boolean isApiLoggingEnabled() {
+        String override = getOverride("apiLogging");
+        if (override != null) {
+            return Boolean.parseBoolean(override);
+        }
+
+        JsonNode node = envNode.get("apiLogging");
+        return node != null && node.asBoolean(true); // default = true
+    }
 }

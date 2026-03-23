@@ -1,11 +1,10 @@
 package api;
 
-import io.qameta.allure.Allure;
 import io.qameta.allure.Step;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import utils.AllureApiLogger;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -14,8 +13,8 @@ import java.net.http.HttpResponse;
 
 /**
  * Lightweight HTTP client wrapper for API testing.
- * Provides GET and POST helpers with clean response handling
- * and full Allure request/response attachments.
+ * Provides GET, POST, PUT, and DELETE helpers with clean response handling
+ * and centralized Allure logging via AllureApiLogger.
  */
 public class ApiClient {
 
@@ -46,6 +45,9 @@ public class ApiClient {
                 .GET()
                 .build();
 
+        // Log request
+        AllureApiLogger.logRequest("GET", url, request.headers().map(), null);
+
         HttpResponse<String> response =
                 client.send(request, HttpResponse.BodyHandlers.ofString());
 
@@ -58,7 +60,8 @@ public class ApiClient {
                 duration
         );
 
-        attachAllureDetails("GET", url, null, apiResponse);
+        // Log response
+        AllureApiLogger.logResponse(response.statusCode(), response.body());
 
         log.info("GET {} → {} {}", url, response.statusCode(), summarizeBody(response.body()));
         return apiResponse;
@@ -79,6 +82,9 @@ public class ApiClient {
                 .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
                 .build();
 
+        // Log request
+        AllureApiLogger.logRequest("POST", url, request.headers().map(), jsonBody);
+
         HttpResponse<String> response =
                 client.send(request, HttpResponse.BodyHandlers.ofString());
 
@@ -91,43 +97,84 @@ public class ApiClient {
                 duration
         );
 
-        attachAllureDetails("POST", url, jsonBody, apiResponse);
+        // Log response
+        AllureApiLogger.logResponse(response.statusCode(), response.body());
 
         log.info("POST {} → {} {}", url, response.statusCode(), summarizeBody(response.body()));
         return apiResponse;
     }
 
     // ============================================================
-    // Allure Attachments
+    // PUT Request
     // ============================================================
-    private void attachAllureDetails(String method,
-                                     String url,
-                                     String requestBody,
-                                     ApiResponse response) {
+    @Step("Send PUT request to: {url}")
+    public ApiResponse put(String url, String jsonBody) throws IOException, InterruptedException {
 
-        Allure.addAttachment("Request Method", method);
-        Allure.addAttachment("Request URL", url);
+        long start = System.currentTimeMillis();
+        log.debug("Sending PUT request to {} with body: {}", url, jsonBody);
 
-        if (requestBody != null) {
-            Allure.addAttachment(
-                    "Request Body",
-                    "application/json",
-                    new ByteArrayInputStream(requestBody.getBytes()),
-                    ".json"
-            );
-        }
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .header("Content-Type", "application/json")
+                .PUT(HttpRequest.BodyPublishers.ofString(jsonBody))
+                .build();
 
-        Allure.addAttachment("Status Code", String.valueOf(response.getStatusCode()));
-        Allure.addAttachment("Response Time (ms)", String.valueOf(response.getResponseTime()));
+        // Log request
+        AllureApiLogger.logRequest("PUT", url, request.headers().map(), jsonBody);
 
-        Allure.addAttachment(
-                "Response Body",
-                "application/json",
-                new ByteArrayInputStream(response.getBody().getBytes()),
-                ".json"
+        HttpResponse<String> response =
+                client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        long duration = System.currentTimeMillis() - start;
+
+        ApiResponse apiResponse = new ApiResponse(
+                response.statusCode(),
+                response.body(),
+                response.headers().map(),
+                duration
         );
 
-        Allure.addAttachment("Response Headers", response.getHeaders().toString());
+        // Log response
+        AllureApiLogger.logResponse(response.statusCode(), response.body());
+
+        log.info("PUT {} → {} {}", url, response.statusCode(), summarizeBody(response.body()));
+        return apiResponse;
+    }
+
+    // ============================================================
+    // DELETE Request
+    // ============================================================
+    @Step("Send DELETE request to: {url}")
+    public ApiResponse delete(String url) throws IOException, InterruptedException {
+
+        long start = System.currentTimeMillis();
+        log.debug("Sending DELETE request to {}", url);
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(url))
+                .DELETE()
+                .build();
+
+        // Log request
+        AllureApiLogger.logRequest("DELETE", url, request.headers().map(), null);
+
+        HttpResponse<String> response =
+                client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        long duration = System.currentTimeMillis() - start;
+
+        ApiResponse apiResponse = new ApiResponse(
+                response.statusCode(),
+                response.body(),
+                response.headers().map(),
+                duration
+        );
+
+        // Log response
+        AllureApiLogger.logResponse(response.statusCode(), response.body());
+
+        log.info("DELETE {} → {} {}", url, response.statusCode(), summarizeBody(response.body()));
+        return apiResponse;
     }
 
     // ============================================================

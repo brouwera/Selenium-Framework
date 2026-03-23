@@ -6,11 +6,17 @@
        parallel="methods"
        thread-count="2">
 
+    <!-- ============================================================
+         Listeners
+         ============================================================ -->
     <listeners>
         <listener class-name="listeners.TestListener"/>
         <listener class-name="listeners.RetryListener"/>
     </listeners>
 
+    <!-- ============================================================
+         All Tests
+         ============================================================ -->
     <test name="All Tests">
         <classes>
 
@@ -24,8 +30,13 @@
 
             <!-- API Tests -->
             <class name="tests.api.ApiTests"/>
-            <class name="tests.api.NegativeApiTests"/>
             <class name="tests.api.ContractTests"/>
+            <class name="tests.api.NegativeApiTests"/>
+            <class name="tests.api.CreatePostsTests"/>
+            <class name="tests.api.UpdatePostsTests"/>
+            <class name="tests.api.DeletePostsTests"/>
+            <class name="tests.api.NegativePostsTests"/>
+            <class name="tests.api.GetPostsTests"/>
 
         </classes>
     </test>

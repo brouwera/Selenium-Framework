@@ -3,9 +3,19 @@
 
     <test name="API Tests">
         <classes>
+
+            <!-- Core API Tests -->
             <class name="tests.api.ApiTests"/>
             <class name="tests.api.NegativeApiTests"/>
             <class name="tests.api.ContractTests"/>
+
+            <!-- New Posts API Test Classes -->
+            <class name="tests.api.CreatePostsTests"/>
+            <class name="tests.api.UpdatePostsTests"/>
+            <class name="tests.api.DeletePostsTests"/>
+            <class name="tests.api.NegativePostsTests"/>
+            <class name="tests.api.GetPostsTests"/>
+
         </classes>
     </test>
 

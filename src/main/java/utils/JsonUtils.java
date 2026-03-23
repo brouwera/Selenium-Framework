@@ -20,6 +20,48 @@ public final class JsonUtils {
         // Prevent instantiation
     }
 
+    // ============================================================
+    // Pretty JSON Helpers (NEW FOR DAY 43)
+    // ============================================================
+
+    /**
+     * Pretty prints a JSON string. If the input is not valid JSON,
+     * the raw string is returned unchanged.
+     */
+    public static String toPrettyJson(String json) {
+        if (json == null || json.isEmpty()) {
+            return "";
+        }
+
+        try {
+            Object obj = mapper.readValue(json, Object.class);
+            return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(obj);
+        } catch (Exception e) {
+            // Not valid JSON → return raw string
+            return json;
+        }
+    }
+
+    /**
+     * Pretty prints any Java object (Map, List, POJO, etc.).
+     * Falls back to toString() if serialization fails.
+     */
+    public static String toPrettyJson(Object obj) {
+        if (obj == null) {
+            return "";
+        }
+
+        try {
+            return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(obj);
+        } catch (Exception e) {
+            return obj.toString();
+        }
+    }
+
+    // ============================================================
+    // JSON Data Provider Loader
+    // ============================================================
+
     /**
      * Reads a JSON array of objects and converts it into Object[][] for TestNG.
      *

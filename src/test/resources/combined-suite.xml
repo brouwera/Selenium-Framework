@@ -1,6 +1,9 @@
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd" >
 <suite name="Combined UI + API Suite" verbose="1">
 
+    <!-- ============================================================
+         UI Tests
+         ============================================================ -->
     <test name="UI Tests">
         <classes>
             <class name="tests.ui.LoginTest"/>
@@ -12,11 +15,19 @@
         </classes>
     </test>
 
+    <!-- ============================================================
+         API Tests
+         ============================================================ -->
     <test name="API Tests">
         <classes>
             <class name="tests.api.ApiTests"/>
             <class name="tests.api.NegativeApiTests"/>
             <class name="tests.api.ContractTests"/>
+            <class name="tests.api.CreatePostsTests"/>
+            <class name="tests.api.UpdatePostsTests"/>
+            <class name="tests.api.DeletePostsTests"/>
+            <class name="tests.api.NegativePostsTests"/>
+            <class name="tests.api.GetPostsTests"/>
         </classes>
     </test>
 

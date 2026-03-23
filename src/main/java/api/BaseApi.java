@@ -1,14 +1,15 @@
 package api;
 
 import config.ConfigManager;
+import io.qameta.allure.Allure;
 import io.qameta.allure.Step;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Base class for all API service-layer classes.
- * Provides shared behavior for GET/POST requests, endpoint resolution,
- * and retry logic for flaky endpoints.
+ * Provides shared behavior for GET/POST/PUT/DELETE requests,
+ * endpoint resolution, retry logic, and Allure reporting.
  */
 public abstract class BaseApi {
 
@@ -33,7 +34,7 @@ public abstract class BaseApi {
     }
 
     // ============================================================
-    // GET Request (with Retry)
+    // GET Request (with Retry + Allure)
     // ============================================================
     @Step("Send GET request to endpoint: {endpoint}")
     protected ApiResponse get(String endpoint) throws Exception {
@@ -42,7 +43,7 @@ public abstract class BaseApi {
     }
 
     // ============================================================
-    // POST Request (with Retry)
+    // POST Request (with Retry + Allure)
     // ============================================================
     @Step("Send POST request to endpoint: {endpoint}")
     protected ApiResponse post(String endpoint, String jsonBody) throws Exception {
@@ -51,7 +52,25 @@ public abstract class BaseApi {
     }
 
     // ============================================================
-    // Retry Wrapper
+    // PUT Request (with Retry + Allure)
+    // ============================================================
+    @Step("Send PUT request to endpoint: {endpoint}")
+    protected ApiResponse put(String endpoint, String jsonBody) throws Exception {
+        String url = buildUrl(endpoint);
+        return executeWithRetry("PUT", url, jsonBody);
+    }
+
+    // ============================================================
+    // DELETE Request (with Retry + Allure)
+    // ============================================================
+    @Step("Send DELETE request to endpoint: {endpoint}")
+    protected ApiResponse delete(String endpoint) throws Exception {
+        String url = buildUrl(endpoint);
+        return executeWithRetry("DELETE", url, null);
+    }
+
+    // ============================================================
+    // Retry Wrapper + Allure Attachments
     // ============================================================
     private ApiResponse executeWithRetry(String method, String url, String body) throws Exception {
 
@@ -63,20 +82,35 @@ public abstract class BaseApi {
                 log.debug("{} attempt {} to {}", method, attempt, url);
 
                 if (attempt > 1) {
-                    io.qameta.allure.Allure.step(
-                            "Retry attempt " + attempt + " for " + method + " " + url
-                    );
+                    Allure.step("Retry attempt " + attempt + " for " + method + " " + url);
                 }
 
-                if ("GET".equals(method)) {
-                    return client.get(url);
-                } else {
-                    return client.post(url, body);
+                // Attach request details
+                attachRequestDetails(method, url, body);
+
+                ApiResponse response;
+
+                switch (method) {
+                    case "GET" -> response = client.get(url);
+                    case "POST" -> response = client.post(url, body);
+                    case "PUT" -> response = client.put(url, body);
+                    case "DELETE" -> response = client.delete(url);
+                    default -> throw new IllegalArgumentException("Unsupported method: " + method);
                 }
+
+                // Attach response details
+                attachResponseDetails(response);
+
+                return response;
 
             } catch (Exception ex) {
                 lastException = ex;
                 log.warn("{} attempt {} failed: {}", method, attempt, ex.getMessage());
+
+                Allure.addAttachment(
+                        "Exception on attempt " + attempt,
+                        ex.getMessage()
+                );
 
                 if (attempt < MAX_RETRIES) {
                     Thread.sleep(RETRY_DELAY_MS);
@@ -85,6 +119,24 @@ public abstract class BaseApi {
         }
 
         throw lastException;
+    }
+
+    // ============================================================
+    // Allure Attachment Helpers
+    // ============================================================
+    private void attachRequestDetails(String method, String url, String body) {
+        Allure.addAttachment("HTTP Method", method);
+        Allure.addAttachment("Request URL", url);
+
+        if (body != null) {
+            Allure.addAttachment("Request Body", body);
+        }
+    }
+
+    private void attachResponseDetails(ApiResponse response) {
+        Allure.addAttachment("Status Code", String.valueOf(response.getStatusCode()));
+        Allure.addAttachment("Response Time (ms)", String.valueOf(response.getResponseTime()));
+        Allure.addAttachment("Response Body", response.getBody());
     }
 
     // ============================================================

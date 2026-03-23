@@ -25,6 +25,9 @@ A clean, maintainable, and professional Selenium + TestNG automation framework b
   <!-- API Testing -->
   <img src="https://img.shields.io/badge/API-Testing-blue?style=flat-square" alt="API Testing">
 
+  <!-- API Logging -->
+  <img src="https://img.shields.io/badge/API%20Logging-Enabled-purple?style=flat-square" alt="API Logging">
+
   <!-- Maven Build -->
   <img src="https://img.shields.io/badge/Maven-Build-orange?style=flat-square" alt="Maven Build">
 
@@ -32,7 +35,7 @@ A clean, maintainable, and professional Selenium + TestNG automation framework b
   <img src="https://img.shields.io/badge/Maven-Profiles-success?style=flat-square" alt="Maven Profiles">
 
   <!-- Tests Passing -->
-  <img src="https://img.shields.io/badge/Tests-105%20Passing-brightgreen?style=flat-square" alt="Tests Passing">
+  <img src="https://img.shields.io/badge/Tests-132%20Passing-brightgreen?style=flat-square" alt="Tests Passing">
 
   <!-- Java -->
   <img src="https://img.shields.io/badge/Java-17-blue?style=flat-square" alt="Java 17">
@@ -67,30 +70,31 @@ A clean, maintainable, and professional Selenium + TestNG automation framework b
 11. [Framework Architecture](#-framework-architecture)
 12. [API Architecture](#-api-architecture-days-40–42)
 13. [Logging Architecture](#-logging-architecture)
-14. [Performance Considerations](#-performance-considerations)
-15. [CI Pipeline Architecture](#-ci-pipeline-architecture)
-16. [CI Pipeline](#-ci-pipeline)
-17. [Multi‑Environment Architecture](#-multi-environment-architecture)
-18. [Allure Report Preview](#-allure-report-preview)
-19. [Allure Reporting](#-allure-reporting)
-20. [Why This Framework Matters](#-why-this-framework-matters)
-21. [Enterprise‑Grade Enhancements (Days 25–30)](#-enterprisegrade-enhancements-days-25–30)
-22. [Features at a Glance](#-features-at-a-glance)
-23. [Data‑Driven Testing](#-data-driven-testing-csv-powered)
-24. [Current Scope](#-current-scope-aligned-with-the-real-ui)
-25. [Completed Features](#-completed-features)
-26. [Project Structure](#-project-structure)
-27. [How to Run](#-how-to-run)
-28. [Running Tests with Maven Profiles](#-running-tests-with-maven-profiles)
-29. [How to Run in CI](#-how-to-run-in-ci)
-30. [AI‑Augmented QA Strategy](#-ai-augmented-qa-strategy-day-31)
-31. [Day‑by‑Day Progress Log](#-day-by-day-progress-log)
-32. [Upcoming Enhancements](#-upcoming-enhancements-updated-roadmap)
-33. [Future Enhancements](#-future-enhancements)
-34. [Visual Roadmap Timeline](#-visual-roadmap-timeline)
-35. [Contributing](#-contributing)
-36. [License](#-license)
-37. [Author](#-author)
+14. [API Logging](#-api-logging)
+15. [Performance Considerations](#-performance-considerations)
+16. [CI Pipeline Architecture](#-ci-pipeline-architecture)
+17. [CI Pipeline](#-ci-pipeline)
+18. [Multi‑Environment Architecture](#-multi-environment-architecture)
+19. [Allure Report Preview](#-allure-report-preview)
+20. [Allure Reporting](#-allure-reporting)
+21. [Why This Framework Matters](#-why-this-framework-matters)
+22. [Enterprise‑Grade Enhancements (Days 25–30)](#-enterprisegrade-enhancements-days-25–30)
+23. [Features at a Glance](#-features-at-a-glance)
+24. [Data‑Driven Testing](#-data-driven-testing-csv-powered)
+25. [Current Scope](#-current-scope-aligned-with-the-real-ui)
+26. [Completed Features](#-completed-features)
+27. [Project Structure](#-project-structure)
+28. [How to Run](#-how-to-run)
+29. [Running Tests with Maven Profiles](#-running-tests-with-maven-profiles)
+30. [How to Run in CI](#-how-to-run-in-ci)
+31. [AI‑Augmented QA Strategy](#-ai-augmented-qa-strategy-day-31)
+32. [Day‑by‑Day Progress Log](#-day-by-day-progress-log)
+33. [Upcoming Enhancements](#-upcoming-enhancements-updated-roadmap)
+34. [Future Enhancements](#-future-enhancements)
+35. [Visual Roadmap Timeline](#-visual-roadmap-timeline)
+36. [Contributing](#-contributing)
+37. [License](#-license)
+38. [Author](#-author)
 
 <p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
 
@@ -111,7 +115,7 @@ This 30‑day engineering log documents the evolution of a modern, enterprise‑
 - A unified BasePage interaction layer with step numbering, durations, and defensive waits
 - A lightweight API testing layer with JSON parsing, status validation, and dedicated Maven profiles
 
-Across 30 days, the framework matured through iterative enhancements, architectural refactors, stability passes, and CI‑ready validation — culminating in **35/35 passing tests** (UI + API), clean Allure reports, and a fully modernized automation platform aligned with real enterprise standards.
+Across 30 days, the framework matured through iterative enhancements, architectural refactors, stability passes, and CI‑ready validation — culminating in a fully passing UI + API test suite, clean Allure reports, and a fully modernized automation platform aligned with real enterprise standards.
 
 <p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
 
@@ -140,7 +144,7 @@ It demonstrates:
 - Lightweight API testing layer with JSON parsing and status/body validation
 - CI/CD readiness with GitHub Actions
 
-All 35 tests across UI and API modules currently pass with **zero failures** across all supported browsers.
+All UI and API tests currently pass with **zero failures** across all supported browsers.
 
 <p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
 
@@ -252,7 +256,7 @@ This makes the framework fully environment‑agnostic, profile‑aware, and CI�
 
 ---
 
-# 📂 Test Data Manager (Day 40)
+# 📂 Test Data Manager
 
 The framework includes a unified, environment‑aware Test Data Manager that centralizes all JSON and CSV test data loading. This ensures consistency, schema validation, and clean separation between test logic and test data.
 
@@ -279,13 +283,21 @@ The manager loads:
 - JSON arrays and objects (e.g., `loginData.json`)
 
 ### **Schema Validation**
-Every JSON dataset is validated against a matching schema:
+Every JSON dataset and API response is validated against a matching schema:
+
+**Test Data Schemas**
 - `loginData.schema.json`
+
+**API Contract Schemas**
 - `post-schema.json`
+- `posts-all.schema.json`
+- `posts-create.schema.json`
+- `posts-single.schema.json`
+- `posts-update.schema.json`
 - `user-schema.json`
 - `comment-schema.json`
 
-This prevents malformed or drifting test data from entering the suite.
+This ensures that both test data and API responses strictly conform to their expected structure, preventing malformed or drifting data from entering the suite.
 
 ### **Centralized Access**
 All tests and DataProviders load data through:
@@ -316,7 +328,7 @@ The Test Data Manager is now a core part of the framework’s architecture, powe
 
 ---
 
-# 📜 Schema Validation (Days 41–42)
+# 📜 Schema Validation
 
 The framework includes full JSON Schema validation for both API responses and test data. This ensures structural correctness, prevents regressions, and guarantees that all data consumed by the framework is valid before tests run.
 
@@ -332,7 +344,12 @@ src/test/resources/schemas/
 ```
 
 Schemas include:
+
 - `post-schema.json`
+- `posts-all.schema.json`
+- `posts-create.schema.json`
+- `posts-single.schema.json`
+- `posts-update.schema.json`
 - `user-schema.json`
 - `comment-schema.json`
 
@@ -352,9 +369,8 @@ This ensures:
 ### **2. Test Data Schema Validation**
 All JSON test data is validated before being consumed by tests.
 
-Schemas include:
+**Test Data Schemas**
 - `loginData.schema.json`
-- (additional schemas as needed)
 
 This prevents:
 - Missing fields
@@ -372,8 +388,8 @@ SchemaValidator.validate("user-schema.json", jsonResponse);
 ```
 
 Validation runs:
-- During API tests
-- During TestDataManager JSON loading
+- During API tests (contract, functional, negative)
+- During TestDataManager JSON loading (environment‑aware test data)
 
 If validation fails, the test fails immediately with a clear, readable error message.
 
@@ -395,32 +411,67 @@ Schema validation is now a core part of the framework’s stability and correctn
 
 # 🧪 API Suite Structure
 
-The API test layer is organized into three focused TestNG classes, each covering a different aspect of API behavior. These classes are executed through `api-suite.xml` or as part of the combined UI + API suite.
+The API test layer includes a full set of TestNG classes covering functional behavior, CRUD operations, negative scenarios, and JSON Schema contract validation. These tests run through `api-suite.xml` or as part of the combined UI + API suite.
 
 ---
 
 ## 🔹 Test Classes
 
-### **1. ApiTests**
-Covers functional, happy‑path API behavior:
+### **1. Functional API Tests**
+Covers standard, happy‑path API behavior:
 - Status code validation
 - JSON field validation
 - Response time checks
 - Basic contract expectations
 
-### **2. NegativeApiTests**
+Classes include:
+- `ApiTests`
+- `GetPostsTests`
+
+---
+
+### **2. CRUD Operation Tests**
+Validates full create/read/update/delete flows for the Posts API:
+
+- `CreatePostsTests`
+- `UpdatePostsTests`
+- `DeletePostsTests`
+
+These tests use:
+- Environment‑aware base URLs
+- Schema‑validated request/response bodies
+- Centralized API service classes (`PostsApi`, `UsersApi`, `CommentsApi`, `AuthApi`)
+
+---
+
+### **3. Negative API Tests**
 Covers error and edge‑case behavior:
 - Invalid IDs
 - Missing resources
 - Bad payloads
 - Non‑existent endpoints
-- Auth failures (via `AuthApi`)
+- Auth failures
 
-### **3. ContractTests**
+Classes include:
+- `NegativeApiTests`
+- `NegativePostsTests`
+
+---
+
+### **4. Contract Tests**
 Validates API responses against JSON Schemas:
+
+Schemas include:
 - `post-schema.json`
+- `posts-all.schema.json`
+- `posts-create.schema.json`
+- `posts-single.schema.json`
+- `posts-update.schema.json`
 - `user-schema.json`
 - `comment-schema.json`
+
+Class:
+- `ContractTests`
 
 Ensures structural correctness and prevents regressions.
 
@@ -436,10 +487,12 @@ mvn clean test -Papi
 ```
 
 Runs:
+- All functional tests
+- All CRUD tests
+- All negative tests
+- All contract tests
 
-- `ApiTests`
-- `NegativeApiTests`
-- `ContractTests`
+---
 
 ### **Combined UI + API Execution**
 Triggered via:
@@ -449,7 +502,6 @@ mvn clean test -Pall
 ```
 
 Runs:
-
 - Full UI suite
 - Full API suite
 - Shared reporting + logging
@@ -511,7 +563,14 @@ flowchart TD
         IFT[iFrameTest]
 
         AT[ApiTests]
+        GPT[GetPostsTests]
+        CPT[CreatePostsTests]
+        UPT[UpdatePostsTests]
+        DPT[DeletePostsTests]
+
         NAT[NegativeApiTests]
+        NPT[NegativePostsTests]
+
         CT[ContractTests]
     end
 
@@ -521,6 +580,9 @@ flowchart TD
     subgraph DataLayer[Data Layer]
         DP[LoginDataProvider]
         CSV[loginData.csv]
+        JSONQA[qa/loginData.json]
+        JSONST[stage/loginData.json]
+        JSONPR[prod/loginData.json]
         TDM[TestDataManager]
     end
 
@@ -545,6 +607,7 @@ flowchart TD
     subgraph ApiLayer[API Layer]
         AC[ApiClient]
         AR[ApiResponse]
+        BA[BaseApi]
 
         UAPI[UsersApi]
         PAPI[PostsApi]
@@ -571,6 +634,9 @@ flowchart TD
     %% ============================
     subgraph Utils[Utilities]
         CSVU[CSVUtils]
+        JSONU[JsonUtils]
+        TU[TableUtils]
+        AAL[AllureApiLogger]
         EX[CsvParsingException]
     end
 
@@ -582,6 +648,9 @@ flowchart TD
     LT --> DP
     DP --> CSV
     DP --> TDM
+    TDM --> JSONQA
+    TDM --> JSONST
+    TDM --> JSONPR
 
     %% UI Tests → BaseTest
     LT --> BT
@@ -592,7 +661,12 @@ flowchart TD
 
     %% API Tests → ApiBaseTest
     AT --> ABT
+    GPT --> ABT
+    CPT --> ABT
+    UPT --> ABT
+    DPT --> ABT
     NAT --> ABT
+    NPT --> ABT
     CT --> ABT
 
     %% Base Layer Dependencies
@@ -603,6 +677,7 @@ flowchart TD
 
     ABT --> AC
     ABT --> AR
+    ABT --> BA
 
     %% API Services → ApiClient
     UAPI --> AC
@@ -634,21 +709,25 @@ flowchart TD
     IFT --> IFP
     IFP --> BP
 
-    %% Utils
+    %% Utils used across tests
     LT --> Utils
     ET --> Utils
     TT --> Utils
     FT --> Utils
     IFT --> Utils
     AT --> Utils
+    GPT --> Utils
+    CPT --> Utils
+    UPT --> Utils
+    DPT --> Utils
     NAT --> Utils
+    NPT --> Utils
     CT --> Utils
 ```
 
 ---
 
-
-# 🔌 API Architecture (Days 40–42)
+# 🔌 API Architecture
 
 The framework includes a lightweight but powerful API testing layer that is fully integrated with logging, data management, schema validation, and TestNG suite execution. It follows the same architectural principles as the UI layer: clarity, modularity, and maintainability.
 
@@ -680,6 +759,12 @@ Provides:
 - Shared setup for all API tests
 - Unified logging behavior across UI + API layers
 
+### **BaseApi**
+A shared parent class for all service classes:
+- Centralizes base URLs
+- Handles environment‑aware endpoint resolution
+- Provides reusable request helpers
+
 ### **Service Classes**
 Each endpoint group has its own dedicated service class:
 
@@ -701,16 +786,37 @@ Validate:
 - JSON fields
 - Basic contract expectations
 
+Classes include:
+- `ApiTests`
+- `GetPostsTests`
+
+### **CRUD Tests**
+Validate full create/read/update/delete flows:
+
+- `CreatePostsTests`
+- `UpdatePostsTests`
+- `DeletePostsTests`
+
 ### **Negative Tests**
 Validate:
 - Invalid IDs
 - Missing resources
 - Bad payloads
-- Non‑existent auth endpoints
+- Non‑existent endpoints
+- Auth failures
+
+Classes include:
+- `NegativeApiTests`
+- `NegativePostsTests`
 
 ### **Contract Tests**
 Validate API responses against JSON schemas:
+
 - `post-schema.json`
+- `posts-all.schema.json`
+- `posts-create.schema.json`
+- `posts-single.schema.json`
+- `posts-update.schema.json`
 - `user-schema.json`
 - `comment-schema.json`
 
@@ -729,8 +835,6 @@ The API layer is fully integrated with:
 - **TestNG suites** → `api-suite.xml` and `combined-suite.xml`
 
 This creates a unified, enterprise‑grade automation platform across UI + API layers.
-
----
 
 <p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
 
@@ -908,6 +1012,116 @@ This logging system demonstrates:
 - Recruiter‑friendly clarity
 
 It mirrors the logging approach used in enterprise QA automation frameworks.
+
+<p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
+
+---
+
+# 📡 API Logging
+
+The framework includes a dedicated API logging layer that captures every request and response with full detail, formatted for readability, and automatically attached to Allure reports. This brings API observability to the same enterprise‑grade level as the UI logging system.
+
+---
+
+## 🔹 Key Capabilities
+
+### **Pretty‑Printed JSON Logging**
+All request and response bodies are automatically formatted using `JsonUtils.toPrettyJson()`, producing:
+
+- Human‑readable JSON
+- Indentation and line breaks
+- Graceful fallback for non‑JSON payloads
+
+This dramatically improves debugging clarity in both logs and Allure.
+
+---
+
+### **Request + Response Metadata**
+Each API call logs:
+
+- HTTP method
+- Full URL
+- Headers
+- Request body
+- Response status
+- Response time
+- Response body
+
+All captured through the centralized `AllureApiLogger`.
+
+---
+
+### **Automatic cURL Generation**
+Every API request includes a fully escaped, copy‑ready cURL command:
+
+```
+curl -X GET "https://jsonplaceholder.typicode.com/posts/1" \
+-H "Content-Type: application/json"
+```
+
+This makes reproducing failures outside the framework effortless.
+
+---
+
+### **Allure Attachments**
+Each API call produces the following Allure attachments:
+
+- **Request Details**
+- **Response Details**
+- **cURL Command**
+
+These appear under the test’s step tree and are included in CI artifacts.
+
+---
+
+### **Configurable Logging Toggle**
+API logging can be enabled or disabled via:
+
+#### **config.json**
+
+```json
+"apiLogging": true
+```
+
+---
+
+#### **System property**
+
+```
+-DapiLogging=false
+```
+
+#### **.env override**
+
+```
+apiLogging=false
+```
+
+
+The `ConfigManager.isApiLoggingEnabled()` method unifies all override paths.
+
+---
+
+### **MDC‑Aware Logging**
+API logs are routed through the same MDC test‑name tagging system used by UI tests, ensuring:
+
+- Clean per‑test log files
+- Thread‑safe parallel execution
+- Unified formatting across UI + API layers
+
+---
+
+## 🔹 Why This Matters
+
+This enhancement brings the API layer to full enterprise maturity:
+
+- Faster debugging
+- Cleaner Allure reports
+- Reproducible API calls
+- Consistent logging across UI + API
+- CI‑ready observability
+
+It also lays the groundwork for future enhancements such as retry logic, authentication flows, and API performance metrics.
 
 <p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
 
@@ -1236,8 +1450,11 @@ This framework automates real UI modules across two applications and includes a 
 ---
 
 ### API Testing
-- **GET endpoints** with status/body validation
-- **JSON parsing** via lightweight API client
+- **Functional tests** for GET/POST/PUT/DELETE endpoints
+- **CRUD coverage** for Posts API
+- **Negative tests** for invalid IDs, missing resources, and bad payloads
+- **Contract tests** using JSON Schema validation
+- **Pretty‑printed request/response logging** with cURL generation
 - **Profile‑based execution** (`-Papi`, `-Pall`)
 
 ---
@@ -1268,7 +1485,7 @@ This keeps the framework aligned with the real applications under test.
 ### ✔ Framework Cleanup (Day 13)
 - Removed deprecated modules
 - Cleaned HomePage to match real UI
-- Updated testng.xml
+- Updated `testng.xml`
 - Full green suite with `mvn clean test`
 - TestListener integrated
 
@@ -1292,8 +1509,20 @@ This keeps the framework aligned with the real applications under test.
 
 ---
 
+### ✔ Architecture Upgrades (Days 25–30)
+- Extracted WebDriverFactory with local, headless, and remote support
+- Added per‑test artifact directories and run‑level summaries
+- Implemented JSON‑based ConfigManager with overrides
+- Added step‑numbered BasePage logging with duration tracking
+- Added unified Logback pattern across all logs
+- Added browser console log exposure
+- Added retention policy for artifact runs
+- Synchronized TestListener, BasePage, and global step‑counter architecture
+
+---
+
 ### ✔ API Testing Layer (Day 31)
-- Added lightweight `ApiClient` for GET requests
+- Introduced lightweight `ApiClient` for initial GET endpoints
 - Added `ApiBaseTest` with MDC logging and Allure integration
 - Added `ApiResponse` wrapper for status/body validation
 - Added `api-suite.xml` and Maven profiles (`-Papi`, `-Pall`)
@@ -1301,15 +1530,15 @@ This keeps the framework aligned with the real applications under test.
 
 ---
 
-### ✔ Architecture Upgrades (Days 25–30)
-- Extracted WebDriverFactory with local, headless, and remote support
-- Added per‑test artifact directories and run‑level summaries
-- Implemented JSON‑based ConfigManager with overrides
-- Added step‑numbered BasePage logging with duration tracking
-- Added unified logback pattern across all logs
-- Added browser console log exposure
-- Added retention policy for artifact runs
-- Synchronized TestListener, BasePage, and global step‑counter architecture
+### ✔ API Expansion (Days 32–43)
+- Added full CRUD coverage for Posts API
+- Added Negative API tests for invalid IDs and bad payloads
+- Added JSON Schema contract validation for all API responses
+- Added `BaseApi` and dedicated service classes (Users, Posts, Comments, Auth)
+- Added pretty‑printed request/response logging with cURL generation
+- Added Allure API attachments (request, response, cURL)
+- Added environment‑aware JSON test data via TestDataManager
+- Added API logging toggle via `config.json`, system properties, and `.env`
 
 <p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
 
@@ -1318,108 +1547,126 @@ This keeps the framework aligned with the real applications under test.
 # 📁 Project Structure
 
 ```
-src
-├── main
-│   ├── java
-│   │   ├── api
-│   │   │   ├── ApiClient.java
-│   │   │   ├── ApiResponse.java
-│   │   │   ├── BaseApi.java
-│   │   │   ├── AuthApi.java
-│   │   │   ├── UsersApi.java
-│   │   │   ├── PostsApi.java
-│   │   │   └── CommentsApi.java
-│   │   ├── config
-│   │   │   └── ConfigManager.java
-│   │   ├── exceptions
-│   │   │   ├── CsvParsingException.java
-│   │   │   ├── ElementNotFoundException.java
-│   │   │   ├── FrameworkInitializationException.java
-│   │   │   ├── InvalidTestDataException.java
-│   │   │   └── PageNavigationException.java
-│   │   ├── factory
-│   │   │   └── WebDriverFactory.java
-│   │   ├── pages
-│   │   │   ├── BasePage.java
-│   │   │   ├── DynamicControlsPage.java
-│   │   │   ├── ExceptionsPage.java
-│   │   │   ├── FramesPage.java
-│   │   │   ├── HomePage.java
-│   │   │   ├── IFramePage.java
-│   │   │   ├── LoginPage.java
-│   │   │   ├── NestedFramesPage.java
-│   │   │   ├── SuccessfulLoginPage.java
-│   │   │   └── TablePage.java
-│   │   └── utils
-│   │       ├── ArtifactManager.java
-│   │       ├── CSVUtils.java
-│   │       ├── JsonUtils.java
-│   │       ├── SchemaValidator.java
-│   │       ├── TableUtils.java
-│   │       └── TestDataManager.java
-│   └── resources
-│       └── config.json
-│
-└── test
-    ├── java
-    │   ├── api
-    │   │   ├── ApiBaseTest.java
-    │   │   ├── ApiTests.java
-    │   │   ├── NegativeApiTests.java
-    │   │   └── ContractTests.java
-    │   ├── base
-    │   │   └── BaseTest.java
-    │   ├── dataproviders
-    │   │   ├── ApiDataProviders.java
-    │   │   ├── JsonDataProvider.java
-    │   │   └── LoginDataProvider.java
-    │   ├── helpers
-    │   │   └── AssertionHelper.java
-    │   ├── listeners
-    │   │   ├── RetryAnalyzer.java
-    │   │   ├── RetryListener.java
-    │   │   └── TestListener.java
-    │   └── tests
-    │       ├── ui
-    │       │   ├── DynamicControlsTest.java
-    │       │   ├── ExceptionsTest.java
-    │       │   ├── FramesTest.java
-    │       │   ├── LoginTest.java
-    │       │   ├── SchemaValidationTest.java
-    │       │   └── TableTest.java
-    │       └── api
-    │           ├── ApiTests.java
-    │           ├── NegativeApiTests.java
-    │           └── ContractTests.java
-    └── resources
-        ├── schema
-        │   ├── comment-schema.json
-        │   ├── loginData.schema.json
-        │   ├── post-schema.json
-        │   └── user-schema.json
-        ├── testData
-        │   ├── loginData.csv
-        │   ├── prod
-        │   │   └── loginData.json
-        │   ├── qa
-        │   │   └── loginData.json
-        │   └── stage
-        │       └── loginData.json
-        ├── api-suite.xml
-        ├── combined-suite.xml
-        ├── categories.json
-        ├── logback-test.xml
-        └── testng.xml
-
-.github/
-├── workflows/
-│   └── ci.yml
-
-allure-results/
-logs/
-allure-report-example.png
-pom.xml
-README.md
+D:\Projects\Selenium-Framework
+├── .allure
+├── .github
+│   └── workflows
+│       └── ci.yml
+├── .idea
+├── .mvn
+├── allure-results
+├── logs
+├── src
+│   ├── main
+│   │   ├── java
+│   │   │   ├── api
+│   │   │   │   ├── ApiClient.java
+│   │   │   │   ├── ApiResponse.java
+│   │   │   │   ├── AuthApi.java
+│   │   │   │   ├── BaseApi.java
+│   │   │   │   ├── CommentsApi.java
+│   │   │   │   ├── PostsApi.java
+│   │   │   │   └── UsersApi.java
+│   │   │   ├── config
+│   │   │   │   └── ConfigManager.java
+│   │   │   ├── exceptions
+│   │   │   │   ├── CsvParsingException.java
+│   │   │   │   ├── ElementNotFoundException.java
+│   │   │   │   ├── FrameworkInitializationException.java
+│   │   │   │   ├── InvalidTestDataException.java
+│   │   │   │   └── PageNavigationException.java
+│   │   │   ├── factory
+│   │   │   │   └── WebDriverFactory.java
+│   │   │   ├── pages
+│   │   │   │   ├── BasePage.java
+│   │   │   │   ├── DynamicControlsPage.java
+│   │   │   │   ├── ExceptionsPage.java
+│   │   │   │   ├── FramesPage.java
+│   │   │   │   ├── HomePage.java
+│   │   │   │   ├── IFramePage.java
+│   │   │   │   ├── LoginPage.java
+│   │   │   │   ├── NestedFramesPage.java
+│   │   │   │   ├── SuccessfulLoginPage.java
+│   │   │   │   └── TablePage.java
+│   │   │   └── utils
+│   │   │       ├── AllureApiLogger.java
+│   │   │       ├── ArtifactManager.java
+│   │   │       ├── CSVUtils.java
+│   │   │       ├── JsonUtils.java
+│   │   │       ├── SchemaValidator.java
+│   │   │       ├── TableUtils.java
+│   │   │       └── TestDataManager.java
+│   │   └── resources
+│   │       └── config.json
+│   └── test
+│       ├── java
+│       │   ├── api
+│       │   │   ├── ApiBaseTest.java
+│       │   │   ├── ApiTests.java
+│       │   │   ├── ContractTests.java
+│       │   │   ├── CreatePostsTests.java
+│       │   │   ├── DeletePostsTests.java
+│       │   │   ├── GetPostsTests.java
+│       │   │   ├── NegativeApiTests.java
+│       │   │   ├── NegativePostsTests.java
+│       │   │   └── UpdatePostsTests.java
+│       │   ├── base
+│       │   │   └── BaseTest.java
+│       │   ├── dataproviders
+│       │   │   ├── ApiDataProviders.java
+│       │   │   ├── JsonDataProvider.java
+│       │   │   └── LoginDataProvider.java
+│       │   ├── helpers
+│       │   │   └── AssertionHelper.java
+│       │   ├── listeners
+│       │   │   ├── RetryAnalyzer.java
+│       │   │   ├── RetryListener.java
+│       │   │   └── TestListener.java
+│       │   └── tests
+│       │       ├── api
+│       │       │   ├── ApiTests.java
+│       │       │   ├── ContractTests.java
+│       │       │   ├── CreatePostsTests.java
+│       │       │   ├── DeletePostsTests.java
+│       │       │   ├── GetPostsTests.java
+│       │       │   ├── NegativeApiTests.java
+│       │       │   ├── NegativePostsTests.java
+│       │       │   └── UpdatePostsTests.java
+│       │       └── ui
+│       │           ├── DynamicControlsTest.java
+│       │           ├── ExceptionsTest.java
+│       │           ├── FramesTest.java
+│       │           ├── LoginTest.java
+│       │           ├── SchemaValidationTest.java
+│       │           └── TableTest.java
+│       └── resources
+│           ├── schema
+│           │   ├── comment-schema.json
+│           │   ├── loginData.schema.json
+│           │   ├── post-schema.json
+│           │   ├── posts-all.schema.json
+│           │   ├── posts-create.schema.json
+│           │   ├── posts-single.schema.json
+│           │   ├── posts-update.schema.json
+│           │   └── user-schema.json
+│           ├── testData
+│           │   ├── loginData.csv
+│           │   ├── prod
+│           │   │   └── loginData.json
+│           │   ├── qa
+│           │   │   └── loginData.json
+│           │   └── stage
+│           │       └── loginData.json
+│           ├── api-suite.xml
+│           ├── categories.json
+│           ├── combined-suite.xml
+│           ├── logback-test.xml
+│           └── testng.xml
+├── target
+├── .gitignore
+├── allure-report-example.png
+├── pom.xml
+└── README.md
 ```
 
 <p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
@@ -1509,8 +1756,6 @@ Runs the API suite (`api-suite.xml`) without launching a browser:
 mvn test -Papi
 ```
 
----
-
 Includes:
 - Functional API tests
 - Negative API tests
@@ -1538,8 +1783,6 @@ If no profile is specified, Maven now uses the **combined suite** and runs **bot
 ```
 mvn clean test
 ```
-
----
 
 This ensures:
 - Consistent local behavior
@@ -1618,7 +1861,8 @@ mvn clean test -Denv=local -Dbrowser=chrome -Dheadless=true
 [Day 39](#day-39) ·
 [Day 40](#day-40) ·
 [Day 41](#day-41) ·
-[Day 42](#day-42)
+[Day 42](#day-42) ·
+[Day 43](#day-43)
 
 <p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
 
@@ -2071,6 +2315,21 @@ Key achievements:
 - Added environment‑aware API base URLs and config updates
 
 This completed the API architecture, ensuring strict contract enforcement and production‑grade API validation.
+
+---
+
+### **Day 43 — API Logging, cURL Generation & Allure Attachments**
+Enhanced the API layer with rich debugging, traceability, and reporting features.  
+Key achievements:
+- Added centralized API logging with `AllureApiLogger`
+- Implemented pretty‑printed JSON formatting for request/response bodies
+- Added automatic cURL generation for every API call
+- Integrated request, response, and cURL attachments into Allure reports
+- Added config‑driven logging toggle (`config.json`, system properties, `.env`)
+- Updated `ApiClient` and service classes to use the new logging pipeline
+- Validated full CRUD, negative, and contract tests with enhanced visibility
+
+This upgrade brings production‑grade observability to the API layer, making debugging faster, clearer, and fully traceable through Allure.
 
 <p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
 

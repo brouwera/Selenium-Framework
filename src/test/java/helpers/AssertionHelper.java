@@ -143,6 +143,17 @@ public class AssertionHelper {
         );
     }
 
+    // ⭐ NEW: Schema Validation Assertion
+    public static void assertSchemaValid(String schemaFile, ApiResponse response) {
+        Assert.assertNotNull(response, "API response is null");
+
+        try {
+            utils.SchemaValidator.validate(schemaFile, response.getBody());
+        } catch (Exception ex) {
+            Assert.fail("Schema validation failed for file: " + schemaFile + "\n" + ex.getMessage());
+        }
+    }
+
     // ============================================================
     // JSON Assertions
     // ============================================================
@@ -222,6 +233,14 @@ public class AssertionHelper {
                 expected.toString(),
                 "JSON response does not match expected file: " + expectedJsonFile
         );
+    }
+
+    // ⭐ NEW: JSON Helper
+    public static JSONObject getJson(ApiResponse response) {
+        Assert.assertNotNull(response, "API response is null");
+        Assert.assertNotNull(response.getBody(), "API response body is null");
+
+        return new JSONObject(response.getBody());
     }
 
     // ============================================================
