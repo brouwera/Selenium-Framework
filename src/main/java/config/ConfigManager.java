@@ -189,7 +189,7 @@ public final class ConfigManager {
     }
 
     // ============================================================
-    // Logging Settings (NEW FOR DAY 43)
+    // Logging Settings (DAY 43)
     // ============================================================
     public static boolean isApiLoggingEnabled() {
         String override = getOverride("apiLogging");
@@ -199,5 +199,28 @@ public final class ConfigManager {
 
         JsonNode node = envNode.get("apiLogging");
         return node != null && node.asBoolean(true); // default = true
+    }
+
+    // ============================================================
+    // API Settings (DAY 44)
+    // ============================================================
+    public static int getApiRetries() {
+        String override = getOverride("apiRetries");
+        if (override != null) {
+            return Integer.parseInt(override);
+        }
+
+        JsonNode node = envNode.get("apiRetries");
+        return (node != null && node.isInt()) ? node.asInt() : 0; // default = 0 retries
+    }
+
+    public static int getApiRetryBackoffMs() {
+        String override = getOverride("apiRetryBackoffMs");
+        if (override != null) {
+            return Integer.parseInt(override);
+        }
+
+        JsonNode node = envNode.get("apiRetryBackoffMs");
+        return (node != null && node.isInt()) ? node.asInt() : 200; // default = 200ms
     }
 }

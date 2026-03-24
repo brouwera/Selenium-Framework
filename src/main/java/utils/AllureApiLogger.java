@@ -10,7 +10,7 @@ import java.util.Map;
 /**
  * Centralized API logging utility for Allure reporting.
  * Handles request/response logging, pretty JSON formatting,
- * and cURL generation for reproducible debugging.
+ * cURL generation for reproducible debugging, and timing attachments.
  */
 public class AllureApiLogger {
 
@@ -53,10 +53,45 @@ public class AllureApiLogger {
         attach("Response Body", JsonUtils.toPrettyJson(body));
     }
 
+    /**
+     * Logs API timing information as a separate Allure attachment.
+     */
+    public static void logTiming(String method, String url, long durationMs) {
+
+        if (!ConfigManager.isApiLoggingEnabled()) {
+            return;
+        }
+
+        String message = String.format(
+                "%s %s completed in %d ms",
+                method, url, durationMs
+        );
+
+        log.info(message);
+        attach("API Timing", message);
+    }
+
+    /**
+     * Logs retry attempt information as a separate Allure attachment.
+     */
+    public static void logRetryAttempt(String description, int attempt, int maxRetries) {
+
+        if (!ConfigManager.isApiLoggingEnabled()) {
+            return;
+        }
+
+        String message = String.format(
+                "Retry attempt %d of %d for %s",
+                attempt, maxRetries, description
+        );
+
+        log.warn(message);
+        attach("API Retry Attempt", message);
+    }
+
     // ============================================================
     // Attachment Helper
     // ============================================================
-
     private static void attach(String name, String content) {
         Allure.addAttachment(
                 name,
@@ -69,7 +104,6 @@ public class AllureApiLogger {
     // ============================================================
     // cURL Generator
     // ============================================================
-
     private static String generateCurl(String method,
                                        String url,
                                        Map<String, ?> headers,

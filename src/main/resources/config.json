@@ -5,6 +5,9 @@
     "apiBaseUrl": "https://jsonplaceholder.typicode.com/",
     "browser": "chrome",
     "headless": false,
+    "apiLogging": true,
+    "apiRetries": 2,
+    "apiRetryBackoffMs": 200,
     "timeouts": {
       "explicit": 10,
       "pageLoad": 30,
@@ -24,6 +27,9 @@
     "apiBaseUrl": "https://jsonplaceholder.typicode.com/",
     "browser": "chrome",
     "headless": false,
+    "apiLogging": true,
+    "apiRetries": 2,
+    "apiRetryBackoffMs": 200,
     "timeouts": {
       "explicit": 10,
       "pageLoad": 30,
@@ -43,6 +49,9 @@
     "apiBaseUrl": "https://jsonplaceholder.typicode.com/",
     "browser": "firefox",
     "headless": false,
+    "apiLogging": true,
+    "apiRetries": 2,
+    "apiRetryBackoffMs": 200,
     "timeouts": {
       "explicit": 10,
       "pageLoad": 30,
@@ -62,6 +71,9 @@
     "apiBaseUrl": "https://jsonplaceholder.typicode.com/",
     "browser": "firefox",
     "headless": false,
+    "apiLogging": true,
+    "apiRetries": 2,
+    "apiRetryBackoffMs": 200,
     "timeouts": {
       "explicit": 10,
       "pageLoad": 30,

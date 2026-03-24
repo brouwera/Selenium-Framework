@@ -1862,7 +1862,8 @@ mvn clean test -Denv=local -Dbrowser=chrome -Dheadless=true
 [Day 40](#day-40) ·
 [Day 41](#day-41) ·
 [Day 42](#day-42) ·
-[Day 43](#day-43)
+[Day 43](#day-43) ·
+[Day 44](#day-44)
 
 <p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
 
@@ -2330,6 +2331,21 @@ Key achievements:
 - Validated full CRUD, negative, and contract tests with enhanced visibility
 
 This upgrade brings production‑grade observability to the API layer, making debugging faster, clearer, and fully traceable through Allure.
+
+---
+
+### **Day 44 — API Retry Logic, Timing Metrics & Resilience Enhancements**
+Strengthened the API layer with production‑grade reliability and performance visibility.  
+Key achievements:
+- Added configurable retry logic for idempotent operations (`GET`, `PUT`)
+- Implemented exponential backoff using `apiRetries` and `apiRetryBackoffMs` from config
+- Added centralized API timing metrics with SLF4J + Allure attachments
+- Expanded Allure reporting with retry attempt steps and timing logs
+- Ensured request/response logging integrates cleanly with the retry pipeline
+- Validated behavior using a guaranteed 500 endpoint (`https://httpstat.us/500`)
+- Confirmed no‑retry behavior for `POST` and `DELETE` to preserve API semantics
+
+These upgrades make the API layer significantly more resilient to transient failures, while providing clear, traceable insight into performance and retry behavior through Allure.
 
 <p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
 
