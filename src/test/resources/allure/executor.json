@@ -1,0 +1,13 @@
+{
+  "name": "Selenium Framework",
+  "type": "maven",
+  "reportName": "Allure Test Report",
+  "url": "${ci.url}",
+  "buildOrder": "${ci.build.number}",
+  "buildName": "${ci.job.name}",
+  "buildUrl": "${ci.build.url}",
+  "reportUrl": "${ci.report.url}",
+  "executor": "${ci.executor}",
+  "branch": "${ci.branch}",
+  "commit": "${ci.commit}"
+}

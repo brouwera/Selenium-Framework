@@ -2347,6 +2347,21 @@ Key achievements:
 
 These upgrades make the API layer significantly more resilient to transient failures, while providing clear, traceable insight into performance and retry behavior through Allure.
 
+---
+
+### **Day 46 — Allure CLI Integration, Local Report Server & Full Reporting Pipeline**
+Completed the reporting layer by integrating the Allure CLI directly into the framework and enabling fully interactive, browser‑ready test reports.  
+Key achievements:
+- Added `AllureReportUtil` with a dedicated `main()` entry point for standalone report generation
+- Integrated absolute‑path execution of the Allure CLI for Windows/Scoop environments
+- Implemented automatic history copying to preserve trend data across runs
+- Ensured clean, reproducible report generation via `allure generate --clean`
+- Added automatic browser launch for local runs while safely skipping CI environments
+- Validated full end‑to‑end reporting flow using `allure open` to serve reports over HTTP
+- Confirmed correct rendering of suites, widgets, metadata, and 132/132 passing tests
+
+This completes the framework’s reporting pipeline, delivering a polished, CI‑ready Allure experience with reliable local preview and full historical insight.
+
 <p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
 
 ---

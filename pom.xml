@@ -133,14 +133,14 @@
             <version>${jackson.version}</version>
         </dependency>
 
-        <!-- JSON Schema validation (Correct Everit dependency) -->
+        <!-- JSON Schema validation -->
         <dependency>
             <groupId>com.github.erosb</groupId>
             <artifactId>everit-json-schema</artifactId>
             <version>${everit.schema.version}</version>
         </dependency>
 
-        <!-- org.json (used by Everit and your API tests) -->
+        <!-- org.json -->
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
@@ -153,26 +153,6 @@
     <!--                           BUILD                           -->
     <!-- ========================================================= -->
     <build>
-
-        <pluginManagement>
-            <plugins>
-
-                <!-- Surefire Plugin -->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>${surefire.version}</version>
-                </plugin>
-
-                <!-- Allure Maven Plugin -->
-                <plugin>
-                    <groupId>io.qameta.allure</groupId>
-                    <artifactId>allure-maven</artifactId>
-                    <version>${allure.maven.version}</version>
-                </plugin>
-
-            </plugins>
-        </pluginManagement>
 
         <plugins>
 
@@ -202,19 +182,33 @@
                     <!-- Parallel execution -->
                     <parallel>methods</parallel>
                     <threadCount>2</threadCount>
-                    <useUnlimitedThreads>false</useUnlimitedThreads>
 
                     <!-- Required for logging + Allure -->
                     <useSystemClassLoader>false</useSystemClassLoader>
 
-                    <!-- Corrected suite path -->
+                    <!-- Correct suite path -->
                     <suiteXmlFiles>
                         <suiteXmlFile>src/test/resources/combined-suite.xml</suiteXmlFile>
                     </suiteXmlFiles>
 
+                    <!-- Day 46: Allure metadata + CI metadata -->
                     <systemPropertyVariables>
-                        <allure.results.directory>${project.build.directory}/allure-results</allure.results.directory>
+                        <allure.results.directory>allure-results</allure.results.directory>
+
+                        <!-- Reporting metadata -->
+                        <browser.version>${browser.version}</browser.version>
+                        <build.timestamp>${build.timestamp}</build.timestamp>
+                        <os.version>${os.version}</os.version>
+
+                        <!-- CI metadata -->
+                        <ci.job.name>${ci.job.name}</ci.job.name>
+                        <ci.build.number>${ci.build.number}</ci.build.number>
+                        <ci.build.url>${ci.build.url}</ci.build.url>
+                        <ci.executor>${ci.executor}</ci.executor>
+                        <ci.branch>${ci.branch}</ci.branch>
+                        <ci.commit>${ci.commit}</ci.commit>
                     </systemPropertyVariables>
+
                 </configuration>
             </plugin>
 

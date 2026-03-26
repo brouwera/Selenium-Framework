@@ -146,6 +146,16 @@ public final class ConfigManager {
         return node != null && node.asBoolean(false);
     }
 
+    // NEW: String version for Allure environment.properties
+    public static String getHeadlessMode() {
+        return Boolean.toString(isHeadless());
+    }
+
+    // NEW: Browser version (system property only)
+    public static String getBrowserVersion() {
+        return System.getProperty("browser.version", "unknown");
+    }
+
     public static boolean isRemote() {
         String override = getOverride("remote");
         if (override != null) return Boolean.parseBoolean(override);
@@ -222,5 +232,17 @@ public final class ConfigManager {
 
         JsonNode node = envNode.get("apiRetryBackoffMs");
         return (node != null && node.isInt()) ? node.asInt() : 200; // default = 200ms
+    }
+
+    // ============================================================
+    // NEW: Day 46 Reporting Metadata
+    // ============================================================
+
+    public static String getBuildTimestamp() {
+        return System.getProperty("build.timestamp", "");
+    }
+
+    public static String getOsVersion() {
+        return System.getProperty("os.version", "unknown");
     }
 }

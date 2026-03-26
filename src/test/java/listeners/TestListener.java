@@ -14,9 +14,9 @@ import org.testng.ITestResult;
 import pages.BasePage;
 import utils.ArtifactManager;
 
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -24,9 +24,7 @@ import java.util.stream.Collectors;
 public class TestListener implements ITestListener {
 
     private static final Logger log = LoggerFactory.getLogger(TestListener.class);
-
-    private static final SimpleDateFormat TS =
-            new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
+    private static final SimpleDateFormat TS = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
 
     // ============================================================
     // EARLY MDC SUPPORT
@@ -45,32 +43,18 @@ public class TestListener implements ITestListener {
 
         ArtifactManager.initRun();
 
+        // Ensure root-level allure-results exists
+        Path resultsDir = Path.of("allure-results");
         try {
-            Path resultsDir = Path.of("target", "allure-results");
             Files.createDirectories(resultsDir);
-
-            Path envFile = resultsDir.resolve("environment.properties");
-
-            Properties props = new Properties();
-            props.setProperty("Suite", context.getName());
-            props.setProperty("Timestamp", TS.format(new Date()));
-            props.setProperty("OS", System.getProperty("os.name"));
-            props.setProperty("OS Version", System.getProperty("os.version"));
-            props.setProperty("Java Version", System.getProperty("java.version"));
-            props.setProperty("Browser", System.getProperty("browser", "chrome"));
-            props.setProperty("Headless", System.getProperty("headless", "false"));
-            props.setProperty("Remote", System.getProperty("remote", "false"));
-            props.setProperty("Environment", System.getProperty("env", "local"));
-
-            try (var out = Files.newOutputStream(envFile)) {
-                props.store(out, "Allure Environment Properties");
-            }
-
-            log.info("Generated Allure environment.properties at {}", envFile.toAbsolutePath());
-
         } catch (Exception e) {
-            log.warn("Unable to generate environment.properties: {}", e.getMessage());
+            log.warn("Unable to create allure-results directory: {}", e.getMessage());
         }
+
+        // Copy Allure metadata from CLASSPATH (Maven-safe)
+        copyMetadataFromClasspath("allure/categories.json");
+        copyMetadataFromClasspath("allure/environment.properties");
+        copyMetadataFromClasspath("allure/executor.json");
 
         Allure.addAttachment("Environment Info", "text/plain",
                 "Suite: " + context.getName() + "\n" +
@@ -93,7 +77,6 @@ public class TestListener implements ITestListener {
     @Override
     public void onTestStart(ITestResult result) {
         String fullName = buildFullTestName(result);
-
         result.setAttribute("finalTestName", fullName);
 
         BasePage.resetStepCounter();
@@ -122,8 +105,7 @@ public class TestListener implements ITestListener {
 
     @Override
     public void onTestFailure(ITestResult result) {
-        Throwable throwable = result.getThrowable();
-        handleTestCompletion(result, "FAILED", throwable);
+        handleTestCompletion(result, "FAILED", result.getThrowable());
     }
 
     @Override
@@ -193,8 +175,6 @@ public class TestListener implements ITestListener {
             } catch (Exception e) {
                 log.warn("Unable to retrieve driver from BaseTest: {}", e.getMessage());
             }
-        } else {
-            log.warn("Test instance is not a BaseTest: {}", instance);
         }
         return null;
     }
@@ -267,6 +247,27 @@ public class TestListener implements ITestListener {
 
         } catch (Exception e) {
             log.warn("Unable to attach per-test log: {}", e.getMessage());
+        }
+    }
+
+    // ============================================================
+    // METADATA COPY (FIXED)
+    // ============================================================
+    private void copyMetadataFromClasspath(String resourcePath) {
+        try (InputStream in = getClass().getClassLoader().getResourceAsStream(resourcePath)) {
+
+            if (in == null) {
+                log.warn("Metadata file not found on classpath: {}", resourcePath);
+                return;
+            }
+
+            Path target = Path.of("allure-results", Path.of(resourcePath).getFileName().toString());
+            Files.copy(in, target, StandardCopyOption.REPLACE_EXISTING);
+
+            log.info("Copied Allure metadata: {}", resourcePath);
+
+        } catch (Exception e) {
+            log.warn("Failed to copy metadata {}: {}", resourcePath, e.getMessage());
         }
     }
 

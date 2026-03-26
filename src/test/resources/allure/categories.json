@@ -1,0 +1,57 @@
+[
+  {
+    "name": "Assertion Failures",
+    "matchedStatuses": ["failed"],
+    "messageRegex": ".*AssertionError.*"
+  },
+  {
+    "name": "Timeouts / Wait Issues",
+    "matchedStatuses": ["failed"],
+    "messageRegex": ".*(Timeout|Timed out|Wait.*expired|Condition.*failed).*"
+  },
+  {
+    "name": "Element Not Found",
+    "matchedStatuses": ["failed"],
+    "messageRegex": ".*(NoSuchElementException|ElementNotInteractableException|ElementClickInterceptedException|ElementNotFoundException).*"
+  },
+  {
+    "name": "Stale Element Reference",
+    "matchedStatuses": ["failed"],
+    "messageRegex": ".*StaleElementReferenceException.*"
+  },
+  {
+    "name": "WebDriver Errors",
+    "matchedStatuses": ["failed"],
+    "messageRegex": ".*(WebDriverException|SessionNotCreatedException|InvalidSessionIdException|JavascriptException).*"
+  },
+  {
+    "name": "API Contract Violations",
+    "matchedStatuses": ["failed"],
+    "messageRegex": ".*(ValidationException|Schema.*failed|JSON.*schema|InvalidTestDataException).*"
+  },
+  {
+    "name": "API Response Errors",
+    "matchedStatuses": ["failed"],
+    "messageRegex": ".*(Status code.*did not match|Unexpected.*status|HTTP.*500|HTTP.*404|HTTP.*400|ApiResponse).*"
+  },
+  {
+    "name": "API Retry Failures",
+    "matchedStatuses": ["failed"],
+    "messageRegex": ".*(Retry.*exhausted|Max retries reached|Backoff|RetryAnalyzer).*"
+  },
+  {
+    "name": "Configuration / Environment Issues",
+    "matchedStatuses": ["failed"],
+    "messageRegex": ".*(FileNotFoundException|Config.*missing|Environment.*not.*set|Invalid.*config|FrameworkInitializationException).*"
+  },
+  {
+    "name": "Data Setup / Test Data Errors",
+    "matchedStatuses": ["failed"],
+    "messageRegex": ".*(TestData.*missing|Data.*not.*found|Invalid.*test.*data|CsvParsingException).*"
+  },
+  {
+    "name": "Navigation / Page Errors",
+    "matchedStatuses": ["failed"],
+    "messageRegex": ".*(PageNavigationException|Unable to navigate|Navigation failed).*"
+  }
+]
