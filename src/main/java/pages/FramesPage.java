@@ -37,12 +37,25 @@ public class FramesPage extends BasePage {
     // ============================================================
     @Step("Check if Nested Frames link is visible")
     public boolean isNestedFramesLinkVisible() {
-        return isDisplayed(nestedFramesLink);
+        return isElementVisible(nestedFramesLink);
     }
 
     @Step("Check if iFrame link is visible")
     public boolean isIFrameLinkVisible() {
-        return isDisplayed(iFrameLink);
+        return isElementVisible(iFrameLink);
+    }
+
+    // Optional semantic waits for consistency
+    @Step("Wait for Nested Frames link to be visible")
+    public FramesPage waitForNestedFramesLink() {
+        waitForVisibility(nestedFramesLink);
+        return this;
+    }
+
+    @Step("Wait for iFrame link to be visible")
+    public FramesPage waitForIFrameLink() {
+        waitForVisibility(iFrameLink);
+        return this;
     }
 
     // ============================================================
@@ -52,6 +65,7 @@ public class FramesPage extends BasePage {
     public NestedFramesPage clickNestedFrames() {
         waitForVisibility(nestedFramesLink);
         click(nestedFramesLink);
+        waitForPageLoad();
         return new NestedFramesPage(driver, wait);
     }
 
@@ -59,6 +73,7 @@ public class FramesPage extends BasePage {
     public IFramePage clickIFrame() {
         waitForVisibility(iFrameLink);
         click(iFrameLink);
+        waitForPageLoad();
         return new IFramePage(driver, wait);
     }
 }

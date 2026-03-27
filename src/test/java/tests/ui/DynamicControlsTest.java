@@ -8,6 +8,7 @@ import pages.DynamicControlsPage;
 
 @Epic("Dynamic Controls")
 @Feature("Dynamic UI Behavior")
+@Owner("Adam Brouwer")
 public class DynamicControlsTest extends BaseTest {
 
     // ============================================================
@@ -24,14 +25,13 @@ public class DynamicControlsTest extends BaseTest {
     @Story("Checkbox can be removed and added back")
     @Severity(SeverityLevel.NORMAL)
     @Description("Verify checkbox can be removed and added back with correct messages.")
-    @Test(groups = {"regression"})
+    @Test
     public void testRemoveAndAddCheckbox() {
 
         DynamicControlsPage page = navigateToDynamicControlsPage();
 
         // Remove checkbox
         page.clickRemoveOrAdd()
-                .waitForLoadingToDisappear()
                 .waitForCheckboxToDisappear();
 
         AssertionHelper.assertFalse(
@@ -47,7 +47,6 @@ public class DynamicControlsTest extends BaseTest {
 
         // Add checkbox back
         page.clickRemoveOrAdd()
-                .waitForLoadingToDisappear()
                 .waitForCheckboxToAppear();
 
         AssertionHelper.assertTrue(
@@ -68,14 +67,13 @@ public class DynamicControlsTest extends BaseTest {
     @Story("Input field can be enabled and disabled")
     @Severity(SeverityLevel.NORMAL)
     @Description("Verify input field can be enabled and disabled with correct messages.")
-    @Test(groups = {"regression"})
+    @Test
     public void testEnableAndDisableInput() {
 
         DynamicControlsPage page = navigateToDynamicControlsPage();
 
         // Enable input
         page.clickEnableOrDisable()
-                .waitForLoadingToDisappear()
                 .waitForInputToBeEnabled();
 
         AssertionHelper.assertTrue(
@@ -91,7 +89,6 @@ public class DynamicControlsTest extends BaseTest {
 
         // Disable input
         page.clickEnableOrDisable()
-                .waitForLoadingToDisappear()
                 .waitForInputToBeDisabled();
 
         AssertionHelper.assertFalse(
@@ -112,7 +109,7 @@ public class DynamicControlsTest extends BaseTest {
     @Story("Loading indicator appears and disappears correctly")
     @Severity(SeverityLevel.MINOR)
     @Description("Verify loading indicator appears and disappears correctly when clicking Remove/Add.")
-    @Test(groups = {"regression"})
+    @Test
     public void testLoadingIndicatorBehavior() {
 
         DynamicControlsPage page = navigateToDynamicControlsPage();

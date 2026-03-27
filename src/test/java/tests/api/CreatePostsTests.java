@@ -11,6 +11,7 @@ import utils.SchemaValidator;
 
 @Epic("API")
 @Feature("Posts API")
+@Owner("Adam Brouwer")
 public class CreatePostsTests {
 
     private PostsApi postsApi;
@@ -18,7 +19,6 @@ public class CreatePostsTests {
     // ============================================================
     // Setup
     // ============================================================
-    @Step("Initialize Posts API client")
     @BeforeClass
     public void setUp() {
         ApiClient client = new ApiClient();
@@ -28,13 +28,11 @@ public class CreatePostsTests {
     // ============================================================
     // Positive Tests
     // ============================================================
-
     @Story("Create a new post")
     @Severity(SeverityLevel.CRITICAL)
-    @Owner("Adam Brouwer")
     @Description("Validates that POST /posts creates a new post and matches the expected JSON schema.")
-    @Test(groups = {"api", "regression"})
-    public void createPostReturns201AndValidSchema() throws Exception {
+    @Test
+    public void createPostReturns201AndValidSchema() {
 
         ApiResponse response = postsApi.createPost(
                 "My New Post",
@@ -54,13 +52,11 @@ public class CreatePostsTests {
     // ============================================================
     // Edge Case Tests
     // ============================================================
-
     @Story("Create post with empty title")
     @Severity(SeverityLevel.NORMAL)
-    @Owner("Adam Brouwer")
     @Description("Validates behavior when creating a post with an empty title.")
-    @Test(groups = {"api", "edge"})
-    public void createPostWithEmptyTitleStillReturns201() throws Exception {
+    @Test
+    public void createPostWithEmptyTitleStillReturns201() {
 
         ApiResponse response = postsApi.createPost(
                 "",
@@ -77,10 +73,9 @@ public class CreatePostsTests {
 
     @Story("Create post with extremely long title")
     @Severity(SeverityLevel.NORMAL)
-    @Owner("Adam Brouwer")
     @Description("Validates behavior when creating a post with a very long title.")
-    @Test(groups = {"api", "edge"})
-    public void createPostWithVeryLongTitleReturns201() throws Exception {
+    @Test
+    public void createPostWithVeryLongTitleReturns201() {
 
         String longTitle = "A".repeat(500);
 
@@ -100,13 +95,11 @@ public class CreatePostsTests {
     // ============================================================
     // Negative Tests
     // ============================================================
-
     @Story("Create post with invalid JSON body")
     @Severity(SeverityLevel.NORMAL)
-    @Owner("Adam Brouwer")
     @Description("Validates behavior when sending invalid JSON to POST /posts.")
-    @Test(groups = {"api", "negative"})
-    public void createPostWithInvalidJsonReturnsError() throws Exception {
+    @Test
+    public void createPostWithInvalidJsonReturnsError() {
 
         ApiResponse response = postsApi.postRaw(
                 "posts",
@@ -123,10 +116,9 @@ public class CreatePostsTests {
 
     @Story("Create post with missing fields")
     @Severity(SeverityLevel.NORMAL)
-    @Owner("Adam Brouwer")
     @Description("Validates behavior when creating a post with missing fields in the payload.")
-    @Test(groups = {"api", "negative"})
-    public void createPostWithMissingFieldsReturns201OrError() throws Exception {
+    @Test
+    public void createPostWithMissingFieldsReturns201OrError() {
 
         ApiResponse response = postsApi.postRaw(
                 "posts",

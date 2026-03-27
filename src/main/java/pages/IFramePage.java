@@ -44,6 +44,7 @@ public class IFramePage extends BasePage {
         if (isElementPresent(popupCloseButton)) {
             click(popupCloseButton);
             waitForInvisibility(popupCloseButton);
+            waitForNetworkIdle(); // TinyMCE reloads iframe after popup closes
         }
 
         return this;
@@ -52,13 +53,26 @@ public class IFramePage extends BasePage {
     // ============================================================
     // Frame Handling
     // ============================================================
+    @Step("Enter TinyMCE iframe")
     private void enterEditorFrame() {
         switchToDefault();
         switchToFrame(editorIframe);
     }
 
+    @Step("Exit TinyMCE iframe")
     private void exitEditorFrame() {
         switchToDefault();
+    }
+
+    // ============================================================
+    // Editor Readiness
+    // ============================================================
+    @Step("Wait for TinyMCE editor to be ready")
+    public IFramePage waitForEditorReady() {
+        enterEditorFrame();
+        waitForVisibility(editorBody);
+        exitEditorFrame();
+        return this;
     }
 
     // ============================================================

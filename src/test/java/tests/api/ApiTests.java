@@ -13,6 +13,7 @@ import utils.SchemaValidator;
 
 @Epic("API Testing")
 @Feature("JSONPlaceholder API Suite")
+@Owner("Adam Brouwer")
 public class ApiTests {
 
     // ============================================================
@@ -29,7 +30,6 @@ public class ApiTests {
     @BeforeClass(alwaysRun = true)
     @Story("Initialize API service layer")
     @Severity(SeverityLevel.CRITICAL)
-    @Owner("Adam Brouwer")
     public void setup() {
         client = new ApiClient();
         postsApi = new PostsApi(client);
@@ -41,8 +41,9 @@ public class ApiTests {
     // GET Tests
     // ============================================================
     @Test(dataProvider = "validPostIds", dataProviderClass = ApiDataProviders.class)
+    @Story("GET /posts/{id}")
     @Description("Verify GET /posts/{id} returns correct post and matches schema")
-    public void testGetPostById(int id) throws Exception {
+    public void testGetPostById(int id) {
         var response = postsApi.getPostById(id);
 
         AssertionHelper.assertStatusCode(response, 200);
@@ -55,8 +56,9 @@ public class ApiTests {
     }
 
     @Test(dataProvider = "validUserIds", dataProviderClass = ApiDataProviders.class)
+    @Story("GET /users/{id}")
     @Description("Verify GET /users/{id} returns correct user and matches schema")
-    public void testGetUserById(int id) throws Exception {
+    public void testGetUserById(int id) {
         var response = usersApi.getUserById(id);
 
         AssertionHelper.assertStatusCode(response, 200);
@@ -69,8 +71,9 @@ public class ApiTests {
     }
 
     @Test(dataProvider = "validCommentIds", dataProviderClass = ApiDataProviders.class)
+    @Story("GET /comments/{id}")
     @Description("Verify GET /comments/{id} returns correct comment and matches schema")
-    public void testGetCommentById(int id) throws Exception {
+    public void testGetCommentById(int id) {
         var response = commentsApi.getCommentById(id);
 
         AssertionHelper.assertStatusCode(response, 200);
@@ -86,8 +89,9 @@ public class ApiTests {
     // POST Tests
     // ============================================================
     @Test(dataProvider = "createUserPayloads", dataProviderClass = ApiDataProviders.class)
+    @Story("POST /users")
     @Description("Verify POST /users creates a new user (mocked behavior)")
-    public void testCreateUser(String name, String username, String email) throws Exception {
+    public void testCreateUser(String name, String username, String email) {
         var response = usersApi.createUser(name, username, email);
 
         AssertionHelper.assertTrue(
@@ -102,8 +106,9 @@ public class ApiTests {
     }
 
     @Test(dataProvider = "createCommentPayloads", dataProviderClass = ApiDataProviders.class)
+    @Story("POST /comments")
     @Description("Verify POST /comments creates a new comment (mocked behavior)")
-    public void testCreateComment(int postId, String name, String email, String body) throws Exception {
+    public void testCreateComment(int postId, String name, String email, String body) {
         var response = commentsApi.createComment(postId, name, email, body);
 
         AssertionHelper.assertTrue(
@@ -121,8 +126,9 @@ public class ApiTests {
     // List Tests
     // ============================================================
     @Test
+    @Story("GET /posts")
     @Description("Verify GET /posts returns a list of posts")
-    public void testGetAllPosts() throws Exception {
+    public void testGetAllPosts() {
         var response = postsApi.getAllPosts();
 
         AssertionHelper.assertStatusCode(response, 200);
@@ -133,8 +139,9 @@ public class ApiTests {
     }
 
     @Test
+    @Story("GET /users")
     @Description("Verify GET /users returns a list of users")
-    public void testGetAllUsers() throws Exception {
+    public void testGetAllUsers() {
         var response = usersApi.getAllUsers();
 
         AssertionHelper.assertStatusCode(response, 200);
@@ -145,8 +152,9 @@ public class ApiTests {
     }
 
     @Test
+    @Story("GET /comments")
     @Description("Verify GET /comments returns a list of comments")
-    public void testGetAllComments() throws Exception {
+    public void testGetAllComments() {
         var response = commentsApi.getAllComments();
 
         AssertionHelper.assertStatusCode(response, 200);

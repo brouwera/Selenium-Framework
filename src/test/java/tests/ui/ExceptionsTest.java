@@ -10,6 +10,7 @@ import pages.HomePage;
 
 @Epic("Practice Test Automation")
 @Feature("Exceptions Module")
+@Owner("Adam Brouwer")
 public class ExceptionsTest extends BaseTest {
 
     // ============================================================
@@ -28,11 +29,13 @@ public class ExceptionsTest extends BaseTest {
     @Story("Row 2 appears after delay")
     @Severity(SeverityLevel.NORMAL)
     @Description("Verify that clicking Add eventually reveals Row 2 input field.")
-    @Test(groups = {"regression"})
+    @Test
     public void testRow2AppearsAfterDelay() {
 
         ExceptionsPage page = navigateToExceptionsPage();
-        page.clickAddButton();
+
+        page.clickAddButton()
+                .waitForRow2ToAppear();
 
         AssertionHelper.assertTrue(
                 page.isRow2InputVisible(),
@@ -46,7 +49,7 @@ public class ExceptionsTest extends BaseTest {
     @Story("Save text in Row 2")
     @Severity(SeverityLevel.CRITICAL)
     @Description("Verify that saving text in Row 2 works and avoids clicking invisible Save in Row 1.")
-    @Test(groups = {"regression"})
+    @Test
     public void testSaveTextRow2() {
 
         ExceptionsPage page = navigateToExceptionsPage();
@@ -65,16 +68,15 @@ public class ExceptionsTest extends BaseTest {
     @Story("Demonstrate ElementNotInteractableException")
     @Severity(SeverityLevel.MINOR)
     @Description("Intentionally click the invisible Save button to show the exception behavior.")
-    @Test(
-            groups = {"regression"},
-            expectedExceptions = ElementNotInteractableException.class
-    )
+    @Test
     public void testInvisibleSaveThrowsException() {
 
         ExceptionsPage page = navigateToExceptionsPage();
 
-        // This intentionally triggers ElementNotInteractableException
-        page.clickInvisibleSaveButton();
+        AssertionHelper.assertThrows(
+                ElementNotInteractableException.class,
+                page::clickInvisibleSaveButton
+        );
     }
 
     // ============================================================
@@ -83,7 +85,7 @@ public class ExceptionsTest extends BaseTest {
     @Story("Row 1 disabled state")
     @Severity(SeverityLevel.NORMAL)
     @Description("Verify Row 1 is disabled before clicking Edit.")
-    @Test(groups = {"regression"})
+    @Test
     public void testRow1IsDisabledInitially() {
 
         ExceptionsPage page = navigateToExceptionsPage();
@@ -97,12 +99,13 @@ public class ExceptionsTest extends BaseTest {
     @Story("Edit Row 1 input")
     @Severity(SeverityLevel.NORMAL)
     @Description("Verify that editing Row 1 requires clicking Edit first.")
-    @Test(groups = {"regression"})
+    @Test
     public void testEditRow1() {
 
         ExceptionsPage page = navigateToExceptionsPage();
 
         page.clickRow1Edit()
+                .waitForRow1ToAppear()
                 .clearRow1Input()
                 .enterTextRow1("Updated");
 
@@ -119,7 +122,7 @@ public class ExceptionsTest extends BaseTest {
     @Story("Instructions disappear after Add")
     @Severity(SeverityLevel.NORMAL)
     @Description("Verify that instructions text disappears after clicking Add.")
-    @Test(groups = {"regression"})
+    @Test
     public void testInstructionsDisappear() {
 
         ExceptionsPage page = navigateToExceptionsPage();
@@ -129,7 +132,8 @@ public class ExceptionsTest extends BaseTest {
                 "Instructions should be visible initially"
         );
 
-        page.clickAddButton();
+        page.clickAddButton()
+                .waitForInstructionsToDisappear();
 
         AssertionHelper.assertFalse(
                 page.isInstructionsDisplayed(),
@@ -140,12 +144,13 @@ public class ExceptionsTest extends BaseTest {
     @Story("Instructions removed from DOM")
     @Severity(SeverityLevel.NORMAL)
     @Description("Verify instructions element is removed from DOM after clicking Add.")
-    @Test(groups = {"regression"})
+    @Test
     public void testInstructionsRemovedFromDOM() {
 
         ExceptionsPage page = navigateToExceptionsPage();
 
-        page.clickAddButton();
+        page.clickAddButton()
+                .waitForInstructionsToDisappear();
 
         AssertionHelper.assertFalse(
                 page.isInstructionsPresentInDOM(),
@@ -159,7 +164,7 @@ public class ExceptionsTest extends BaseTest {
     @Story("Short timeout causes failure")
     @Severity(SeverityLevel.MINOR)
     @Description("Verify that a 3-second wait fails because Row 2 appears after ~5 seconds.")
-    @Test(groups = {"regression"})
+    @Test
     public void testShortTimeoutFails() {
 
         ExceptionsPage page = navigateToExceptionsPage();

@@ -14,6 +14,7 @@ public class HomePage extends BasePage {
     private final By testLoginLink = By.linkText("Test Login Page");
     private final By testExceptionsLink = By.linkText("Test Exceptions");
     private final By testTableLink = By.linkText("Test Table");
+    private final By dynamicControlsLink = By.linkText("Dynamic Controls");
 
     // ============================================================
     // Constructor
@@ -39,24 +40,32 @@ public class HomePage extends BasePage {
     @Step("Navigate to Test Login Page")
     public LoginPage goToLoginPage() {
         waitForVisibility(testLoginLink);
-        hover(testLoginLink);
         click(testLoginLink);
+        waitForPageLoad();
         return new LoginPage(driver, wait);
     }
 
     @Step("Navigate to Test Exceptions Page")
     public ExceptionsPage goToExceptionsPage() {
         waitForVisibility(testExceptionsLink);
-        hover(testExceptionsLink);
         click(testExceptionsLink);
+        waitForPageLoad();
         return new ExceptionsPage(driver, wait);
     }
 
     @Step("Navigate to Test Table Page")
     public TablePage goToTablePage() {
         waitForVisibility(testTableLink);
-        hover(testTableLink);
         click(testTableLink);
+        waitForPageLoad();
         return new TablePage(driver, wait);
+    }
+
+    @Step("Navigate to Dynamic Controls Page")
+    public DynamicControlsPage goToDynamicControlsPage() {
+        waitForVisibility(dynamicControlsLink);
+        click(dynamicControlsLink);
+        waitForPageLoad();
+        return new DynamicControlsPage(driver, wait);
     }
 }

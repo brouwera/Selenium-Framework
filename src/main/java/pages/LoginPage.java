@@ -34,9 +34,16 @@ public class LoginPage extends BasePage {
         return this;
     }
 
+    @Step("Wait for Login Page to be ready")
+    public LoginPage waitForLoginPageReady() {
+        waitForVisibility(usernameField);
+        waitForVisibility(submitButton);
+        return this;
+    }
+
     @Step("Verify Login Page is loaded")
     public boolean isPageLoaded() {
-        return isDisplayed(usernameField) && isDisplayed(submitButton);
+        return isElementVisible(usernameField) && isElementVisible(submitButton);
     }
 
     // ============================================================
@@ -83,6 +90,7 @@ public class LoginPage extends BasePage {
     @Step("Click Login button")
     public SuccessfulLoginPage clickLoginButton() {
         click(submitButton);
+        waitForPageLoad();
         return new SuccessfulLoginPage(driver, wait);
     }
 
@@ -137,12 +145,12 @@ public class LoginPage extends BasePage {
     // ============================================================
     @Step("Check if Login button is displayed")
     public boolean isLoginButtonDisplayed() {
-        return isDisplayed(submitButton);
+        return isElementVisible(submitButton);
     }
 
     @Step("Check if error message is visible")
     public boolean isErrorMessageVisible() {
-        return isDisplayed(errorMessage);
+        return isElementVisible(errorMessage);
     }
 
     @Step("Get error message text")

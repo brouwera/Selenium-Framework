@@ -37,51 +37,69 @@ public class NestedFramesPage extends BasePage {
     }
 
     // ============================================================
+    // Frame Helpers
+    // ============================================================
+    private void enterTopFrame() {
+        switchToDefault();
+        switchToFrame(topFrame);
+    }
+
+    private void enterLeftFrame() {
+        enterTopFrame();
+        switchToFrame(leftFrame);
+    }
+
+    private void enterMiddleFrame() {
+        enterTopFrame();
+        switchToFrame(middleFrame);
+    }
+
+    private void enterRightFrame() {
+        enterTopFrame();
+        switchToFrame(rightFrame);
+    }
+
+    private void enterBottomFrame() {
+        switchToDefault();
+        switchToFrame(bottomFrame);
+    }
+
+    private String readBodyText() {
+        waitForVisibility(body);
+        return getText(body).trim();
+    }
+
+    // ============================================================
     // Frame Text Retrieval
     // ============================================================
     @Step("Get text from Left Frame")
     public String getLeftFrameText() {
-        switchToDefault();
-        switchToFrame(topFrame);
-        switchToFrame(leftFrame);
-
-        String text = getText(body).trim();
-
+        enterLeftFrame();
+        String text = readBodyText();
         switchToDefault();
         return text;
     }
 
     @Step("Get text from Middle Frame")
     public String getMiddleFrameText() {
-        switchToDefault();
-        switchToFrame(topFrame);
-        switchToFrame(middleFrame);
-
-        String text = getText(body).trim();
-
+        enterMiddleFrame();
+        String text = readBodyText();
         switchToDefault();
         return text;
     }
 
     @Step("Get text from Right Frame")
     public String getRightFrameText() {
-        switchToDefault();
-        switchToFrame(topFrame);
-        switchToFrame(rightFrame);
-
-        String text = getText(body).trim();
-
+        enterRightFrame();
+        String text = readBodyText();
         switchToDefault();
         return text;
     }
 
     @Step("Get text from Bottom Frame")
     public String getBottomFrameText() {
-        switchToDefault();
-        switchToFrame(bottomFrame);
-
-        String text = getText(body).trim();
-
+        enterBottomFrame();
+        String text = readBodyText();
         switchToDefault();
         return text;
     }

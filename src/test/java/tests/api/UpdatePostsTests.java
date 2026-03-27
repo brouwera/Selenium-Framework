@@ -11,6 +11,7 @@ import utils.SchemaValidator;
 
 @Epic("API")
 @Feature("Posts API")
+@Owner("Adam Brouwer")
 public class UpdatePostsTests {
 
     private PostsApi postsApi;
@@ -18,7 +19,6 @@ public class UpdatePostsTests {
     // ============================================================
     // Setup
     // ============================================================
-    @Step("Initialize Posts API client")
     @BeforeClass
     public void setUp() {
         ApiClient client = new ApiClient();
@@ -28,13 +28,11 @@ public class UpdatePostsTests {
     // ============================================================
     // Positive Tests
     // ============================================================
-
     @Story("Update an existing post")
     @Severity(SeverityLevel.CRITICAL)
-    @Owner("Adam Brouwer")
     @Description("Validates that PUT /posts/{id} updates a post and matches the expected JSON schema.")
-    @Test(groups = {"api", "regression"})
-    public void updatePostReturns200AndValidSchema() throws Exception {
+    @Test
+    public void updatePostReturns200AndValidSchema() {
 
         ApiResponse response = postsApi.putRaw(
                 "posts/1",
@@ -60,13 +58,11 @@ public class UpdatePostsTests {
     // ============================================================
     // Edge Case Tests
     // ============================================================
-
     @Story("Update post with empty title")
     @Severity(SeverityLevel.NORMAL)
-    @Owner("Adam Brouwer")
     @Description("Validates behavior when updating a post with an empty title.")
-    @Test(groups = {"api", "edge"})
-    public void updatePostWithEmptyTitleReturns200() throws Exception {
+    @Test
+    public void updatePostWithEmptyTitleReturns200() {
 
         ApiResponse response = postsApi.putRaw(
                 "posts/1",
@@ -89,10 +85,9 @@ public class UpdatePostsTests {
 
     @Story("Update post with extremely long title")
     @Severity(SeverityLevel.NORMAL)
-    @Owner("Adam Brouwer")
     @Description("Validates behavior when updating a post with a very long title.")
-    @Test(groups = {"api", "edge"})
-    public void updatePostWithVeryLongTitleReturns200() throws Exception {
+    @Test
+    public void updatePostWithVeryLongTitleReturns200() {
 
         String longTitle = "A".repeat(500);
 
@@ -118,13 +113,11 @@ public class UpdatePostsTests {
     // ============================================================
     // Negative Tests
     // ============================================================
-
     @Story("Update post with invalid ID")
     @Severity(SeverityLevel.NORMAL)
-    @Owner("Adam Brouwer")
     @Description("Validates behavior when updating a post using an invalid ID.")
-    @Test(groups = {"api", "negative"})
-    public void updatePostWithInvalidIdReturnsError() throws Exception {
+    @Test
+    public void updatePostWithInvalidIdReturnsError() {
 
         ApiResponse response = postsApi.putRaw(
                 "posts/invalid-id",
@@ -147,10 +140,9 @@ public class UpdatePostsTests {
 
     @Story("Update post with invalid JSON body")
     @Severity(SeverityLevel.NORMAL)
-    @Owner("Adam Brouwer")
     @Description("Validates behavior when sending malformed JSON to PUT /posts/{id}.")
-    @Test(groups = {"api", "negative"})
-    public void updatePostWithInvalidJsonReturnsError() throws Exception {
+    @Test
+    public void updatePostWithInvalidJsonReturnsError() {
 
         ApiResponse response = postsApi.putRaw(
                 "posts/1",
@@ -167,10 +159,9 @@ public class UpdatePostsTests {
 
     @Story("Update post with missing fields")
     @Severity(SeverityLevel.NORMAL)
-    @Owner("Adam Brouwer")
     @Description("Validates behavior when updating a post with missing fields in the payload.")
-    @Test(groups = {"api", "negative"})
-    public void updatePostWithMissingFieldsReturns200OrError() throws Exception {
+    @Test
+    public void updatePostWithMissingFieldsReturns200OrError() {
 
         ApiResponse response = postsApi.putRaw(
                 "posts/1",

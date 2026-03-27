@@ -1863,7 +1863,9 @@ mvn clean test -Denv=local -Dbrowser=chrome -Dheadless=true
 [Day 41](#day-41) ·
 [Day 42](#day-42) ·
 [Day 43](#day-43) ·
-[Day 44](#day-44)
+[Day 44](#day-44) ·
+[Day 46](#day-46) ·
+[Day 47](#day-47)
 
 <p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
 
@@ -2362,6 +2364,20 @@ Key achievements:
 
 This completes the framework’s reporting pipeline, delivering a polished, CI‑ready Allure experience with reliable local preview and full historical insight.
 
+---
+
+### **Day 47 — Allure Results Stabilization, Metadata Integration & Full Report Validation**
+Focused on validating the end‑to‑end reporting flow after the Day 46 CLI integration and ensuring that Allure results, metadata, and attachments were generated consistently across the entire suite.  
+Key achievements:
+- Confirmed stable generation of root‑level `allure-results/` with full attachment sets (screenshots, page source, console logs, failure messages, per‑test logs)
+- Validated correct copying of Allure metadata (`environment.properties`, `executor.json`, `categories.json`) from classpath into the results directory
+- Ensured TestListener lifecycle events produced complete per‑test artifacts and accurate metadata for all 132 tests
+- Verified that Allure CLI successfully rendered a full interactive report with suites, categories, graphs, timeline, and behaviors
+- Confirmed that the Maven plugin warning is expected due to intentional relocation of results outside `target/`, with CLI reporting functioning as the authoritative path
+- Re‑ran the entire suite to validate consistency: 132/132 tests passed with clean Allure output and correct attachment rendering
+
+Day 47 completes the stabilization phase of the reporting layer, ensuring that every test run produces a reliable, artifact‑rich Allure report ready for CI integration and trend tracking.
+
 <p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
 
 ---
@@ -2414,7 +2430,9 @@ These enhancements will be explored during Weeks 7–8 of the 60‑day plan.
 
 # 🛠️ Upcoming Enhancements (Updated Roadmap)
 
-## Short‑Term (Weeks 5–6)
+## **Short‑Term (Days 47–52) — UI Modules & Interaction Enhancements**
+These are modular, self‑contained features that build on your already‑stable UI layer.
+
 - Dynamic Controls module
 - Drag‑and‑Drop module
 - File Upload module
@@ -2424,20 +2442,26 @@ These enhancements will be explored during Weeks 7–8 of the 60‑day plan.
 
 ---
 
-## Mid‑Term (Weeks 7–8)
+## **Mid‑Term (Days 53–56) — AI‑Augmented QA Phase**
+This phase aligns directly with industry trends and your manager’s guidance.
+
 - AI‑generated test data integration
 - AI‑assisted locator healing prototype
-- AI‑driven flakiness analysis
+- AI‑driven flakiness analysis (retry patterns + stability scoring)
 - AI‑suggested scenario generation for Login + Table modules
+- Professional development track: Coveros, TechWell/StickyMinds webinars, STAR conference keynotes
 
 ---
 
-## Long‑Term (Weeks 9–10)
+## **Long‑Term (Days 57–60) — CI/CD, Reporting & Architecture Polish**
+These final touches elevate the framework to enterprise‑grade maturity.
+
 - REST Assured upgrade for API testing layer
-- Full multi‑environment execution (config + data + suite routing)
+- Full multi‑environment execution (config + data + suite routing + CI switching)
 - Parallel execution profiles (local vs CI)
 - Allure dashboards + history server
 - CI/CD pipeline expansion (matrix builds, nightly runs)
+- GitHub Pages Allure history publishing
 
 <p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
 
@@ -2445,14 +2469,15 @@ These enhancements will be explored during Weeks 7–8 of the 60‑day plan.
 
 # 🚀 Future Enhancements
 
-Planned improvements for the next phase:
+Planned improvements for the next phase (post‑Day 60):
 
+- AI‑assisted locator healing (full version)
+- AI‑generated test data expansion
 - REST Assured upgrade for the existing API layer
 - Shadow DOM support
-- Drag‑and‑Drop module
+- Drag‑and‑Drop module (advanced gestures)
 - GitHub Pages Allure history publishing
-- AI‑assisted locator healing
-- AI‑generated test data expansion
+- Multi‑environment architecture visualization
 
 <p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
 
@@ -2464,7 +2489,7 @@ A clear view of what’s coming next for this framework:
 
 ---
 
-## Core Enhancements
+## **Core Enhancements**
 - [x] Exceptions module (page object + validation tests)
 - [x] Table module (parsing utilities + sorting/filtering tests)
 - [x] API testing layer (lightweight HTTP client + JSON parsing)
@@ -2474,15 +2499,16 @@ A clear view of what’s coming next for this framework:
 
 ---
 
-## Architecture & Stability
-- [ ] Retry logic for flaky CI environments (CI‑specific profiles + analytics)
+## **Architecture & Stability**
+- [x] Retry logic for flaky CI environments (CI‑specific profiles + analytics)
 - [x] Logging improvements (SLF4J + Logback + MDC + step logging)
 - [x] Parallel execution support (TestNG + Maven Surefire)
 - [ ] Enhanced JSON ConfigManager (typed accessors + config schema validation)
 
 ---
 
-## CI/CD & Reporting
+## **CI/CD & Reporting**
+- [x] Allure CLI integration + local report server
 - [ ] Allure history tracking in CI (retention + history server)
 - [ ] `categories.json` for failure grouping
 - [ ] Publish Allure report via GitHub Pages
@@ -2490,7 +2516,7 @@ A clear view of what’s coming next for this framework:
 
 ---
 
-## Documentation & Developer Experience
+## **Documentation & Developer Experience**
 - [ ] Demo GIF of test execution
 - [ ] Contributing guidelines
 - [ ] Full API documentation for utilities
@@ -2534,28 +2560,34 @@ Days 21–30 | Enterprise‑Grade Enhancements
            | Step‑counter architecture
            | Full‑suite validation (33/33 passing)
 
-Days 31–40 | AI‑Augmented QA + API Layer
+Days 31–40 | API Layer + Reporting Foundation
 -----------|---------------------------------------------------------
            | Lightweight API testing layer (GET endpoints)
            | ApiClient + ApiBaseTest + ApiResponse
            | API suite + Maven profiles (ui, api, all)
            | TestDataManager (JSON + CSV + env routing)
            | JSON Schema validation for test data
-           | AI‑generated test data exploration
-           | AI‑assisted locator healing prototype
-           | AI‑driven flakiness analysis
+           | Allure CLI integration + local report server
+           | Full UI + API suite reporting (132/132 passing)
 
-Days 41–50 | Advanced Modules & API Upgrade
+Days 41–50 | Advanced UI Modules
 -----------|---------------------------------------------------------
-           | Contract testing (JSON Schema for API responses)
-           | post-schema.json, user-schema.json, comment-schema.json
            | Dynamic Controls module
            | Drag‑and‑Drop module
            | File Upload module
+           | File Download module
            | Shadow DOM module
-           | REST Assured upgrade for API testing (planned)
+           | Table module expansion (sorting + pagination)
 
-Days 51–60 | CI/CD, Reporting & Final Polish
+Days 51–56 | AI‑Augmented QA
+-----------|---------------------------------------------------------
+           | AI‑generated test data
+           | AI‑assisted locator healing prototype
+           | AI‑driven flakiness analysis
+           | AI‑suggested scenario generation
+           | Coveros / TechWell / StickyMinds learning track
+
+Days 57–60 | CI/CD, Multi‑Env & Final Polish
 -----------|---------------------------------------------------------
            | Multi‑environment execution profiles
            | `.env` secrets support

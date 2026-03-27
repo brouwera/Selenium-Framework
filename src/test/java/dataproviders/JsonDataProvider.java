@@ -6,40 +6,28 @@ import org.slf4j.LoggerFactory;
 import org.testng.annotations.DataProvider;
 import utils.TestDataManager;
 
+import java.util.Map;
+
 public final class JsonDataProvider {
 
-    // ============================================================
-    // Logger
-    // ============================================================
     private static final Logger log = LoggerFactory.getLogger(JsonDataProvider.class);
 
-    // ============================================================
-    // Constructor
-    // ============================================================
-    private JsonDataProvider() {
-        // Prevent instantiation
-    }
+    private JsonDataProvider() {}
 
-    // ============================================================
-    // JSON Data Provider (Environment + Schema Validated)
-    // ============================================================
     @Step("Load JSON login test data (environment-aware + schema validated)")
     @DataProvider(name = "loginDataJson")
     public static Object[][] loginDataJson() {
 
-        log.debug("Loading JSON login test data with schema validation");
-
-        Object[][] data = TestDataManager.loadJsonDataProvider(
+        Object[][] raw = TestDataManager.loadJsonDataProvider(
                 "loginData.json",
                 "loginData.schema.json"
         );
 
-        // Optional row-level debug logging
-        for (int i = 0; i < data.length; i++) {
-            log.info("JSON ROW {}: {}", i, data[i][0]);
+        for (int i = 0; i < raw.length; i++) {
+            Map<String, String> row = (Map<String, String>) raw[i][0];
+            log.info("JSON ROW {} → {}", i, row);
         }
 
-        log.info("Loaded {} rows of validated JSON test data", data.length);
-        return data;
+        return raw;
     }
 }

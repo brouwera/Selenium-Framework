@@ -53,6 +53,12 @@ public class ExceptionsPage extends BasePage {
         return this;
     }
 
+    @Step("Wait for Row 2 input to appear")
+    public ExceptionsPage waitForRow2ToAppear() {
+        waitForVisibility(row2Input);
+        return this;
+    }
+
     @Step("Check if Row 2 input is visible")
     public boolean isRow2InputVisible() {
         return isElementVisible(row2Input);
@@ -73,7 +79,7 @@ public class ExceptionsPage extends BasePage {
     @Step("Wait for Row 2 input using short timeout")
     public boolean waitForRow2InputShortTimeout() {
         try {
-            wait.until(driver -> isElementVisible(row2Input));
+            waitForCondition(driver -> isElementVisible(row2Input));
             return true;
         } catch (TimeoutException e) {
             return false;
@@ -86,6 +92,12 @@ public class ExceptionsPage extends BasePage {
     @Step("Click Edit button on Row 1")
     public ExceptionsPage clickRow1Edit() {
         click(row1EditButton);
+        waitForVisibility(row1Input);
+        return this;
+    }
+
+    @Step("Wait for Row 1 input to appear")
+    public ExceptionsPage waitForRow1ToAppear() {
         waitForVisibility(row1Input);
         return this;
     }
@@ -138,7 +150,7 @@ public class ExceptionsPage extends BasePage {
     @Step("Wait for instructions text to disappear from DOM")
     public boolean waitForInstructionsToDisappear() {
         try {
-            wait.until(driver -> !isElementPresent(instructionsText));
+            waitForInvisibility(instructionsText);
             return true;
         } catch (Exception e) {
             return false;

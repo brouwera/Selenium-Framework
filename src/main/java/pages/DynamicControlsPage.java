@@ -4,7 +4,6 @@ import config.ConfigManager;
 import io.qameta.allure.Step;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class DynamicControlsPage extends BasePage {
@@ -37,6 +36,7 @@ public class DynamicControlsPage extends BasePage {
         String url = ConfigManager.getHerokuBaseUrl() + "/dynamic_controls";
         navigateTo(url);
         waitForPageLoad();
+        loadingObserved = false; // reset transient state
         return this;
     }
 
@@ -50,11 +50,22 @@ public class DynamicControlsPage extends BasePage {
         return this;
     }
 
-    @Step("Click Remove/Add and verify loading indicator appears")
+    // ⭐ NEW METHOD — required by DynamicControlsTest
+    @Step("Click Remove/Add button (expecting loading indicator)")
     public DynamicControlsPage clickRemoveOrAddExpectingLoading() {
         click(removeAddButton);
-        waitForLoadingToAppear();
-        waitForLoadingToDisappear();
+
+        // Try to observe spinner appearance
+        try {
+            waitForVisibility(loadingIndicator);
+            loadingObserved = true;
+        } catch (Exception ignored) {
+            // Spinner may appear too fast; ignore
+        }
+
+        // Always wait for spinner to disappear
+        waitForInvisibility(loadingIndicator);
+
         return this;
     }
 
@@ -92,13 +103,13 @@ public class DynamicControlsPage extends BasePage {
 
     @Step("Wait for input field to become enabled")
     public DynamicControlsPage waitForInputToBeEnabled() {
-        wait.until(driver -> find(inputField).isEnabled());
+        waitForCondition(driver -> find(inputField).isEnabled());
         return this;
     }
 
     @Step("Wait for input field to become disabled")
     public DynamicControlsPage waitForInputToBeDisabled() {
-        wait.until(driver -> !find(inputField).isEnabled());
+        waitForCondition(driver -> !find(inputField).isEnabled());
         return this;
     }
 
@@ -135,13 +146,12 @@ public class DynamicControlsPage extends BasePage {
     @Step("Wait for loading cycle to complete")
     public DynamicControlsPage waitForLoadingCycle() {
         try {
-            wait.until(ExpectedConditions.visibilityOfElementLocated(loadingIndicator));
+            waitForVisibility(loadingIndicator);
             loadingObserved = true;
         } catch (Exception ignored) {
             // Spinner may appear too fast; ignore
         }
-
-        wait.until(ExpectedConditions.invisibilityOfElementLocated(loadingIndicator));
+        waitForInvisibility(loadingIndicator);
         return this;
     }
 

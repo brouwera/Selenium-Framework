@@ -10,6 +10,7 @@ import pages.IFramePage;
 
 @Epic("Frames")
 @Feature("Nested Frames and iFrame Editor")
+@Owner("Adam Brouwer")
 public class FramesTest extends BaseTest {
 
     // ============================================================
@@ -26,7 +27,7 @@ public class FramesTest extends BaseTest {
     @Story("Verify text inside nested frames")
     @Severity(SeverityLevel.NORMAL)
     @Description("Validate that LEFT, MIDDLE, RIGHT, and BOTTOM frame texts are correct.")
-    @Test(groups = {"regression"})
+    @Test
     public void testNestedFrames() {
 
         FramesPage framesPage = navigateToFramesPage();
@@ -63,7 +64,7 @@ public class FramesTest extends BaseTest {
     @Story("Verify default TinyMCE editor text")
     @Severity(SeverityLevel.MINOR)
     @Description("Validate that the TinyMCE editor loads with the expected default text.")
-    @Test(groups = {"regression"})
+    @Test
     public void testIFrameDefaultText() {
 
         FramesPage framesPage = navigateToFramesPage();

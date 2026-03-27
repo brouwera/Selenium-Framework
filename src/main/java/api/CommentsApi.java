@@ -1,5 +1,6 @@
 package api;
 
+import io.qameta.allure.Owner;
 import io.qameta.allure.Step;
 import org.json.JSONObject;
 
@@ -7,6 +8,7 @@ import org.json.JSONObject;
  * Service-layer class for interacting with the JSONPlaceholder /comments endpoints.
  * Mirrors the Page Object Model structure used in UI tests.
  */
+@Owner("Adam Brouwer")
 public class CommentsApi extends BaseApi {
 
     // ============================================================
@@ -21,17 +23,17 @@ public class CommentsApi extends BaseApi {
     // ============================================================
 
     @Step("Get all comments")
-    public ApiResponse getAllComments() throws Exception {
+    public ApiResponse getAllComments() {
         return get("comments");
     }
 
     @Step("Get comment by ID: {id}")
-    public ApiResponse getCommentById(int id) throws Exception {
+    public ApiResponse getCommentById(int id) {
         return get("comments/" + id);
     }
 
     @Step("Get comments for post ID: {postId}")
-    public ApiResponse getCommentsForPost(int postId) throws Exception {
+    public ApiResponse getCommentsForPost(int postId) {
         return get("posts/" + postId + "/comments");
     }
 
@@ -40,12 +42,12 @@ public class CommentsApi extends BaseApi {
     // ============================================================
 
     @Step("Create a new comment for post ID: {postId}")
-    public ApiResponse createComment(int postId, String name, String email, String body) throws Exception {
+    public ApiResponse createComment(int postId, String name, String email, String body) {
         JSONObject payload = new JSONObject();
         payload.put("postId", postId);
-        payload.put("name", name);
-        payload.put("email", email);
-        payload.put("body", body);
+        payload.put("name", name == null ? "" : name);
+        payload.put("email", email == null ? "" : email);
+        payload.put("body", body == null ? "" : body);
 
         return post("comments", payload.toString());
     }

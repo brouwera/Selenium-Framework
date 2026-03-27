@@ -11,6 +11,7 @@ import utils.SchemaValidator;
 
 @Epic("API")
 @Feature("Posts API")
+@Owner("Adam Brouwer")
 public class GetPostsTests {
 
     private PostsApi postsApi;
@@ -18,7 +19,6 @@ public class GetPostsTests {
     // ============================================================
     // Setup
     // ============================================================
-    @Step("Initialize Posts API client")
     @BeforeClass
     public void setUp() {
         ApiClient client = new ApiClient();
@@ -28,13 +28,11 @@ public class GetPostsTests {
     // ============================================================
     // Positive Tests
     // ============================================================
-
     @Story("Retrieve all posts")
     @Severity(SeverityLevel.CRITICAL)
-    @Owner("Adam Brouwer")
     @Description("Validates that GET /posts returns status 200 and matches the expected JSON schema.")
-    @Test(groups = {"api", "regression"})
-    public void getAllPostsReturns200AndValidSchema() throws Exception {
+    @Test
+    public void getAllPostsReturns200AndValidSchema() {
 
         ApiResponse response = postsApi.getAllPosts();
 
@@ -49,10 +47,9 @@ public class GetPostsTests {
 
     @Story("Retrieve single post by ID")
     @Severity(SeverityLevel.CRITICAL)
-    @Owner("Adam Brouwer")
     @Description("Validates that GET /posts/{id} returns status 200 and matches the expected JSON schema.")
-    @Test(groups = {"api", "regression"})
-    public void getPostByValidIdReturns200AndValidSchema() throws Exception {
+    @Test
+    public void getPostByValidIdReturns200AndValidSchema() {
 
         ApiResponse response = postsApi.getPostById(1);
 
@@ -68,13 +65,11 @@ public class GetPostsTests {
     // ============================================================
     // Edge Case Tests
     // ============================================================
-
     @Story("Retrieve post with ID = 0")
     @Severity(SeverityLevel.NORMAL)
-    @Owner("Adam Brouwer")
     @Description("Validates behavior when requesting a post with ID = 0.")
-    @Test(groups = {"api", "edge"})
-    public void getPostByIdZeroReturns404OrEmpty() throws Exception {
+    @Test
+    public void getPostByIdZeroReturns404OrEmpty() {
 
         ApiResponse response = postsApi.getPostById(0);
 
@@ -88,10 +83,9 @@ public class GetPostsTests {
 
     @Story("Retrieve post with extremely large ID")
     @Severity(SeverityLevel.NORMAL)
-    @Owner("Adam Brouwer")
     @Description("Validates behavior when requesting a post with a very large ID.")
-    @Test(groups = {"api", "edge"})
-    public void getPostByVeryLargeIdReturns404OrEmpty() throws Exception {
+    @Test
+    public void getPostByVeryLargeIdReturns404OrEmpty() {
 
         ApiResponse response = postsApi.getPostById(999999);
 

@@ -61,20 +61,18 @@ public class TablePage extends BasePage {
     @Step("Select Language: {language}")
     public TablePage selectLanguage(String language) {
         switch (language.toLowerCase()) {
-            case "any":
+            case "any" -> {
                 click(langAny);
                 waitForTableToUpdate();
-                break;
-
-            case "java":
+            }
+            case "java" -> {
                 click(langJava);
                 waitForLanguageToBe("Java");
-                break;
-
-            case "python":
+            }
+            case "python" -> {
                 click(langPython);
                 waitForLanguageToBe("Python");
-                break;
+            }
         }
         return this;
     }
@@ -140,12 +138,12 @@ public class TablePage extends BasePage {
     // ============================================================
     @Step("Check if 'No matching courses' message is visible")
     public boolean isNoResultsMessageVisible() {
-        return isDisplayed(noResultsMessage);
+        return isElementVisible(noResultsMessage);
     }
 
     @Step("Check if Reset button is visible")
     public boolean isResetButtonVisible() {
-        return isDisplayed(resetButton);
+        return isElementVisible(resetButton);
     }
 
     // ============================================================
@@ -227,12 +225,14 @@ public class TablePage extends BasePage {
     // ============================================================
     private void waitForTableToUpdate() {
         log.info("WAIT: table refresh");
-        wait.until(ExpectedConditions.presenceOfAllElementsLocatedBy(tableRows));
+        waitForCondition(driver ->
+                !driver.findElements(tableRows).isEmpty()
+        );
     }
 
     private void waitForLanguageToBe(String expected) {
         log.info("WAIT: first language cell to be '{}'", expected);
-        wait.until(driver -> {
+        waitForCondition(driver -> {
             WebElement cell = driver.findElement(firstLanguageCell);
             return cell.getText().trim().equalsIgnoreCase(expected);
         });

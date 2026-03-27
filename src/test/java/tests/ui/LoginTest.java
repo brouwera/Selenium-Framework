@@ -14,6 +14,7 @@ import java.util.Map;
 
 @Epic("Login")
 @Feature("Login Flow")
+@Owner("Adam Brouwer")
 public class LoginTest extends BaseTest {
 
     // ============================================================
@@ -23,7 +24,8 @@ public class LoginTest extends BaseTest {
     private LoginPage navigateToLoginPage() {
         return new HomePage(getDriver(), getWait())
                 .open()
-                .goToLoginPage();
+                .goToLoginPage()
+                .waitForLoginPageReady();
     }
 
     // ============================================================
@@ -31,13 +33,8 @@ public class LoginTest extends BaseTest {
     // ============================================================
     @Story("Data-driven login validation (CSV)")
     @Severity(SeverityLevel.CRITICAL)
-    @Owner("Adam Brouwer")
     @Description("Validates login behavior using CSV-driven test data for both positive and negative scenarios.")
-    @Test(
-            groups = {"regression"},
-            dataProvider = "loginData",
-            dataProviderClass = LoginDataProvider.class
-    )
+    @Test(dataProvider = "loginDataCsv", dataProviderClass = LoginDataProvider.class)
     public void loginDataDrivenTest(Map<String, String> data) {
 
         String username = data.get("username");
@@ -88,13 +85,8 @@ public class LoginTest extends BaseTest {
     // ============================================================
     @Story("Data-driven login validation (JSON)")
     @Severity(SeverityLevel.CRITICAL)
-    @Owner("Adam Brouwer")
     @Description("Validates login behavior using JSON-driven test data (environment-specific + schema validated).")
-    @Test(
-            groups = {"regression"},
-            dataProvider = "loginDataJson",
-            dataProviderClass = JsonDataProvider.class
-    )
+    @Test(dataProvider = "loginDataJson", dataProviderClass = JsonDataProvider.class)
     public void loginDataDrivenTestJson(Map<String, String> data) {
         // Reuse the CSV-driven logic for consistency and maintainability
         loginDataDrivenTest(data);
@@ -105,9 +97,8 @@ public class LoginTest extends BaseTest {
     // ============================================================
     @Story("User can log in through navigation flow")
     @Severity(SeverityLevel.BLOCKER)
-    @Owner("Adam Brouwer")
     @Description("Validates that a user can navigate through the site and successfully log in.")
-    @Test(groups = {"smoke"})
+    @Test
     public void userCanLoginThroughNavigationFlow() {
 
         LoginPage loginPage = navigateToLoginPage();
@@ -128,9 +119,8 @@ public class LoginTest extends BaseTest {
 
     @Story("User can log out after a successful login")
     @Severity(SeverityLevel.CRITICAL)
-    @Owner("Adam Brouwer")
     @Description("Validates that a logged-in user can log out and return to the Login page.")
-    @Test(groups = {"smoke"})
+    @Test
     public void userCanLogoutAfterSuccessfulLogin() {
 
         LoginPage loginPage = navigateToLoginPage();
@@ -154,9 +144,8 @@ public class LoginTest extends BaseTest {
     // ============================================================
     @Story("Invalid username produces correct error message")
     @Severity(SeverityLevel.NORMAL)
-    @Owner("Adam Brouwer")
     @Description("Ensures that an invalid username triggers the expected error message.")
-    @Test(groups = {"regression"})
+    @Test
     public void invalidUsernameShowsError() {
 
         LoginPage loginPage = navigateToLoginPage();
@@ -168,9 +157,8 @@ public class LoginTest extends BaseTest {
 
     @Story("Invalid password produces correct error message")
     @Severity(SeverityLevel.NORMAL)
-    @Owner("Adam Brouwer")
     @Description("Ensures that an invalid password triggers the expected error message.")
-    @Test(groups = {"regression"})
+    @Test
     public void invalidPasswordShowsError() {
 
         LoginPage loginPage = navigateToLoginPage();
@@ -182,9 +170,8 @@ public class LoginTest extends BaseTest {
 
     @Story("Empty fields produce correct error message")
     @Severity(SeverityLevel.MINOR)
-    @Owner("Adam Brouwer")
     @Description("Ensures that submitting empty login fields triggers the expected error message.")
-    @Test(groups = {"regression"})
+    @Test
     public void emptyFieldsShowError() {
 
         LoginPage loginPage = navigateToLoginPage();
@@ -201,9 +188,8 @@ public class LoginTest extends BaseTest {
     // ============================================================
     @Story("Submit login form using Enter key")
     @Severity(SeverityLevel.NORMAL)
-    @Owner("Adam Brouwer")
     @Description("Ensures that pressing Enter in the password field does not trigger a successful login.")
-    @Test(groups = {"regression"})
+    @Test
     public void submitWithEnterKeyTriggersLogin() {
 
         LoginPage loginPage = navigateToLoginPage();

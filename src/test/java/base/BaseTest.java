@@ -11,6 +11,7 @@ import org.slf4j.MDC;
 import org.testng.ITestResult;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
+import pages.BasePage;
 
 import java.lang.reflect.Method;
 import java.time.Duration;
@@ -33,6 +34,19 @@ public class BaseTest {
     }
 
     // ============================================================
+    // Optional Page Factory Helper
+    // ============================================================
+    protected <T extends BasePage> T create(Class<T> pageClass) {
+        try {
+            return pageClass
+                    .getDeclaredConstructor(WebDriver.class, WebDriverWait.class)
+                    .newInstance(getDriver(), getWait());
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to create page: " + pageClass.getSimpleName(), e);
+        }
+    }
+
+    // ============================================================
     // Test Name Helper (MDC-backed)
     // ============================================================
     public String getTestName() {
@@ -45,6 +59,9 @@ public class BaseTest {
     // ============================================================
     @BeforeMethod(alwaysRun = true)
     public void setUp(Method method) {
+
+        // Reset step counter for clean logging
+        BasePage.resetStepCounter();
 
         // Early MDC set for BasePage logging
         String earlyName = method.getDeclaringClass().getSimpleName() + "." + method.getName();

@@ -23,9 +23,16 @@ public class SuccessfulLoginPage extends BasePage {
     // ============================================================
     // Page Load
     // ============================================================
+    @Step("Wait for Successful Login Page to be ready")
+    public SuccessfulLoginPage waitForSuccessPageReady() {
+        waitForVisibility(successMessage);
+        waitForVisibility(logoutButton);
+        return this;
+    }
+
     @Step("Verify Successful Login Page is loaded")
     public boolean isPageLoaded() {
-        return isDisplayed(successMessage) && isDisplayed(logoutButton);
+        return isElementVisible(successMessage) && isElementVisible(logoutButton);
     }
 
     // ============================================================
@@ -33,12 +40,12 @@ public class SuccessfulLoginPage extends BasePage {
     // ============================================================
     @Step("Check if success message is displayed")
     public boolean isSuccessMessageDisplayed() {
-        return isDisplayed(successMessage);
+        return isElementVisible(successMessage);
     }
 
     @Step("Check if Logout button is displayed")
     public boolean isLogoutButtonDisplayed() {
-        return isDisplayed(logoutButton);
+        return isElementVisible(logoutButton);
     }
 
     // ============================================================
@@ -55,6 +62,7 @@ public class SuccessfulLoginPage extends BasePage {
     @Step("Click Logout button")
     public LoginPage clickLogoutButton() {
         click(logoutButton);
+        waitForPageLoad();
         return new LoginPage(driver, wait);
     }
 }

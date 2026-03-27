@@ -252,4 +252,19 @@ public class AssertionHelper {
                 message + " | Expected <= " + maxAllowedMs + "ms but got " + actualMs + "ms"
         );
     }
+
+    // ============================================================
+    // Exception Assertions (⭐ NEW ⭐)
+    // ============================================================
+    public static void assertThrows(Class<? extends Throwable> expected, Runnable action) {
+        try {
+            action.run();
+            Assert.fail("Expected exception: " + expected.getName() + " but no exception was thrown");
+        } catch (Throwable actual) {
+            if (!expected.isAssignableFrom(actual.getClass())) {
+                Assert.fail("Expected exception: " + expected.getName()
+                        + " but got: " + actual.getClass().getName());
+            }
+        }
+    }
 }

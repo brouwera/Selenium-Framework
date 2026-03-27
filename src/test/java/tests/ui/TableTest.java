@@ -12,6 +12,7 @@ import java.util.List;
 
 @Epic("Table")
 @Feature("Course Table Filtering and Sorting")
+@Owner("Adam Brouwer")
 public class TableTest extends BaseTest {
 
     // ============================================================
@@ -29,7 +30,6 @@ public class TableTest extends BaseTest {
     // ============================================================
     @Story("Filter by Language: Java")
     @Severity(SeverityLevel.NORMAL)
-    @Owner("Adam Brouwer")
     @Description("Verify that selecting Language = Java shows only Java courses.")
     @Test(groups = {"regression"})
     public void filterByLanguageJava() {
@@ -50,7 +50,6 @@ public class TableTest extends BaseTest {
     // ============================================================
     @Story("Filter by Level: Beginner")
     @Severity(SeverityLevel.NORMAL)
-    @Owner("Adam Brouwer")
     @Description("Verify that only Beginner courses are visible when Intermediate and Advanced are unchecked.")
     @Test(groups = {"regression"})
     public void filterByLevelBeginner() {
@@ -72,7 +71,6 @@ public class TableTest extends BaseTest {
     // ============================================================
     @Story("Filter by Min Enrollments: 10,000+")
     @Severity(SeverityLevel.NORMAL)
-    @Owner("Adam Brouwer")
     @Description("Verify that all visible courses have enrollments >= 10,000.")
     @Test(groups = {"regression"})
     public void filterByMinEnrollments() {
@@ -93,7 +91,6 @@ public class TableTest extends BaseTest {
     // ============================================================
     @Story("Combined Filters: Python + Beginner + 10,000+")
     @Severity(SeverityLevel.CRITICAL)
-    @Owner("Adam Brouwer")
     @Description("Verify combined filtering logic for Language, Level, and Min Enrollments.")
     @Test(groups = {"regression"})
     public void combinedFilters() {
@@ -129,7 +126,6 @@ public class TableTest extends BaseTest {
     // ============================================================
     @Story("No Results State")
     @Severity(SeverityLevel.MINOR)
-    @Owner("Adam Brouwer")
     @Description("Verify that no results message appears when filters yield no matches.")
     @Test(groups = {"regression"})
     public void noResultsState() {
@@ -151,7 +147,6 @@ public class TableTest extends BaseTest {
     // ============================================================
     @Story("Reset Button Behavior")
     @Severity(SeverityLevel.NORMAL)
-    @Owner("Adam Brouwer")
     @Description("Verify Reset button visibility and that it restores default filter values.")
     @Test(groups = {"regression"})
     public void resetButtonBehavior() {
@@ -184,7 +179,6 @@ public class TableTest extends BaseTest {
     // ============================================================
     @Story("Sort by Enrollments (Ascending)")
     @Severity(SeverityLevel.NORMAL)
-    @Owner("Adam Brouwer")
     @Description("Verify numeric sorting of enrollments in ascending order.")
     @Test(groups = {"regression"})
     public void sortByEnrollmentsAscending() {
@@ -205,7 +199,6 @@ public class TableTest extends BaseTest {
     // ============================================================
     @Story("Sort by Course Name (A→Z)")
     @Severity(SeverityLevel.NORMAL)
-    @Owner("Adam Brouwer")
     @Description("Verify alphabetical sorting of course names.")
     @Test(groups = {"regression"})
     public void sortByCourseName() {

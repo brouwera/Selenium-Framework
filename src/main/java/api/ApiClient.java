@@ -2,6 +2,7 @@ package api;
 
 import config.ConfigManager;
 import io.qameta.allure.Allure;
+import io.qameta.allure.Owner;
 import io.qameta.allure.Step;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,12 +15,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.function.Supplier;
 
-/**
- * Lightweight HTTP client wrapper for API testing.
- * Provides GET, POST, PUT, and DELETE helpers with clean response handling,
- * centralized Allure logging via AllureApiLogger, and optional retry logic
- * for idempotent operations.
- */
+@Owner("Adam Brouwer")
 public class ApiClient {
 
     // ============================================================
@@ -38,6 +34,7 @@ public class ApiClient {
     // ============================================================
     // Retry Wrapper
     // ============================================================
+    @Step("Execute API call with retry: {description}")
     private <T> T executeWithRetry(Supplier<T> action, String description) {
         int maxRetries = ConfigManager.getApiRetries();
         int backoffMs = ConfigManager.getApiRetryBackoffMs();
@@ -56,13 +53,11 @@ public class ApiClient {
 
                 attempt++;
 
-                // Allure retry step
                 Allure.step(String.format(
                         "Retry attempt %d of %d for %s",
                         attempt, maxRetries, description
                 ));
 
-                // Centralized retry logging
                 AllureApiLogger.logRetryAttempt(description, attempt, maxRetries);
 
                 log.warn("Retrying API call (attempt {} of {}) for: {}", attempt, maxRetries, description);
@@ -103,7 +98,6 @@ public class ApiClient {
                     .GET()
                     .build();
 
-            // Log request
             AllureApiLogger.logRequest("GET", url, request.headers().map(), null);
 
             HttpResponse<String> response =
@@ -118,7 +112,6 @@ public class ApiClient {
                     duration
             );
 
-            // Log response + timing
             AllureApiLogger.logResponse(response.statusCode(), response.body());
             logApiTiming("GET", url, duration);
 
@@ -145,7 +138,6 @@ public class ApiClient {
                     .POST(HttpRequest.BodyPublishers.ofString(jsonBody))
                     .build();
 
-            // Log request
             AllureApiLogger.logRequest("POST", url, request.headers().map(), jsonBody);
 
             HttpResponse<String> response =
@@ -160,7 +152,6 @@ public class ApiClient {
                     duration
             );
 
-            // Log response + timing
             AllureApiLogger.logResponse(response.statusCode(), response.body());
             logApiTiming("POST", url, duration);
 
@@ -191,7 +182,6 @@ public class ApiClient {
                     .PUT(HttpRequest.BodyPublishers.ofString(jsonBody))
                     .build();
 
-            // Log request
             AllureApiLogger.logRequest("PUT", url, request.headers().map(), jsonBody);
 
             HttpResponse<String> response =
@@ -206,7 +196,6 @@ public class ApiClient {
                     duration
             );
 
-            // Log response + timing
             AllureApiLogger.logResponse(response.statusCode(), response.body());
             logApiTiming("PUT", url, duration);
 
@@ -232,7 +221,6 @@ public class ApiClient {
                     .DELETE()
                     .build();
 
-            // Log request
             AllureApiLogger.logRequest("DELETE", url, request.headers().map(), null);
 
             HttpResponse<String> response =
@@ -247,7 +235,6 @@ public class ApiClient {
                     duration
             );
 
-            // Log response + timing
             AllureApiLogger.logResponse(response.statusCode(), response.body());
             logApiTiming("DELETE", url, duration);
 

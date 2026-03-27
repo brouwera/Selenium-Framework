@@ -290,6 +290,13 @@ public abstract class BasePage {
     }
 
     // ============================================================
+    // NEW: Generic Condition Wait Helper
+    // ============================================================
+    protected void waitForCondition(java.util.function.Function<WebDriver, Boolean> condition) {
+        step("WAIT custom condition", () -> wait.until(condition));
+    }
+
+    // ============================================================
     // NEW: waitForErrorMessage() — Day 30 Enhancement
     // ============================================================
     protected void waitForErrorMessage(By locator) {

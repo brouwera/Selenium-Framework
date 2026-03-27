@@ -1,5 +1,6 @@
 package api;
 
+import io.qameta.allure.Owner;
 import java.util.List;
 import java.util.Map;
 
@@ -7,6 +8,7 @@ import java.util.Map;
  * Represents a structured HTTP response returned by ApiClient.
  * Provides status code, body, headers, response time, and helper accessors.
  */
+@Owner("Adam Brouwer")
 public class ApiResponse {
 
     // ============================================================
@@ -64,4 +66,9 @@ public class ApiResponse {
 
         return values.get(0);
     }
+
+    // Optional helpers for expressive assertions
+    public boolean is2xx() { return statusCode >= 200 && statusCode < 300; }
+    public boolean is4xx() { return statusCode >= 400 && statusCode < 500; }
+    public boolean is5xx() { return statusCode >= 500; }
 }

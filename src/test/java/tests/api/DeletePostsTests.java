@@ -10,6 +10,7 @@ import org.testng.annotations.Test;
 
 @Epic("API")
 @Feature("Posts API")
+@Owner("Adam Brouwer")
 public class DeletePostsTests {
 
     private PostsApi postsApi;
@@ -17,7 +18,6 @@ public class DeletePostsTests {
     // ============================================================
     // Setup
     // ============================================================
-    @Step("Initialize Posts API client")
     @BeforeClass
     public void setUp() {
         ApiClient client = new ApiClient();
@@ -29,10 +29,9 @@ public class DeletePostsTests {
     // ============================================================
     @Story("Delete an existing post")
     @Severity(SeverityLevel.CRITICAL)
-    @Owner("Adam Brouwer")
     @Description("Validates that DELETE /posts/{id} returns a successful status code.")
-    @Test(groups = {"api", "regression"})
-    public void deletePostReturns200() throws Exception {
+    @Test
+    public void deletePostReturns200() {
 
         ApiResponse response = postsApi.deleteRaw("posts/1");
 
@@ -48,10 +47,9 @@ public class DeletePostsTests {
     // ============================================================
     @Story("Delete post with ID = 0")
     @Severity(SeverityLevel.NORMAL)
-    @Owner("Adam Brouwer")
     @Description("Validates behavior when deleting a post with ID = 0.")
-    @Test(groups = {"api", "edge"})
-    public void deletePostWithIdZeroReturns404Or200() throws Exception {
+    @Test
+    public void deletePostWithIdZeroReturns404Or200() {
 
         ApiResponse response = postsApi.deleteRaw("posts/0");
 
@@ -65,10 +63,9 @@ public class DeletePostsTests {
 
     @Story("Delete post with extremely large ID")
     @Severity(SeverityLevel.NORMAL)
-    @Owner("Adam Brouwer")
     @Description("Validates behavior when deleting a post with a very large ID.")
-    @Test(groups = {"api", "edge"})
-    public void deletePostWithVeryLargeIdReturns404Or200() throws Exception {
+    @Test
+    public void deletePostWithVeryLargeIdReturns404Or200() {
 
         ApiResponse response = postsApi.deleteRaw("posts/999999");
 
@@ -85,10 +82,9 @@ public class DeletePostsTests {
     // ============================================================
     @Story("Delete post with invalid ID")
     @Severity(SeverityLevel.NORMAL)
-    @Owner("Adam Brouwer")
     @Description("Validates behavior when deleting a post using an invalid ID.")
-    @Test(groups = {"api", "negative"})
-    public void deletePostWithInvalidIdReturnsError() throws Exception {
+    @Test
+    public void deletePostWithInvalidIdReturnsError() {
 
         ApiResponse response = postsApi.deleteRaw("posts/invalid-id");
 
@@ -102,10 +98,9 @@ public class DeletePostsTests {
 
     @Story("Delete post with malformed endpoint")
     @Severity(SeverityLevel.NORMAL)
-    @Owner("Adam Brouwer")
     @Description("Validates behavior when the DELETE endpoint is malformed.")
-    @Test(groups = {"api", "negative"})
-    public void deletePostWithMalformedEndpointReturnsError() throws Exception {
+    @Test
+    public void deletePostWithMalformedEndpointReturnsError() {
 
         ApiResponse response = postsApi.deleteRaw("posts//1");
 
