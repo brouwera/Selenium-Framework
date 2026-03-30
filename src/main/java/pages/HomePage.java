@@ -9,12 +9,11 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 public class HomePage extends BasePage {
 
     // ============================================================
-    // Locators
+    // Locators (Practice Test Automation site only)
     // ============================================================
     private final By testLoginLink = By.linkText("Test Login Page");
     private final By testExceptionsLink = By.linkText("Test Exceptions");
     private final By testTableLink = By.linkText("Test Table");
-    private final By dynamicControlsLink = By.linkText("Dynamic Controls");
 
     // ============================================================
     // Constructor
@@ -35,7 +34,7 @@ public class HomePage extends BasePage {
     }
 
     // ============================================================
-    // Navigation Helpers
+    // Navigation Helpers (Practice Test Automation)
     // ============================================================
     @Step("Navigate to Test Login Page")
     public LoginPage goToLoginPage() {
@@ -61,11 +60,22 @@ public class HomePage extends BasePage {
         return new TablePage(driver, wait);
     }
 
+    // ============================================================
+    // Navigation Helpers (Herokuapp)
+    // ============================================================
     @Step("Navigate to Dynamic Controls Page")
     public DynamicControlsPage goToDynamicControlsPage() {
-        waitForVisibility(dynamicControlsLink);
-        click(dynamicControlsLink);
+        String url = ConfigManager.getHerokuBaseUrl() + "/dynamic_controls";
+        navigateTo(url);
         waitForPageLoad();
         return new DynamicControlsPage(driver, wait);
+    }
+
+    @Step("Navigate to Drag and Drop Page")
+    public DragAndDropPage goToDragAndDropPage() {
+        String url = ConfigManager.getHerokuBaseUrl() + "/drag_and_drop";
+        navigateTo(url);
+        waitForPageLoad();
+        return new DragAndDropPage(driver, wait);
     }
 }

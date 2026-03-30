@@ -6,6 +6,11 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+/**
+ * Dynamic Controls Page
+ * Handles checkbox removal/addition, input enable/disable,
+ * and loading indicator synchronization.
+ */
 public class DynamicControlsPage extends BasePage {
 
     // ============================================================
@@ -31,13 +36,25 @@ public class DynamicControlsPage extends BasePage {
     // ============================================================
     // Navigation
     // ============================================================
-    @Step("Open Dynamic Controls page")
+    @Step("Open Dynamic Controls Page")
     public DynamicControlsPage open() {
         String url = ConfigManager.getHerokuBaseUrl() + "/dynamic_controls";
         navigateTo(url);
         waitForPageLoad();
-        loadingObserved = false; // reset transient state
+        loadingObserved = false;
         return this;
+    }
+
+    @Step("Wait for Dynamic Controls Page to be ready")
+    public DynamicControlsPage waitForPageReady() {
+        waitForVisibility(removeAddButton);
+        waitForVisibility(enableDisableButton);
+        return this;
+    }
+
+    @Step("Verify Dynamic Controls Page is loaded")
+    public boolean isPageLoaded() {
+        return isElementVisible(removeAddButton) && isElementVisible(enableDisableButton);
     }
 
     // ============================================================
@@ -50,22 +67,11 @@ public class DynamicControlsPage extends BasePage {
         return this;
     }
 
-    // ⭐ NEW METHOD — required by DynamicControlsTest
     @Step("Click Remove/Add button (expecting loading indicator)")
     public DynamicControlsPage clickRemoveOrAddExpectingLoading() {
         click(removeAddButton);
-
-        // Try to observe spinner appearance
-        try {
-            waitForVisibility(loadingIndicator);
-            loadingObserved = true;
-        } catch (Exception ignored) {
-            // Spinner may appear too fast; ignore
-        }
-
-        // Always wait for spinner to disappear
+        observeLoadingIndicator();
         waitForInvisibility(loadingIndicator);
-
         return this;
     }
 
@@ -123,12 +129,7 @@ public class DynamicControlsPage extends BasePage {
 
     @Step("Wait for loading indicator to appear")
     public DynamicControlsPage waitForLoadingToAppear() {
-        try {
-            waitForVisibility(loadingIndicator);
-            loadingObserved = true;
-        } catch (Exception ignored) {
-            // Spinner may appear too fast; ignore
-        }
+        observeLoadingIndicator();
         return this;
     }
 
@@ -138,24 +139,22 @@ public class DynamicControlsPage extends BasePage {
         return this;
     }
 
-    /**
-     * Full loading cycle:
-     * 1. Wait for spinner to appear (if it does)
-     * 2. Wait for spinner to disappear
-     */
     @Step("Wait for loading cycle to complete")
     public DynamicControlsPage waitForLoadingCycle() {
-        try {
-            waitForVisibility(loadingIndicator);
-            loadingObserved = true;
-        } catch (Exception ignored) {
-            // Spinner may appear too fast; ignore
-        }
+        observeLoadingIndicator();
         waitForInvisibility(loadingIndicator);
         return this;
     }
 
-    // Used by the test to confirm spinner was seen
+    private void observeLoadingIndicator() {
+        try {
+            waitForVisibility(loadingIndicator);
+            loadingObserved = true;
+        } catch (Exception ignored) {
+            // Spinner may appear and disappear too quickly — expected behavior
+        }
+    }
+
     public boolean wasLoadingIndicatorObserved() {
         return loadingObserved;
     }

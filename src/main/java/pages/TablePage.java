@@ -4,7 +4,6 @@ import config.ConfigManager;
 import io.qameta.allure.Step;
 import org.openqa.selenium.*;
 import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
@@ -101,8 +100,7 @@ public class TablePage extends BasePage {
     private void setCheckbox(By locator, boolean checked) {
         WebElement box = find(locator);
         if (box.isSelected() != checked) {
-            log.info("CLICK CHECKBOX: {} → {}", locator, checked);
-            box.click();
+            click(locator); // Use BasePage click wrapper
         }
     }
 
@@ -119,7 +117,6 @@ public class TablePage extends BasePage {
     // ============================================================
     @Step("Sort by: {option}")
     public TablePage sortBy(String option) {
-        log.info("SORT: selecting '{}'", option);
         WebElement dropdown = find(sortDropdown);
         new Select(dropdown).selectByVisibleText(option);
         waitForTableToUpdate();
@@ -223,15 +220,15 @@ public class TablePage extends BasePage {
     // ============================================================
     // Table Refresh Waits
     // ============================================================
-    private void waitForTableToUpdate() {
-        log.info("WAIT: table refresh");
+    @Step("Wait for table to update")
+    public void waitForTableToUpdate() {
         waitForCondition(driver ->
                 !driver.findElements(tableRows).isEmpty()
         );
     }
 
-    private void waitForLanguageToBe(String expected) {
-        log.info("WAIT: first language cell to be '{}'", expected);
+    @Step("Wait for first language cell to be: {expected}")
+    public void waitForLanguageToBe(String expected) {
         waitForCondition(driver -> {
             WebElement cell = driver.findElement(firstLanguageCell);
             return cell.getText().trim().equalsIgnoreCase(expected);
@@ -241,8 +238,8 @@ public class TablePage extends BasePage {
     // ============================================================
     // Helper: Find element inside a row with logging
     // ============================================================
+    @Step("Find element within row: {locator}")
     private WebElement findWithin(WebElement parent, By locator) {
-        log.info("FIND (within row): {}", locator);
         return parent.findElement(locator);
     }
 }

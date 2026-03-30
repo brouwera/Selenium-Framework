@@ -5,6 +5,7 @@ import helpers.AssertionHelper;
 import io.qameta.allure.*;
 import org.testng.annotations.Test;
 import pages.DynamicControlsPage;
+import pages.HomePage;
 
 @Epic("Dynamic Controls")
 @Feature("Dynamic UI Behavior")
@@ -16,7 +17,10 @@ public class DynamicControlsTest extends BaseTest {
     // ============================================================
     @Step("Navigate to Dynamic Controls Page")
     private DynamicControlsPage navigateToDynamicControlsPage() {
-        return new DynamicControlsPage(getDriver(), getWait()).open();
+        return new HomePage(getDriver(), getWait())
+                .open()
+                .goToDynamicControlsPage()
+                .waitForPageReady();
     }
 
     // ============================================================
@@ -24,19 +28,21 @@ public class DynamicControlsTest extends BaseTest {
     // ============================================================
     @Story("Checkbox can be removed and added back")
     @Severity(SeverityLevel.NORMAL)
-    @Description("Verify checkbox can be removed and added back with correct messages.")
+    @Description("Validates that the checkbox can be removed and added back, and that the correct success messages are displayed.")
     @Test
     public void testRemoveAndAddCheckbox() {
 
+        // Arrange
         DynamicControlsPage page = navigateToDynamicControlsPage();
 
-        // Remove checkbox
+        // Act — Remove checkbox
         page.clickRemoveOrAdd()
                 .waitForCheckboxToDisappear();
 
+        // Assert — Checkbox removed
         AssertionHelper.assertFalse(
                 page.isCheckboxPresent(),
-                "Checkbox should be removed"
+                "Checkbox should be removed from the DOM"
         );
 
         AssertionHelper.assertEquals(
@@ -45,13 +51,14 @@ public class DynamicControlsTest extends BaseTest {
                 "Removal message should match expected text"
         );
 
-        // Add checkbox back
+        // Act — Add checkbox back
         page.clickRemoveOrAdd()
                 .waitForCheckboxToAppear();
 
+        // Assert — Checkbox added
         AssertionHelper.assertTrue(
                 page.isCheckboxPresent(),
-                "Checkbox should be added back"
+                "Checkbox should be added back to the DOM"
         );
 
         AssertionHelper.assertEquals(
@@ -66,19 +73,21 @@ public class DynamicControlsTest extends BaseTest {
     // ============================================================
     @Story("Input field can be enabled and disabled")
     @Severity(SeverityLevel.NORMAL)
-    @Description("Verify input field can be enabled and disabled with correct messages.")
+    @Description("Validates that the input field can be enabled and disabled, and that the correct success messages are displayed.")
     @Test
     public void testEnableAndDisableInput() {
 
+        // Arrange
         DynamicControlsPage page = navigateToDynamicControlsPage();
 
-        // Enable input
+        // Act — Enable input
         page.clickEnableOrDisable()
                 .waitForInputToBeEnabled();
 
+        // Assert — Input enabled
         AssertionHelper.assertTrue(
                 page.isInputEnabled(),
-                "Input should be enabled"
+                "Input field should be enabled"
         );
 
         AssertionHelper.assertEquals(
@@ -87,13 +96,14 @@ public class DynamicControlsTest extends BaseTest {
                 "Enable message should match expected text"
         );
 
-        // Disable input
+        // Act — Disable input
         page.clickEnableOrDisable()
                 .waitForInputToBeDisabled();
 
+        // Assert — Input disabled
         AssertionHelper.assertFalse(
                 page.isInputEnabled(),
-                "Input should be disabled"
+                "Input field should be disabled"
         );
 
         AssertionHelper.assertEquals(
@@ -108,14 +118,17 @@ public class DynamicControlsTest extends BaseTest {
     // ============================================================
     @Story("Loading indicator appears and disappears correctly")
     @Severity(SeverityLevel.MINOR)
-    @Description("Verify loading indicator appears and disappears correctly when clicking Remove/Add.")
+    @Description("Validates that the loading indicator appears at least once during a Remove/Add operation.")
     @Test
     public void testLoadingIndicatorBehavior() {
 
+        // Arrange
         DynamicControlsPage page = navigateToDynamicControlsPage();
 
+        // Act
         page.clickRemoveOrAddExpectingLoading();
 
+        // Assert
         AssertionHelper.assertTrue(
                 page.wasLoadingIndicatorObserved(),
                 "Loading indicator should appear at least once during the operation"

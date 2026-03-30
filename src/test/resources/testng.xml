@@ -26,6 +26,7 @@
             <class name="tests.ui.TableTest"/>
             <class name="tests.ui.FramesTest"/>
             <class name="tests.ui.DynamicControlsTest"/>
+            <class name="tests.ui.DragAndDropTest"/>
             <class name="tests.ui.SchemaValidationTest"/>
 
             <!-- API Tests -->
