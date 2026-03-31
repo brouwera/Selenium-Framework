@@ -1,8 +1,8 @@
 {
   "local": {
-    "practiceBaseUrl": "https://practicetestautomation.com/practice/",
-    "herokuBaseUrl": "https://the-internet.herokuapp.com/",
-    "apiBaseUrl": "https://jsonplaceholder.typicode.com/",
+    "practiceBaseUrl": "https://practicetestautomation.com",
+    "herokuBaseUrl": "https://the-internet.herokuapp.com",
+    "apiBaseUrl": "https://jsonplaceholder.typicode.com",
     "browser": "chrome",
     "headless": false,
     "apiLogging": true,
@@ -24,9 +24,9 @@
   },
 
   "qa": {
-    "practiceBaseUrl": "https://practicetestautomation.com/practice/",
-    "herokuBaseUrl": "https://the-internet.herokuapp.com/",
-    "apiBaseUrl": "https://jsonplaceholder.typicode.com/",
+    "practiceBaseUrl": "https://practicetestautomation.com",
+    "herokuBaseUrl": "https://the-internet.herokuapp.com",
+    "apiBaseUrl": "https://jsonplaceholder.typicode.com",
     "browser": "chrome",
     "headless": false,
     "apiLogging": true,
@@ -48,9 +48,9 @@
   },
 
   "stage": {
-    "practiceBaseUrl": "https://practicetestautomation.com/practice/",
-    "herokuBaseUrl": "https://the-internet.herokuapp.com/",
-    "apiBaseUrl": "https://jsonplaceholder.typicode.com/",
+    "practiceBaseUrl": "https://practicetestautomation.com",
+    "herokuBaseUrl": "https://the-internet.herokuapp.com",
+    "apiBaseUrl": "https://jsonplaceholder.typicode.com",
     "browser": "firefox",
     "headless": false,
     "apiLogging": true,
@@ -72,9 +72,9 @@
   },
 
   "prod": {
-    "practiceBaseUrl": "https://practicetestautomation.com/practice/",
-    "herokuBaseUrl": "https://the-internet.herokuapp.com/",
-    "apiBaseUrl": "https://jsonplaceholder.typicode.com/",
+    "practiceBaseUrl": "https://practicetestautomation.com",
+    "herokuBaseUrl": "https://the-internet.herokuapp.com",
+    "apiBaseUrl": "https://jsonplaceholder.typicode.com",
     "browser": "firefox",
     "headless": false,
     "apiLogging": true,
