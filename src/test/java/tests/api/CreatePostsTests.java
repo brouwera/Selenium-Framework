@@ -3,11 +3,15 @@ package tests.api;
 import api.ApiClient;
 import api.ApiResponse;
 import api.PostsApi;
+import config.ConfigManager;
 import helpers.AssertionHelper;
 import io.qameta.allure.*;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+import utils.AiDataGenerator;
 import utils.SchemaValidator;
+
+import java.util.Map;
 
 @Epic("API")
 @Feature("Posts API")
@@ -34,11 +38,26 @@ public class CreatePostsTests {
     @Test
     public void createPostReturns201AndValidSchema() {
 
-        ApiResponse response = postsApi.createPost(
-                "My New Post",
-                "This is the body of the new post.",
-                1
-        );
+        String title;
+        String body;
+        int userId;
+
+        // ============================================================
+        // Day 51 — AI Data Integration (config-driven)
+        // ============================================================
+        if (ConfigManager.isAiDataEnabled()) {
+            Map<String, Object> aiPost = AiDataGenerator.generatePostPayload();
+            title = aiPost.get("title").toString();
+            body = aiPost.get("body").toString();
+            userId = Integer.parseInt(aiPost.get("userId").toString());
+        } else {
+            // Fallback to static values if AI is disabled
+            title = "My New Post";
+            body = "This is the body of the new post.";
+            userId = 1;
+        }
+
+        ApiResponse response = postsApi.createPost(title, body, userId);
 
         AssertionHelper.assertEquals(
                 response.getStatusCode(),

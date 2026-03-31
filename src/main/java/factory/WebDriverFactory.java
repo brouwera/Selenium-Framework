@@ -58,14 +58,11 @@ public class WebDriverFactory {
 
     private static WebDriver createChromeDriver(boolean headless) {
 
-        // Auto-detect installed Chrome version (fixes CI mismatch)
         WebDriverManager.chromedriver().setup();
-
         ChromeOptions options = buildChromeOptions(headless);
 
-        // Force correct Chrome binary in CI
         if (isCiEnvironment()) {
-            log.info("CI detected — using Chrome binary at /usr/bin/google-chrome");
+            log.info("CI detected — forcing Chrome binary path");
             options.setBinary("/usr/bin/google-chrome");
         }
 
@@ -81,12 +78,12 @@ public class WebDriverFactory {
 
         options.setPageLoadStrategy(PageLoadStrategy.NORMAL);
 
-        // Local headless mode (from config.json)
+        // Local headless
         if (headless) {
             options.addArguments("--headless=new");
         }
 
-        // CI must ALWAYS run headless
+        // CI always headless
         if (isCiEnvironment()) {
             options.addArguments("--headless=new");
         }
@@ -117,13 +114,7 @@ public class WebDriverFactory {
 
         options.setPageLoadStrategy(PageLoadStrategy.NORMAL);
 
-        // Local headless
-        if (headless) {
-            options.addArguments("-headless");
-        }
-
-        // CI headless override
-        if (isCiEnvironment()) {
+        if (headless || isCiEnvironment()) {
             options.addArguments("-headless");
         }
 
@@ -151,13 +142,7 @@ public class WebDriverFactory {
 
         options.setPageLoadStrategy(PageLoadStrategy.NORMAL);
 
-        // Local headless
-        if (headless) {
-            options.addArguments("--headless=new");
-        }
-
-        // CI headless override
-        if (isCiEnvironment()) {
+        if (headless || isCiEnvironment()) {
             options.addArguments("--headless=new");
         }
 
@@ -230,6 +215,11 @@ public class WebDriverFactory {
         options.addArguments("--disable-dev-shm-usage");
         options.addArguments("--disable-extensions");
         options.addArguments("--disable-infobars");
+        options.addArguments("--remote-allow-origins=*");
+        options.addArguments("--disable-software-rasterizer");
+        options.addArguments("--disable-backgrounding-occluded-windows");
+        options.addArguments("--disable-background-timer-throttling");
+        options.addArguments("--disable-renderer-backgrounding");
     }
 
     private static void applyCiSafeFlags(EdgeOptions options) {
@@ -238,6 +228,7 @@ public class WebDriverFactory {
         options.addArguments("--disable-dev-shm-usage");
         options.addArguments("--disable-extensions");
         options.addArguments("--disable-infobars");
+        options.addArguments("--remote-allow-origins=*");
     }
 
     private static void applyWindowSize(ChromeOptions options) {

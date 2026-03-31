@@ -8,6 +8,8 @@
     "apiLogging": true,
     "apiRetries": 2,
     "apiRetryBackoffMs": 200,
+    "aiDataEnabled": true,
+    "aiDataProvider": "local",
     "timeouts": {
       "explicit": 10,
       "pageLoad": 30,
@@ -30,6 +32,8 @@
     "apiLogging": true,
     "apiRetries": 2,
     "apiRetryBackoffMs": 200,
+    "aiDataEnabled": true,
+    "aiDataProvider": "local",
     "timeouts": {
       "explicit": 10,
       "pageLoad": 30,
@@ -52,6 +56,8 @@
     "apiLogging": true,
     "apiRetries": 2,
     "apiRetryBackoffMs": 200,
+    "aiDataEnabled": true,
+    "aiDataProvider": "local",
     "timeouts": {
       "explicit": 10,
       "pageLoad": 30,
@@ -74,6 +80,8 @@
     "apiLogging": true,
     "apiRetries": 2,
     "apiRetryBackoffMs": 200,
+    "aiDataEnabled": true,
+    "aiDataProvider": "local",
     "timeouts": {
       "explicit": 10,
       "pageLoad": 30,

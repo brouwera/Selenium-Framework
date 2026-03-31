@@ -108,6 +108,43 @@ public final class ConfigManager {
     }
 
     // ============================================================
+    // Generic Boolean / String Helpers
+    // ============================================================
+    private static boolean getBoolean(String key, boolean defaultValue) {
+        String override = getOverride(key);
+        if (override != null) {
+            return Boolean.parseBoolean(override);
+        }
+
+        JsonNode node = envNode.get(key);
+        if (node == null || node.isNull()) {
+            return defaultValue;
+        }
+        return node.asBoolean(defaultValue);
+    }
+
+    private static String getString(String key, String defaultValue) {
+        String override = getOverride(key);
+        if (override != null) {
+            return override;
+        }
+
+        JsonNode node = envNode.get(key);
+        if (node == null || node.isNull()) {
+            return defaultValue;
+        }
+        return node.asText();
+    }
+
+    // ============================================================
+    // URL Normalization Helper (NEW)
+    // ============================================================
+    private static String normalizeUrl(String url) {
+        if (url == null) return "";
+        return url.replaceAll("/+$", "");  // remove trailing slashes
+    }
+
+    // ============================================================
     // Environment
     // ============================================================
     public static String getEnvironment() {
@@ -117,18 +154,18 @@ public final class ConfigManager {
     }
 
     // ============================================================
-    // Base URLs
+    // Base URLs (Slash‑Safe)
     // ============================================================
     public static String getPracticeBaseUrl() {
-        return getConfigValue("practice.base.url", "practiceBaseUrl");
+        return normalizeUrl(getConfigValue("practice.base.url", "practiceBaseUrl"));
     }
 
     public static String getHerokuBaseUrl() {
-        return getConfigValue("heroku.base.url", "herokuBaseUrl");
+        return normalizeUrl(getConfigValue("heroku.base.url", "herokuBaseUrl"));
     }
 
     public static String getApiBaseUrl() {
-        return getConfigValue("api.base.url", "apiBaseUrl");
+        return normalizeUrl(getConfigValue("api.base.url", "apiBaseUrl"));
     }
 
     // ============================================================
@@ -146,12 +183,10 @@ public final class ConfigManager {
         return node != null && node.asBoolean(false);
     }
 
-    // NEW: String version for Allure environment.properties
     public static String getHeadlessMode() {
         return Boolean.toString(isHeadless());
     }
 
-    // NEW: Browser version (system property only)
     public static String getBrowserVersion() {
         return System.getProperty("browser.version", "unknown");
     }
@@ -169,7 +204,7 @@ public final class ConfigManager {
     }
 
     // ============================================================
-    // Timeout Settings (SAFE DEFAULTS)
+    // Timeout Settings
     // ============================================================
     public static int getExplicitWait() {
         return getConfigInt("timeouts.explicit", "explicit", 10);
@@ -199,7 +234,7 @@ public final class ConfigManager {
     }
 
     // ============================================================
-    // Logging Settings (DAY 43)
+    // Logging Settings
     // ============================================================
     public static boolean isApiLoggingEnabled() {
         String override = getOverride("apiLogging");
@@ -208,11 +243,11 @@ public final class ConfigManager {
         }
 
         JsonNode node = envNode.get("apiLogging");
-        return node != null && node.asBoolean(true); // default = true
+        return node != null && node.asBoolean(true);
     }
 
     // ============================================================
-    // API Settings (DAY 44)
+    // API Retry Settings
     // ============================================================
     public static int getApiRetries() {
         String override = getOverride("apiRetries");
@@ -221,7 +256,7 @@ public final class ConfigManager {
         }
 
         JsonNode node = envNode.get("apiRetries");
-        return (node != null && node.isInt()) ? node.asInt() : 0; // default = 0 retries
+        return (node != null && node.isInt()) ? node.asInt() : 0;
     }
 
     public static int getApiRetryBackoffMs() {
@@ -231,13 +266,27 @@ public final class ConfigManager {
         }
 
         JsonNode node = envNode.get("apiRetryBackoffMs");
-        return (node != null && node.isInt()) ? node.asInt() : 200; // default = 200ms
+        return (node != null && node.isInt()) ? node.asInt() : 200;
     }
 
     // ============================================================
-    // NEW: Day 46 Reporting Metadata
+    // AI Data Settings (DAY 51)
     // ============================================================
+    public static boolean isAiDataEnabled() {
+        return getBoolean("aiDataEnabled", false);
+    }
 
+    public static String getAiDataProvider() {
+        return getString("aiDataProvider", "local");
+    }
+
+    public static boolean isAiDataLocal() {
+        return isAiDataEnabled() && "local".equalsIgnoreCase(getAiDataProvider());
+    }
+
+    // ============================================================
+    // Reporting Metadata
+    // ============================================================
     public static String getBuildTimestamp() {
         return System.getProperty("build.timestamp", "");
     }

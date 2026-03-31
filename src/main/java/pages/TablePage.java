@@ -44,13 +44,20 @@ public class TablePage extends BasePage {
     }
 
     // ============================================================
-    // Navigation
+    // Navigation (Correct URL + Slash Normalization)
     // ============================================================
     @Step("Open Test Table page")
     public TablePage open() {
-        String url = ConfigManager.getPracticeBaseUrl() + "/practice-test-tables/";
+
+        // Normalize base URL to avoid double slashes
+        String base = ConfigManager.getPracticeBaseUrl().replaceAll("/+$", "");
+
+        // Correct PTA table page path
+        String url = base + "/practice-test-tables/";
+
         navigateTo(url);
         waitForPageLoad();
+        waitForTableReady();
         return this;
     }
 
@@ -100,7 +107,7 @@ public class TablePage extends BasePage {
     private void setCheckbox(By locator, boolean checked) {
         WebElement box = find(locator);
         if (box.isSelected() != checked) {
-            click(locator); // Use BasePage click wrapper
+            click(locator);
         }
     }
 
@@ -218,13 +225,14 @@ public class TablePage extends BasePage {
     }
 
     // ============================================================
-    // Table Refresh Waits
+    // Table Refresh Waits (CI‑Safe)
     // ============================================================
     @Step("Wait for table to update")
     public void waitForTableToUpdate() {
         waitForCondition(driver ->
                 !driver.findElements(tableRows).isEmpty()
         );
+        waitForTableReady();
     }
 
     @Step("Wait for first language cell to be: {expected}")
@@ -233,6 +241,14 @@ public class TablePage extends BasePage {
             WebElement cell = driver.findElement(firstLanguageCell);
             return cell.getText().trim().equalsIgnoreCase(expected);
         });
+        waitForTableReady();
+    }
+
+    @Step("Wait for table to be fully ready")
+    public void waitForTableReady() {
+        waitForCondition(driver ->
+                driver.findElements(tableRows).size() > 0
+        );
     }
 
     // ============================================================

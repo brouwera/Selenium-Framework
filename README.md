@@ -1868,7 +1868,8 @@ mvn clean test -Denv=local -Dbrowser=chrome -Dheadless=true
 [Day 47](#day-47) ·
 [Day 48](#day-48) ·
 [Day 49](#day-49) ·
-[Day 50](#day-50)
+[Day 50](#day-50) ·
+[Day 51](#day-51)
 
 <p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
 
@@ -2438,6 +2439,22 @@ Every page object now uses:
 ```java
 public PageName(WebDriver driver, WebDriverWait wait)
 ```
+
+---
+
+### **Day 51 — AI‑Augmented Test Data Generation & Allure Integration**
+Introduced AI‑driven test data generation into the framework, enabling dynamic, context‑aware payload creation for API and UI tests. This marks the beginning of the AI‑Augmented QA phase, where tests can evolve beyond static fixtures and leverage intelligent data generation for broader coverage and higher realism.
+
+Key achievements:
+- Added new `aiDataEnabled` and `aiDataProvider` settings to `config.json` with full override support
+- Implemented `AiDataGenerator` with a local provider for deterministic, offline‑safe AI payload creation
+- Added Allure attachment support for AI‑generated data, including provider metadata and timestamps
+- Integrated AI data into `CreatePostsTests`, validating end‑to‑end behavior with schema‑compliant dynamic payloads
+- Ensured AI data generation is fully optional, config‑driven, and safe for CI environments
+- Verified clean Allure reporting with attached AI artifacts for debugging and reproducibility
+- Confirmed full suite stability with AI enabled, including API, UI, and hybrid tests
+
+Day 51 establishes the foundation for AI‑powered testing across the framework — enabling richer scenarios, dynamic payloads, and future expansion into AI‑driven edge cases, scenario generation, and flakiness analysis.
 
 <p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
 

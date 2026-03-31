@@ -23,11 +23,17 @@ public class HomePage extends BasePage {
     }
 
     // ============================================================
-    // Page Load
+    // Page Load (Slash‑Safe URL Normalization)
     // ============================================================
     @Step("Open Practice Test Automation Home Page")
     public HomePage open() {
-        String url = ConfigManager.getPracticeBaseUrl() + "/practice/";
+
+        // Normalize base URL to avoid double slashes
+        String base = ConfigManager.getPracticeBaseUrl().replaceAll("/+$", "");
+
+        // PTA home page is always /practice/
+        String url = base + "/practice/";
+
         navigateTo(url);
         waitForPageLoad();
         return this;
@@ -65,7 +71,10 @@ public class HomePage extends BasePage {
     // ============================================================
     @Step("Navigate to Dynamic Controls Page")
     public DynamicControlsPage goToDynamicControlsPage() {
-        String url = ConfigManager.getHerokuBaseUrl() + "/dynamic_controls";
+
+        String base = ConfigManager.getHerokuBaseUrl().replaceAll("/+$", "");
+        String url = base + "/dynamic_controls";
+
         navigateTo(url);
         waitForPageLoad();
         return new DynamicControlsPage(driver, wait);
@@ -73,7 +82,10 @@ public class HomePage extends BasePage {
 
     @Step("Navigate to Drag and Drop Page")
     public DragAndDropPage goToDragAndDropPage() {
-        String url = ConfigManager.getHerokuBaseUrl() + "/drag_and_drop";
+
+        String base = ConfigManager.getHerokuBaseUrl().replaceAll("/+$", "");
+        String url = base + "/drag_and_drop";
+
         navigateTo(url);
         waitForPageLoad();
         return new DragAndDropPage(driver, wait);
