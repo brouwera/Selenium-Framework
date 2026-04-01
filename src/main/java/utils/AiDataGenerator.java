@@ -4,20 +4,21 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import config.ConfigManager;
 import io.qameta.allure.Allure;
 
-import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
 /**
- * Day 51 — AI-Generated Test Data Utility
+ * AI-Generated Test Data Utility
  *
- * This class provides environment-aware, config-driven test data generation.
- * - Supports local random data generation (default)
- * - Future-ready for OpenAI / Azure providers
- * - Automatically attaches generated data to Allure reports
- * - Produces JSON-serializable maps for UI + API tests
+ * Provides:
+ * - Local random data generation (default)
+ * - AI-style payloads for Posts, Comments, Users
+ * - Malicious payloads for negative tests
+ * - Oversized payloads
+ * - Invalid JSON generation
+ * - Pretty Allure attachments
  */
 public final class AiDataGenerator {
 
@@ -27,12 +28,81 @@ public final class AiDataGenerator {
     private AiDataGenerator() {}
 
     // ============================================================
-    // Public API
+    // PUBLIC API
     // ============================================================
 
-    /**
-     * Generates a realistic user profile.
-     */
+    /** Generate AI-style user payload */
+    public static Map<String, Object> generateUserPayload() {
+        ensureAiEnabled();
+
+        Map<String, Object> user = new HashMap<>();
+        user.put("name", randomFullName());
+        user.put("username", randomUsername());
+        user.put("email", randomEmail());
+
+        attach("ai-user-payload", user);
+        return user;
+    }
+
+    /** Generate AI-style post title */
+    public static String generatePostTitle() {
+        ensureAiEnabled();
+        String title = randomSentence();
+        attach("ai-post-title", title);
+        return title;
+    }
+
+    /** Generate AI-style post body */
+    public static String generatePostBody() {
+        ensureAiEnabled();
+        String body = randomParagraph();
+        attach("ai-post-body", body);
+        return body;
+    }
+
+    /** Generate invalid JSON for negative tests */
+    public static String generateInvalidJson() {
+        ensureAiEnabled();
+        String invalid = "{ invalid-json-" + random.nextInt(9999) + " }";
+        attach("ai-invalid-json", invalid);
+        return invalid;
+    }
+
+    /** Generate malicious payload for negative tests */
+    public static String generateMaliciousPayload() {
+        ensureAiEnabled();
+
+        String payload = """
+                {
+                    "attack": "<script>alert('xss')</script>",
+                    "sql": "' OR 1=1; DROP TABLE users; --",
+                    "unicode": "🔥💀🚨",
+                    "overflow": "%s"
+                }
+                """.formatted(generateLongString(500));
+
+        attach("ai-malicious-payload", payload);
+        return payload;
+    }
+
+    /** Generate long string for oversized payload tests */
+    public static String generateLongString(int length) {
+        ensureAiEnabled();
+
+        StringBuilder sb = new StringBuilder();
+        while (sb.length() < length) {
+            sb.append("X");
+        }
+
+        String result = sb.toString();
+        attach("ai-long-string-" + length, result);
+        return result;
+    }
+
+    // ============================================================
+    // EXISTING METHODS (KEPT + USED BY NEW TESTS)
+    // ============================================================
+
     public static Map<String, Object> generateUser() {
         ensureAiEnabled();
 
@@ -48,9 +118,6 @@ public final class AiDataGenerator {
         return user;
     }
 
-    /**
-     * Generates a payload suitable for POST /posts.
-     */
     public static Map<String, Object> generatePostPayload() {
         ensureAiEnabled();
 
@@ -63,9 +130,6 @@ public final class AiDataGenerator {
         return post;
     }
 
-    /**
-     * Generates a payload suitable for POST /comments.
-     */
     public static Map<String, Object> generateCommentPayload() {
         ensureAiEnabled();
 
@@ -79,9 +143,6 @@ public final class AiDataGenerator {
         return comment;
     }
 
-    /**
-     * Generates credentials for login tests.
-     */
     public static Map<String, String> generateCredentials() {
         ensureAiEnabled();
 
@@ -93,9 +154,6 @@ public final class AiDataGenerator {
         return creds;
     }
 
-    /**
-     * Generates a single table row for Table module tests.
-     */
     public static Map<String, Object> generateTableRow() {
         ensureAiEnabled();
 
@@ -110,7 +168,7 @@ public final class AiDataGenerator {
     }
 
     // ============================================================
-    // Local Provider (Default)
+    // RANDOM DATA PROVIDERS
     // ============================================================
 
     private static String randomFullName() {
@@ -155,8 +213,9 @@ public final class AiDataGenerator {
     }
 
     // ============================================================
-    // Allure Attachment
+    // ALLURE ATTACHMENT
     // ============================================================
+
     private static void attach(String name, Object data) {
         try {
             Map<String, Object> wrapper = new HashMap<>();
@@ -179,8 +238,9 @@ public final class AiDataGenerator {
     }
 
     // ============================================================
-    // Safety Check
+    // SAFETY CHECK
     // ============================================================
+
     private static void ensureAiEnabled() {
         if (!ConfigManager.isAiDataEnabled()) {
             throw new IllegalStateException(

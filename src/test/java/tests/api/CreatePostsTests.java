@@ -9,6 +9,7 @@ import io.qameta.allure.*;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import utils.AiDataGenerator;
+import utils.AllureApiLogger;
 import utils.SchemaValidator;
 
 import java.util.Map;
@@ -43,13 +44,20 @@ public class CreatePostsTests {
         int userId;
 
         // ============================================================
-        // Day 51 — AI Data Integration (config-driven)
+        // AI Data Integration (config-driven)
         // ============================================================
         if (ConfigManager.isAiDataEnabled()) {
+
             Map<String, Object> aiPost = AiDataGenerator.generatePostPayload();
+
             title = aiPost.get("title").toString();
             body = aiPost.get("body").toString();
             userId = Integer.parseInt(aiPost.get("userId").toString());
+
+            AllureApiLogger.attachText("AI Generated Title", title);
+            AllureApiLogger.attachText("AI Generated Body", body);
+            AllureApiLogger.attachText("AI Generated UserId", String.valueOf(userId));
+
         } else {
             // Fallback to static values if AI is disabled
             title = "My New Post";
@@ -58,6 +66,8 @@ public class CreatePostsTests {
         }
 
         ApiResponse response = postsApi.createPost(title, body, userId);
+
+        AllureApiLogger.attachJson("POST /posts Response Body", response.getBody());
 
         AssertionHelper.assertEquals(
                 response.getStatusCode(),
@@ -83,6 +93,8 @@ public class CreatePostsTests {
                 1
         );
 
+        AllureApiLogger.attachJson("POST /posts (Empty Title) Response Body", response.getBody());
+
         AssertionHelper.assertEquals(
                 response.getStatusCode(),
                 201,
@@ -98,11 +110,15 @@ public class CreatePostsTests {
 
         String longTitle = "A".repeat(500);
 
+        AllureApiLogger.attachText("Generated Long Title (500 chars)", longTitle);
+
         ApiResponse response = postsApi.createPost(
                 longTitle,
                 "Body with long title",
                 1
         );
+
+        AllureApiLogger.attachJson("POST /posts (Long Title) Response Body", response.getBody());
 
         AssertionHelper.assertEquals(
                 response.getStatusCode(),
@@ -120,10 +136,11 @@ public class CreatePostsTests {
     @Test
     public void createPostWithInvalidJsonReturnsError() {
 
-        ApiResponse response = postsApi.postRaw(
-                "posts",
-                "{ invalid json }"
-        );
+        String invalidJson = "{ invalid json }";
+
+        AllureApiLogger.attachText("Invalid JSON Payload", invalidJson);
+
+        ApiResponse response = postsApi.postRaw("posts", invalidJson);
 
         int status = response.getStatusCode();
 
@@ -139,10 +156,11 @@ public class CreatePostsTests {
     @Test
     public void createPostWithMissingFieldsReturns201OrError() {
 
-        ApiResponse response = postsApi.postRaw(
-                "posts",
-                "{ \"userId\": 1 }"
-        );
+        String payload = "{ \"userId\": 1 }";
+
+        AllureApiLogger.attachText("Missing Fields Payload", payload);
+
+        ApiResponse response = postsApi.postRaw("posts", payload);
 
         int status = response.getStatusCode();
 

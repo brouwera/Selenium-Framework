@@ -2,7 +2,7 @@ package tests.api;
 
 import api.ApiClient;
 import api.ApiResponse;
-import api.PostsApi;
+import api.UsersApi;
 import helpers.AssertionHelper;
 import io.qameta.allure.*;
 import org.testng.annotations.BeforeClass;
@@ -11,11 +11,11 @@ import utils.AiDataGenerator;
 import utils.AllureApiLogger;
 
 @Epic("API")
-@Feature("Posts API - Negative Scenarios")
+@Feature("Users API - Negative Scenarios")
 @Owner("Adam Brouwer")
-public class NegativePostsTests {
+public class NegativeUsersTests {
 
-    private PostsApi postsApi;
+    private UsersApi usersApi;
 
     // ============================================================
     // Setup
@@ -23,20 +23,21 @@ public class NegativePostsTests {
     @BeforeClass
     public void setUp() {
         ApiClient client = new ApiClient();
-        postsApi = new PostsApi(client);
+        usersApi = new UsersApi(client);
     }
 
     // ============================================================
     // Invalid ID Tests
     // ============================================================
-
-    @Story("GET /posts/{id} with invalid ID")
+    @Story("GET /users/{id} with invalid ID")
     @Severity(SeverityLevel.NORMAL)
-    @Description("Validates behavior when GET /posts/{id} is called with an invalid ID.")
+    @Description("Validates behavior when GET /users/{id} is called with an invalid ID.")
     @Test
-    public void getPostWithInvalidIdReturnsError() {
+    public void getUserWithInvalidIdReturnsError() {
 
-        ApiResponse response = postsApi.getPostById(-1);
+        ApiResponse response = usersApi.getUserById(-1);
+
+        AllureApiLogger.attachJson("GET /users/-1 Response Body", response.getBody());
 
         int status = response.getStatusCode();
 
@@ -46,13 +47,15 @@ public class NegativePostsTests {
         );
     }
 
-    @Story("GET /posts/{id} with non-numeric ID")
+    @Story("GET /users/{id} with non-numeric ID")
     @Severity(SeverityLevel.NORMAL)
-    @Description("Validates behavior when GET /posts/{id} is called with a non-numeric ID.")
+    @Description("Validates behavior when GET /users/{id} is called with a non-numeric ID.")
     @Test
-    public void getPostWithNonNumericIdReturnsError() {
+    public void getUserWithNonNumericIdReturnsError() {
 
-        ApiResponse response = postsApi.getRaw("posts/abc123");
+        ApiResponse response = usersApi.getRaw("users/abc123");
+
+        AllureApiLogger.attachJson("GET /users/abc123 Response Body", response.getBody());
 
         int status = response.getStatusCode();
 
@@ -65,17 +68,17 @@ public class NegativePostsTests {
     // ============================================================
     // Invalid JSON Tests
     // ============================================================
-
-    @Story("POST /posts with invalid JSON")
+    @Story("POST /users with invalid JSON")
     @Severity(SeverityLevel.NORMAL)
-    @Description("Validates behavior when POST /posts receives malformed JSON.")
+    @Description("Validates behavior when POST /users receives malformed JSON.")
     @Test
-    public void createPostWithInvalidJsonReturnsError() {
+    public void createUserWithInvalidJsonReturnsError() {
 
         String invalidJson = AiDataGenerator.generateInvalidJson();
+
         AllureApiLogger.attachText("AI Generated Invalid JSON", invalidJson);
 
-        ApiResponse response = postsApi.postRaw("posts", invalidJson);
+        ApiResponse response = usersApi.postRaw("users", invalidJson);
 
         int status = response.getStatusCode();
 
@@ -85,16 +88,17 @@ public class NegativePostsTests {
         );
     }
 
-    @Story("PUT /posts/{id} with invalid JSON")
+    @Story("PUT /users/{id} with invalid JSON")
     @Severity(SeverityLevel.NORMAL)
-    @Description("Validates behavior when PUT /posts/{id} receives malformed JSON.")
+    @Description("Validates behavior when PUT /users/{id} receives malformed JSON.")
     @Test
-    public void updatePostWithInvalidJsonReturnsError() {
+    public void updateUserWithInvalidJsonReturnsError() {
 
         String invalidJson = AiDataGenerator.generateInvalidJson();
+
         AllureApiLogger.attachText("AI Generated Invalid JSON", invalidJson);
 
-        ApiResponse response = postsApi.putRaw("posts/1", invalidJson);
+        ApiResponse response = usersApi.putRaw("users/1", invalidJson);
 
         int status = response.getStatusCode();
 
@@ -107,20 +111,17 @@ public class NegativePostsTests {
     // ============================================================
     // Missing Field Tests
     // ============================================================
-
-    @Story("POST /posts with missing fields")
+    @Story("POST /users with missing fields")
     @Severity(SeverityLevel.NORMAL)
-    @Description("Validates behavior when POST /posts is missing required fields.")
+    @Description("Validates behavior when POST /users is missing required fields.")
     @Test
-    public void createPostWithMissingFieldsReturnsErrorOr201() {
+    public void createUserWithMissingFieldsReturns201OrError() {
 
-        String payload = """
-                {
-                    "userId": 1
-                }
-                """;
+        String payload = "{ \"email\": \"test@example.com\" }";
 
-        ApiResponse response = postsApi.postRaw("posts", payload);
+        AllureApiLogger.attachText("Missing Fields Payload", payload);
+
+        ApiResponse response = usersApi.postRaw("users", payload);
 
         int status = response.getStatusCode();
 
@@ -130,19 +131,17 @@ public class NegativePostsTests {
         );
     }
 
-    @Story("PUT /posts/{id} with missing fields")
+    @Story("PUT /users/{id} with missing fields")
     @Severity(SeverityLevel.NORMAL)
-    @Description("Validates behavior when PUT /posts/{id} is missing required fields.")
+    @Description("Validates behavior when PUT /users/{id} is missing required fields.")
     @Test
-    public void updatePostWithMissingFieldsReturnsErrorOr200() {
+    public void updateUserWithMissingFieldsReturns200OrError() {
 
-        String payload = """
-                {
-                    "title": "Only Title Provided"
-                }
-                """;
+        String payload = "{ \"username\": \"OnlyUsernameProvided\" }";
 
-        ApiResponse response = postsApi.putRaw("posts/1", payload);
+        AllureApiLogger.attachText("Missing Fields Payload", payload);
+
+        ApiResponse response = usersApi.putRaw("users/1", payload);
 
         int status = response.getStatusCode();
 
@@ -153,19 +152,19 @@ public class NegativePostsTests {
     }
 
     // ============================================================
-    // AI-Generated Malicious / Edge Case Payload Tests
+    // AI-Generated Malicious / Oversized Payload Tests
     // ============================================================
-
-    @Story("POST /posts with AI-generated malicious payload")
+    @Story("POST /users with AI-generated malicious payload")
     @Severity(SeverityLevel.NORMAL)
-    @Description("Validates behavior when POST /posts receives an AI-generated malicious or suspicious payload.")
+    @Description("Validates behavior when POST /users receives an AI-generated malicious or suspicious payload.")
     @Test
-    public void createPostWithMaliciousPayloadReturnsErrorOr201() {
+    public void createUserWithMaliciousPayloadReturns201OrError() {
 
         String maliciousPayload = AiDataGenerator.generateMaliciousPayload();
+
         AllureApiLogger.attachText("AI Generated Malicious Payload", maliciousPayload);
 
-        ApiResponse response = postsApi.postRaw("posts", maliciousPayload);
+        ApiResponse response = usersApi.postRaw("users", maliciousPayload);
 
         int status = response.getStatusCode();
 
@@ -175,28 +174,28 @@ public class NegativePostsTests {
         );
     }
 
-    @Story("PUT /posts/{id} with AI-generated oversized payload")
+    @Story("PUT /users/{id} with AI-generated oversized payload")
     @Severity(SeverityLevel.NORMAL)
-    @Description("Validates behavior when PUT /posts/{id} receives an extremely large AI-generated payload.")
+    @Description("Validates behavior when PUT /users/{id} receives an extremely large AI-generated payload.")
     @Test
-    public void updatePostWithOversizedPayloadReturnsErrorOr200() {
+    public void updateUserWithOversizedPayloadReturns200OrError() {
 
-        String longTitle = AiDataGenerator.generateLongString(2000);
-        String longBody = AiDataGenerator.generateLongString(5000);
+        String longName = AiDataGenerator.generateLongString(2000);
+        String longEmail = AiDataGenerator.generateLongString(3000);
 
-        AllureApiLogger.attachText("AI Generated Oversized Title", longTitle);
-        AllureApiLogger.attachText("AI Generated Oversized Body", longBody);
+        AllureApiLogger.attachText("AI Generated Oversized Name", longName);
+        AllureApiLogger.attachText("AI Generated Oversized Email", longEmail);
 
         String payload = """
                 {
                     "id": 1,
-                    "title": "%s",
-                    "body": "%s",
-                    "userId": 1
+                    "name": "%s",
+                    "username": "testuser",
+                    "email": "%s"
                 }
-                """.formatted(longTitle, longBody);
+                """.formatted(longName, longEmail);
 
-        ApiResponse response = postsApi.putRaw("posts/1", payload);
+        ApiResponse response = usersApi.putRaw("users/1", payload);
 
         int status = response.getStatusCode();
 
@@ -207,21 +206,23 @@ public class NegativePostsTests {
     }
 
     // ============================================================
-    // Server Error Tests
+    // Malformed Endpoint Tests
     // ============================================================
-    @Story("GET /posts/trigger-500 (mocked server error)")
-    @Severity(SeverityLevel.CRITICAL)
-    @Description("Validates behavior when the server returns a 500 error for /posts.")
+    @Story("DELETE /users//1 malformed endpoint")
+    @Severity(SeverityLevel.NORMAL)
+    @Description("Validates behavior when the DELETE endpoint is malformed.")
     @Test
-    public void triggerServerErrorReturns500() {
+    public void deleteUserWithMalformedEndpointReturnsError() {
 
-        ApiResponse response = postsApi.triggerServerError();
+        ApiResponse response = usersApi.deleteRaw("users//1");
+
+        AllureApiLogger.attachJson("DELETE /users//1 Response Body", response.getBody());
 
         int status = response.getStatusCode();
 
         AssertionHelper.assertTrue(
-                status == 500 || status == 404 || status == 200,
-                "Expected 500/404/200 depending on mock behavior, but got " + status
+                status == 200 || status == 400 || status == 404 || status == 500,
+                "Expected 200/400/404/500 depending on mock behavior, but got " + status
         );
     }
 }

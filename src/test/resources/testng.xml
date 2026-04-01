@@ -38,7 +38,12 @@
             <class name="tests.api.DeletePostsTests"/>
             <class name="tests.api.NegativePostsTests"/>
             <class name="tests.api.GetPostsTests"/>
-
+            <class name="tests.api.CreateCommentsTests"/>
+            <class name="tests.api.UpdateCommentsTests"/>
+            <class name="tests.api.NegativeCommentsTests"/>
+            <class name="tests.api.CreateUsersTests"/>
+            <class name="tests.api.UpdateUsersTests"/>
+            <class name="tests.api.NegativeUsersTests"/>
         </classes>
     </test>
 

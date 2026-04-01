@@ -2456,6 +2456,23 @@ Key achievements:
 
 Day 51 establishes the foundation for AI‑powered testing across the framework — enabling richer scenarios, dynamic payloads, and future expansion into AI‑driven edge cases, scenario generation, and flakiness analysis.
 
+---
+
+### **Day 52 — Full API Expansion, AI‑Driven Test Data, and Contract Validation for Users & Comments**
+Day 52 focused on expanding the API automation layer to achieve full CRUD coverage for the **Users** and **Comments** endpoints, mirroring the structure and rigor previously applied to Posts. This included adding new service‑layer classes, raw passthrough helpers, AI‑generated payloads, schema validation, and negative testing to ensure robust contract enforcement across all API operations.
+
+Key achievements:
+- Added full create/update/delete/get coverage for **Users** and **Comments** endpoints, completing the API layer
+- Implemented AI‑driven test data generation for user profiles and comment bodies, with Allure attachments for transparency
+- Added raw passthrough helpers (`getRaw`, `postRaw`, `putRaw`, `deleteRaw`) to support malformed payloads and negative scenarios
+- Introduced four new JSON Schemas (`users-create`, `users-update`, `comments-create`, `comments-update`) for contract validation
+- Updated TestNG suites to include all new API test classes, increasing total coverage to 179 tests
+- Validated schema enforcement across all create/update operations using the existing SchemaValidator
+- Confirmed that Allure reporting captured AI payloads, request/response bodies, and negative test artifacts through the Day 47 reporting pipeline
+- Ensured consistent API logging, metadata capture, and attachment generation across the expanded suite
+
+Day 52 completes the API expansion phase of the framework, delivering a fully validated, AI‑augmented, contract‑driven API test suite with comprehensive coverage across Posts, Users, and Comments. The result is a mature, extensible API automation layer aligned with enterprise‑grade testing practices.
+
 <p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
 
 ---

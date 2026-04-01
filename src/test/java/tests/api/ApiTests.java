@@ -9,6 +9,7 @@ import helpers.AssertionHelper;
 import io.qameta.allure.*;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+import utils.AllureApiLogger;
 import utils.SchemaValidator;
 
 @Epic("API Testing")
@@ -42,9 +43,11 @@ public class ApiTests {
     // ============================================================
     @Test(dataProvider = "validPostIds", dataProviderClass = ApiDataProviders.class)
     @Story("GET /posts/{id}")
-    @Description("Verify GET /posts/{id} returns correct post and matches schema")
+    @Description("Verify GET /posts/{id} returns correct post and matches schema.")
     public void testGetPostById(int id) {
         var response = postsApi.getPostById(id);
+
+        AllureApiLogger.attachJson("GET /posts/" + id + " Response Body", response.getBody());
 
         AssertionHelper.assertStatusCode(response, 200);
         AssertionHelper.assertTrue(
@@ -57,9 +60,11 @@ public class ApiTests {
 
     @Test(dataProvider = "validUserIds", dataProviderClass = ApiDataProviders.class)
     @Story("GET /users/{id}")
-    @Description("Verify GET /users/{id} returns correct user and matches schema")
+    @Description("Verify GET /users/{id} returns correct user and matches schema.")
     public void testGetUserById(int id) {
         var response = usersApi.getUserById(id);
+
+        AllureApiLogger.attachJson("GET /users/" + id + " Response Body", response.getBody());
 
         AssertionHelper.assertStatusCode(response, 200);
         AssertionHelper.assertTrue(
@@ -72,9 +77,11 @@ public class ApiTests {
 
     @Test(dataProvider = "validCommentIds", dataProviderClass = ApiDataProviders.class)
     @Story("GET /comments/{id}")
-    @Description("Verify GET /comments/{id} returns correct comment and matches schema")
+    @Description("Verify GET /comments/{id} returns correct comment and matches schema.")
     public void testGetCommentById(int id) {
         var response = commentsApi.getCommentById(id);
+
+        AllureApiLogger.attachJson("GET /comments/" + id + " Response Body", response.getBody());
 
         AssertionHelper.assertStatusCode(response, 200);
         AssertionHelper.assertTrue(
@@ -90,9 +97,11 @@ public class ApiTests {
     // ============================================================
     @Test(dataProvider = "createUserPayloads", dataProviderClass = ApiDataProviders.class)
     @Story("POST /users")
-    @Description("Verify POST /users creates a new user (mocked behavior)")
+    @Description("Verify POST /users creates a new user (mocked behavior).")
     public void testCreateUser(String name, String username, String email) {
         var response = usersApi.createUser(name, username, email);
+
+        AllureApiLogger.attachJson("POST /users Response Body", response.getBody());
 
         AssertionHelper.assertTrue(
                 response.getStatusCode() == 201 || response.getStatusCode() == 200,
@@ -107,9 +116,11 @@ public class ApiTests {
 
     @Test(dataProvider = "createCommentPayloads", dataProviderClass = ApiDataProviders.class)
     @Story("POST /comments")
-    @Description("Verify POST /comments creates a new comment (mocked behavior)")
+    @Description("Verify POST /comments creates a new comment (mocked behavior).")
     public void testCreateComment(int postId, String name, String email, String body) {
         var response = commentsApi.createComment(postId, name, email, body);
+
+        AllureApiLogger.attachJson("POST /comments Response Body", response.getBody());
 
         AssertionHelper.assertTrue(
                 response.getStatusCode() == 201 || response.getStatusCode() == 200,
@@ -127,9 +138,11 @@ public class ApiTests {
     // ============================================================
     @Test
     @Story("GET /posts")
-    @Description("Verify GET /posts returns a list of posts")
+    @Description("Verify GET /posts returns a list of posts.")
     public void testGetAllPosts() {
         var response = postsApi.getAllPosts();
+
+        AllureApiLogger.attachJson("GET /posts Response Body", response.getBody());
 
         AssertionHelper.assertStatusCode(response, 200);
         AssertionHelper.assertTrue(
@@ -140,9 +153,11 @@ public class ApiTests {
 
     @Test
     @Story("GET /users")
-    @Description("Verify GET /users returns a list of users")
+    @Description("Verify GET /users returns a list of users.")
     public void testGetAllUsers() {
         var response = usersApi.getAllUsers();
+
+        AllureApiLogger.attachJson("GET /users Response Body", response.getBody());
 
         AssertionHelper.assertStatusCode(response, 200);
         AssertionHelper.assertTrue(
@@ -153,9 +168,11 @@ public class ApiTests {
 
     @Test
     @Story("GET /comments")
-    @Description("Verify GET /comments returns a list of comments")
+    @Description("Verify GET /comments returns a list of comments.")
     public void testGetAllComments() {
         var response = commentsApi.getAllComments();
+
+        AllureApiLogger.attachJson("GET /comments Response Body", response.getBody());
 
         AssertionHelper.assertStatusCode(response, 200);
         AssertionHelper.assertTrue(

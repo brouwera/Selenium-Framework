@@ -7,6 +7,8 @@ import helpers.AssertionHelper;
 import io.qameta.allure.*;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+import utils.AiDataGenerator;
+import utils.AllureApiLogger;
 import utils.SchemaValidator;
 
 @Epic("API")
@@ -30,21 +32,26 @@ public class UpdatePostsTests {
     // ============================================================
     @Story("Update an existing post")
     @Severity(SeverityLevel.CRITICAL)
-    @Description("Validates that PUT /posts/{id} updates a post and matches the expected JSON schema.")
+    @Description("Validates that PUT /posts/{id} updates a post using AI-generated data and matches the expected JSON schema.")
     @Test
     public void updatePostReturns200AndValidSchema() {
 
-        ApiResponse response = postsApi.putRaw(
-                "posts/1",
-                """
+        String aiTitle = AiDataGenerator.generatePostTitle();
+        String aiBody = AiDataGenerator.generatePostBody();
+
+        AllureApiLogger.attachText("AI Generated Title", aiTitle);
+        AllureApiLogger.attachText("AI Generated Body", aiBody);
+
+        String payload = """
                 {
                     "id": 1,
-                    "title": "Updated Title",
-                    "body": "Updated body content.",
+                    "title": "%s",
+                    "body": "%s",
                     "userId": 1
                 }
-                """
-        );
+                """.formatted(aiTitle, aiBody);
+
+        ApiResponse response = postsApi.putRaw("posts/1", payload);
 
         AssertionHelper.assertEquals(
                 response.getStatusCode(),
@@ -64,17 +71,16 @@ public class UpdatePostsTests {
     @Test
     public void updatePostWithEmptyTitleReturns200() {
 
-        ApiResponse response = postsApi.putRaw(
-                "posts/1",
-                """
+        String payload = """
                 {
                     "id": 1,
                     "title": "",
                     "body": "Body with empty title",
                     "userId": 1
                 }
-                """
-        );
+                """;
+
+        ApiResponse response = postsApi.putRaw("posts/1", payload);
 
         AssertionHelper.assertEquals(
                 response.getStatusCode(),
@@ -85,23 +91,24 @@ public class UpdatePostsTests {
 
     @Story("Update post with extremely long title")
     @Severity(SeverityLevel.NORMAL)
-    @Description("Validates behavior when updating a post with a very long title.")
+    @Description("Validates behavior when updating a post with a very long AI-generated title.")
     @Test
     public void updatePostWithVeryLongTitleReturns200() {
 
-        String longTitle = "A".repeat(500);
+        String longTitle = AiDataGenerator.generateLongString(500);
 
-        ApiResponse response = postsApi.putRaw(
-                "posts/1",
-                """
+        AllureApiLogger.attachText("AI Generated Long Title", longTitle);
+
+        String payload = """
                 {
                     "id": 1,
                     "title": "%s",
                     "body": "Body with long title",
                     "userId": 1
                 }
-                """.formatted(longTitle)
-        );
+                """.formatted(longTitle);
+
+        ApiResponse response = postsApi.putRaw("posts/1", payload);
 
         AssertionHelper.assertEquals(
                 response.getStatusCode(),
@@ -119,16 +126,19 @@ public class UpdatePostsTests {
     @Test
     public void updatePostWithInvalidIdReturnsError() {
 
-        ApiResponse response = postsApi.putRaw(
-                "posts/invalid-id",
-                """
+        String aiTitle = AiDataGenerator.generatePostTitle();
+
+        AllureApiLogger.attachText("AI Generated Title", aiTitle);
+
+        String payload = """
                 {
-                    "title": "Test",
+                    "title": "%s",
                     "body": "Body",
                     "userId": 1
                 }
-                """
-        );
+                """.formatted(aiTitle);
+
+        ApiResponse response = postsApi.putRaw("posts/invalid-id", payload);
 
         int status = response.getStatusCode();
 
@@ -144,10 +154,11 @@ public class UpdatePostsTests {
     @Test
     public void updatePostWithInvalidJsonReturnsError() {
 
-        ApiResponse response = postsApi.putRaw(
-                "posts/1",
-                "{ invalid json }"
-        );
+        String invalidJson = AiDataGenerator.generateInvalidJson();
+
+        AllureApiLogger.attachText("AI Generated Invalid JSON", invalidJson);
+
+        ApiResponse response = postsApi.putRaw("posts/1", invalidJson);
 
         int status = response.getStatusCode();
 
@@ -163,14 +174,13 @@ public class UpdatePostsTests {
     @Test
     public void updatePostWithMissingFieldsReturns200OrError() {
 
-        ApiResponse response = postsApi.putRaw(
-                "posts/1",
-                """
+        String payload = """
                 {
                     "title": "Only Title Provided"
                 }
-                """
-        );
+                """;
+
+        ApiResponse response = postsApi.putRaw("posts/1", payload);
 
         int status = response.getStatusCode();
 

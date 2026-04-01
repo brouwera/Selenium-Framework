@@ -7,6 +7,7 @@ import helpers.AssertionHelper;
 import io.qameta.allure.*;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+import utils.AllureApiLogger;
 import utils.SchemaValidator;
 
 @Epic("API")
@@ -36,6 +37,8 @@ public class GetPostsTests {
 
         ApiResponse response = postsApi.getAllPosts();
 
+        AllureApiLogger.attachJson("GET /posts Response Body", response.getBody());
+
         AssertionHelper.assertEquals(
                 response.getStatusCode(),
                 200,
@@ -52,6 +55,8 @@ public class GetPostsTests {
     public void getPostByValidIdReturns200AndValidSchema() {
 
         ApiResponse response = postsApi.getPostById(1);
+
+        AllureApiLogger.attachJson("GET /posts/1 Response Body", response.getBody());
 
         AssertionHelper.assertEquals(
                 response.getStatusCode(),
@@ -73,6 +78,8 @@ public class GetPostsTests {
 
         ApiResponse response = postsApi.getPostById(0);
 
+        AllureApiLogger.attachJson("GET /posts/0 Response Body", response.getBody());
+
         int status = response.getStatusCode();
 
         AssertionHelper.assertTrue(
@@ -88,6 +95,8 @@ public class GetPostsTests {
     public void getPostByVeryLargeIdReturns404OrEmpty() {
 
         ApiResponse response = postsApi.getPostById(999999);
+
+        AllureApiLogger.attachJson("GET /posts/999999 Response Body", response.getBody());
 
         int status = response.getStatusCode();
 

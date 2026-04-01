@@ -143,7 +143,9 @@ public class AssertionHelper {
         );
     }
 
-    // ⭐ NEW: Schema Validation Assertion
+    // ============================================================
+    // Schema Validation Assertion
+    // ============================================================
     public static void assertSchemaValid(String schemaFile, ApiResponse response) {
         Assert.assertNotNull(response, "API response is null");
 
@@ -234,8 +236,9 @@ public class AssertionHelper {
                 "JSON response does not match expected file: " + expectedJsonFile
         );
     }
-
-    // ⭐ NEW: JSON Helper
+    // ============================================================
+    // JSON Helper
+    // ============================================================
     public static JSONObject getJson(ApiResponse response) {
         Assert.assertNotNull(response, "API response is null");
         Assert.assertNotNull(response.getBody(), "API response body is null");
@@ -254,7 +257,7 @@ public class AssertionHelper {
     }
 
     // ============================================================
-    // Exception Assertions (⭐ NEW ⭐)
+    // Exception Assertions
     // ============================================================
     public static void assertThrows(Class<? extends Throwable> expected, Runnable action) {
         try {

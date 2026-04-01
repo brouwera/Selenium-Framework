@@ -137,7 +137,7 @@ public final class ConfigManager {
     }
 
     // ============================================================
-    // URL Normalization Helper (NEW)
+    // URL Normalization Helper
     // ============================================================
     private static String normalizeUrl(String url) {
         if (url == null) return "";
@@ -270,7 +270,7 @@ public final class ConfigManager {
     }
 
     // ============================================================
-    // AI Data Settings (DAY 51)
+    // AI Data Settings
     // ============================================================
     public static boolean isAiDataEnabled() {
         return getBoolean("aiDataEnabled", false);

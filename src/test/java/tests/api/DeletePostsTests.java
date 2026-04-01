@@ -7,6 +7,7 @@ import helpers.AssertionHelper;
 import io.qameta.allure.*;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+import utils.AllureApiLogger;
 
 @Epic("API")
 @Feature("Posts API")
@@ -35,6 +36,8 @@ public class DeletePostsTests {
 
         ApiResponse response = postsApi.deleteRaw("posts/1");
 
+        AllureApiLogger.attachJson("DELETE /posts/1 Response Body", response.getBody());
+
         AssertionHelper.assertEquals(
                 response.getStatusCode(),
                 200,
@@ -53,6 +56,8 @@ public class DeletePostsTests {
 
         ApiResponse response = postsApi.deleteRaw("posts/0");
 
+        AllureApiLogger.attachJson("DELETE /posts/0 Response Body", response.getBody());
+
         int status = response.getStatusCode();
 
         AssertionHelper.assertTrue(
@@ -68,6 +73,8 @@ public class DeletePostsTests {
     public void deletePostWithVeryLargeIdReturns404Or200() {
 
         ApiResponse response = postsApi.deleteRaw("posts/999999");
+
+        AllureApiLogger.attachJson("DELETE /posts/999999 Response Body", response.getBody());
 
         int status = response.getStatusCode();
 
@@ -88,6 +95,8 @@ public class DeletePostsTests {
 
         ApiResponse response = postsApi.deleteRaw("posts/invalid-id");
 
+        AllureApiLogger.attachText("DELETE /posts/invalid-id Response Body", response.getBody());
+
         int status = response.getStatusCode();
 
         AssertionHelper.assertTrue(
@@ -104,9 +113,10 @@ public class DeletePostsTests {
 
         ApiResponse response = postsApi.deleteRaw("posts//1");
 
+        AllureApiLogger.attachText("DELETE /posts//1 Response Body", response.getBody());
+
         int status = response.getStatusCode();
 
-        // ⭐ Updated to allow 200, matching JSONPlaceholder behavior
         AssertionHelper.assertTrue(
                 status == 200 || status == 400 || status == 404 || status == 500,
                 "Expected 200/400/404/500 depending on mock behavior, but got " + status

@@ -43,4 +43,28 @@ public class UsersApi extends BaseApi {
 
         return post("users", payload.toString());
     }
+
+    // ============================================================
+    // RAW Passthrough Methods
+    // ============================================================
+
+    @Step("POST raw to endpoint: {endpoint}")
+    public ApiResponse postRaw(String endpoint, String rawBody) {
+        return post(endpoint, rawBody);
+    }
+
+    @Step("PUT raw to endpoint: {endpoint}")
+    public ApiResponse putRaw(String endpoint, String rawBody) {
+        return put(endpoint, rawBody);
+    }
+
+    @Step("DELETE raw to endpoint: {endpoint}")
+    public ApiResponse deleteRaw(String endpoint) {
+        return delete(endpoint);
+    }
+
+    @Step("GET raw from endpoint: {endpoint}")
+    public ApiResponse getRaw(String endpoint) {
+        return get(endpoint);
+    }
 }

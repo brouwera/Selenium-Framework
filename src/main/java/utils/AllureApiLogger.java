@@ -33,11 +33,11 @@ public class AllureApiLogger {
         log.info("Headers: {}", headers);
         log.info("Body: {}", body);
 
-        attach("Request Method", method);
-        attach("Request URL", url);
-        attach("Request Headers", JsonUtils.toPrettyJson(headers));
-        attach("Request Body", JsonUtils.toPrettyJson(body));
-        attach("cURL", generateCurl(method, url, headers, body));
+        attachText("Request Method", method);
+        attachText("Request URL", url);
+        attachJson("Request Headers", JsonUtils.toPrettyJson(headers));
+        attachJson("Request Body", JsonUtils.toPrettyJson(body));
+        attachText("cURL", generateCurl(method, url, headers, body));
     }
 
     public static void logResponse(int statusCode, String body) {
@@ -49,8 +49,8 @@ public class AllureApiLogger {
         log.info("API Response Status: {}", statusCode);
         log.info("Response Body: {}", body);
 
-        attach("Response Status Code", String.valueOf(statusCode));
-        attach("Response Body", JsonUtils.toPrettyJson(body));
+        attachText("Response Status Code", String.valueOf(statusCode));
+        attachJson("Response Body", JsonUtils.toPrettyJson(body));
     }
 
     /**
@@ -68,7 +68,7 @@ public class AllureApiLogger {
         );
 
         log.info(message);
-        attach("API Timing", message);
+        attachText("API Timing", message);
     }
 
     /**
@@ -86,19 +86,42 @@ public class AllureApiLogger {
         );
 
         log.warn(message);
-        attach("API Retry Attempt", message);
+        attachText("API Retry Attempt", message);
     }
 
     // ============================================================
-    // Attachment Helper
+    // New Public Attachment Helpers
     // ============================================================
-    private static void attach(String name, String content) {
+
+    /**
+     * Attach plain text content to Allure.
+     */
+    public static void attachText(String name, String content) {
         Allure.addAttachment(
                 name,
                 "text/plain",
                 content == null ? "" : content,
                 ".txt"
         );
+    }
+
+    /**
+     * Attach JSON content to Allure with pretty formatting.
+     */
+    public static void attachJson(String name, String json) {
+        Allure.addAttachment(
+                name,
+                "application/json",
+                json == null ? "" : json,
+                ".json"
+        );
+    }
+
+    // ============================================================
+    // Legacy Attachment Helper (kept for backward compatibility)
+    // ============================================================
+    private static void attach(String name, String content) {
+        attachText(name, content);
     }
 
     // ============================================================

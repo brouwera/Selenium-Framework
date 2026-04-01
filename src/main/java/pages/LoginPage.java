@@ -159,7 +159,7 @@ public class LoginPage extends BasePage {
     }
 
     // ============================================================
-    // Day 28 Enhancement: Browser Console Log Exposure
+    // Browser Console Log Exposure
     // ============================================================
     @Step("Attach browser console logs")
     public void attachBrowserConsoleLogs() {

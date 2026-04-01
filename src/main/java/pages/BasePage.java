@@ -290,14 +290,14 @@ public abstract class BasePage {
     }
 
     // ============================================================
-    // NEW: Generic Condition Wait Helper
+    // Generic Condition Wait Helper
     // ============================================================
     protected void waitForCondition(java.util.function.Function<WebDriver, Boolean> condition) {
         step("WAIT custom condition", () -> wait.until(condition));
     }
 
     // ============================================================
-    // NEW: waitForErrorMessage() — Day 30 Enhancement
+    // Visibility wait for error message elements
     // ============================================================
     protected void waitForErrorMessage(By locator) {
         step("WAIT error message visible " + fmt(locator), () ->
@@ -328,7 +328,7 @@ public abstract class BasePage {
     }
 
     // ============================================================
-    // Safe Sleep Helper (Day 29 Enhancement)
+    // Safe Sleep Helper
     // ============================================================
     protected void safeSleep(long millis) {
         step("SAFE SLEEP " + millis + "ms", () -> {

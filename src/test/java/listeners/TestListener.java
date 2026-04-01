@@ -251,7 +251,7 @@ public class TestListener implements ITestListener {
     }
 
     // ============================================================
-    // METADATA COPY (FIXED)
+    // METADATA COPY
     // ============================================================
     private void copyMetadataFromClasspath(String resourcePath) {
         try (InputStream in = getClass().getClassLoader().getResourceAsStream(resourcePath)) {

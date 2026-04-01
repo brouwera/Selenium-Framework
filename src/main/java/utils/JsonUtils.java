@@ -21,7 +21,7 @@ public final class JsonUtils {
     }
 
     // ============================================================
-    // Pretty JSON Helpers (NEW FOR DAY 43)
+    // Pretty JSON Helpers
     // ============================================================
 
     /**
