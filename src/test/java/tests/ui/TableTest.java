@@ -1,11 +1,14 @@
 package tests.ui;
 
 import base.BaseTest;
+import config.ConfigManager;
 import helpers.AssertionHelper;
 import io.qameta.allure.*;
 import org.testng.annotations.Test;
 import pages.HomePage;
 import pages.TablePage;
+import utils.AiDataGenerator;
+import utils.TableScenario;
 import utils.TableUtils;
 
 import java.util.List;
@@ -23,6 +26,138 @@ public class TableTest extends BaseTest {
         return new HomePage(getDriver(), getWait())
                 .open()
                 .goToTablePage();
+    }
+
+    // ============================================================
+    // AI-Driven Dynamic Sorting & Filtering Scenarios
+    // ============================================================
+    @Story("AI-generated dynamic table scenarios")
+    @Severity(SeverityLevel.NORMAL)
+    @Description("Validates table sorting and filtering using AI-generated instructions.")
+    @Test(enabled = true, groups = {"regression"})
+    public void aiGeneratedTableScenario() {
+
+        // Skip if AI data is disabled
+        if (!ConfigManager.isAiDataEnabled()) {
+            Allure.step("AI data generation disabled — skipping AI-driven table scenario.");
+            return;
+        }
+
+        // Arrange
+        TablePage tablePage = navigateToTablePage();
+
+        // Generate AI-driven scenario
+        TableScenario scenario = AiDataGenerator.generateTableScenario();
+
+        // Attach scenario details to Allure
+        Allure.addAttachment("AI Scenario Instructions", scenario.getInstruction());
+        Allure.addAttachment("AI Scenario Actions", scenario.getActions().toString());
+
+        // Act — Apply filters/sorting based on AI instructions
+        scenario.applyTo(tablePage);
+
+        // ============================================================
+        // Behavior-Driven Assertions (Professional Approach)
+        // ============================================================
+
+        // 1. Language filter
+        if (scenario.getActions().containsKey("language")) {
+            String expectedLang = (String) scenario.getActions().get("language");
+            List<String> languages = tablePage.getColumnValues("language");
+
+            // If no rows exist → assert "No results" instead of failing
+            if (languages.isEmpty()) {
+                AssertionHelper.assertTrue(
+                        tablePage.isNoResultsMessageVisible(),
+                        "No results message should be visible when filtering by Language = " + expectedLang
+                );
+            } else {
+                AssertionHelper.assertTrue(
+                        TableUtils.allEqual(languages, expectedLang),
+                        "All visible courses should have Language = " + expectedLang
+                );
+            }
+        }
+
+        // 2. Level filters
+        boolean beginner = (boolean) scenario.getActions().getOrDefault("beginner", true);
+        boolean intermediate = (boolean) scenario.getActions().getOrDefault("intermediate", true);
+        boolean advanced = (boolean) scenario.getActions().getOrDefault("advanced", true);
+
+        List<String> levels = tablePage.getColumnValues("level");
+
+        if (!beginner && !intermediate && !advanced) {
+            AssertionHelper.assertTrue(
+                    tablePage.isNoResultsMessageVisible(),
+                    "No results message should be visible when all levels are disabled"
+            );
+        } else {
+            if (!beginner) {
+                AssertionHelper.assertFalse(
+                        levels.contains("Beginner"),
+                        "Beginner courses should not be visible"
+                );
+            }
+            if (!intermediate) {
+                AssertionHelper.assertFalse(
+                        levels.contains("Intermediate"),
+                        "Intermediate courses should not be visible"
+                );
+            }
+            if (!advanced) {
+                AssertionHelper.assertFalse(
+                        levels.contains("Advanced"),
+                        "Advanced courses should not be visible"
+                );
+            }
+        }
+
+        // 3. Min enrollments
+        if (scenario.getActions().containsKey("minEnrollments")) {
+            int min = (int) scenario.getActions().get("minEnrollments");
+            List<Integer> enrollments = tablePage.getNumericColumnValues("enrollments");
+
+            if (enrollments.isEmpty()) {
+                AssertionHelper.assertTrue(
+                        tablePage.isNoResultsMessageVisible(),
+                        "No results message should be visible when filtering by minEnrollments = " + min
+                );
+            } else {
+                AssertionHelper.assertTrue(
+                        TableUtils.allGreaterOrEqual(enrollments, min),
+                        "All visible courses should have enrollments >= " + min
+                );
+            }
+        }
+
+        // 4. Sorting
+        if (scenario.getActions().containsKey("sortBy")) {
+            String sortColumn = (String) scenario.getActions().get("sortBy");
+
+            if (sortColumn.equalsIgnoreCase("Enrollments")) {
+                List<Integer> enrollments = tablePage.getNumericColumnValues("enrollments");
+
+                if (!enrollments.isEmpty()) {
+                    AssertionHelper.assertTrue(
+                            TableUtils.isSortedAscending(enrollments),
+                            "Enrollments should be sorted in ascending numeric order"
+                    );
+                }
+            }
+
+            if (sortColumn.equalsIgnoreCase("Course Name")) {
+                List<String> names = tablePage.getColumnValues("course");
+
+                if (!names.isEmpty()) {
+                    AssertionHelper.assertTrue(
+                            TableUtils.isSortedAlphabetically(names),
+                            "Course names should be sorted alphabetically A→Z"
+                    );
+                }
+            }
+        }
+
+        Allure.step("AI-driven table scenario validated successfully.");
     }
 
     // ============================================================

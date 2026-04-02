@@ -9,7 +9,9 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class TablePage extends BasePage {
 
@@ -49,10 +51,7 @@ public class TablePage extends BasePage {
     @Step("Open Test Table page")
     public TablePage open() {
 
-        // Normalize base URL to avoid double slashes
         String base = ConfigManager.getPracticeBaseUrl().replaceAll("/+$", "");
-
-        // Correct PTA table page path
         String url = base + "/practice-test-tables/";
 
         navigateTo(url);
@@ -194,6 +193,30 @@ public class TablePage extends BasePage {
             }
         }
         return null;
+    }
+
+    // ============================================================
+    // NEW: Get All Rows as Maps (AI-Driven Scenarios)
+    // ============================================================
+    @Step("Get all visible table rows as key-value maps")
+    public List<Map<String, String>> getAllRowsAsMaps() {
+
+        List<Map<String, String>> rows = new ArrayList<>();
+
+        for (WebElement row : getVisibleRows()) {
+            Map<String, String> map = new HashMap<>();
+
+            List<WebElement> cells = row.findElements(By.cssSelector("td[data-col]"));
+            for (WebElement cell : cells) {
+                String key = cell.getAttribute("data-col").trim();
+                String value = cell.getText().trim();
+                map.put(key, value);
+            }
+
+            rows.add(map);
+        }
+
+        return rows;
     }
 
     // ============================================================

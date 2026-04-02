@@ -1,6 +1,7 @@
 package tests.ui;
 
 import base.BaseTest;
+import config.ConfigManager;
 import dataproviders.LoginDataProvider;
 import dataproviders.JsonDataProvider;
 import helpers.AssertionHelper;
@@ -9,6 +10,7 @@ import org.testng.annotations.Test;
 import pages.HomePage;
 import pages.LoginPage;
 import pages.SuccessfulLoginPage;
+import utils.AiDataGenerator;
 
 import java.util.Map;
 
@@ -26,6 +28,52 @@ public class LoginTest extends BaseTest {
                 .open()
                 .goToLoginPage()
                 .waitForLoginPageReady();
+    }
+
+    // ============================================================
+    // AI-Driven Negative Login Scenarios
+    // ============================================================
+    @Story("AI-generated invalid login scenarios")
+    @Severity(SeverityLevel.NORMAL)
+    @Description("Validates negative login behavior using AI-generated invalid usernames and passwords.")
+    @Test(enabled = true)
+    public void aiGeneratedNegativeLoginTest() {
+
+        // Skip if AI data is disabled
+        if (!ConfigManager.isAiDataEnabled()) {
+            Allure.step("AI data generation disabled — skipping AI-driven negative login test.");
+            return;
+        }
+
+        // Arrange
+        LoginPage loginPage = navigateToLoginPage();
+
+        // Generate AI-driven invalid login data
+        Map<String, String> aiData = AiDataGenerator.generateInvalidLogin();
+
+        String username = aiData.get("username");
+        String password = aiData.get("password");
+        String reason = aiData.get("reason");
+
+        // Attach AI payload to Allure
+        Allure.addAttachment("AI-Generated Invalid Login Data", aiData.toString());
+
+        // Act
+        String actualError = loginPage.loginExpectingFailure(username, password);
+
+        // Assert
+        AssertionHelper.assertTrue(
+                loginPage.isErrorMessageVisible(),
+                "Error message should be visible for AI-generated invalid login"
+        );
+
+        AssertionHelper.assertEquals(
+                actualError,
+                loginPage.getErrorMessage(),
+                "Error message text should match expected for invalid login"
+        );
+
+        Allure.step("AI-generated invalid login validated successfully. Reason: " + reason);
     }
 
     // ============================================================
@@ -88,7 +136,6 @@ public class LoginTest extends BaseTest {
     @Description("Validates login behavior using JSON-driven test data (environment-specific + schema validated).")
     @Test(dataProvider = "loginDataJson", dataProviderClass = JsonDataProvider.class)
     public void loginDataDrivenTestJson(Map<String, String> data) {
-        // Reuse the CSV-driven logic for consistency and maintainability
         loginDataDrivenTest(data);
     }
 

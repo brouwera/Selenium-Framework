@@ -5,9 +5,7 @@ import config.ConfigManager;
 import io.qameta.allure.Allure;
 
 import java.time.Instant;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 /**
  * AI-Generated Test Data Utility
@@ -18,6 +16,7 @@ import java.util.Random;
  * - Malicious payloads for negative tests
  * - Oversized payloads
  * - Invalid JSON generation
+ * - AI-driven login and table scenarios
  * - Pretty Allure attachments
  */
 public final class AiDataGenerator {
@@ -28,10 +27,164 @@ public final class AiDataGenerator {
     private AiDataGenerator() {}
 
     // ============================================================
-    // PUBLIC API
+    // PUBLIC API — NEW (UI TESTS)
     // ============================================================
 
-    /** Generate AI-style user payload */
+    /**
+     * Generate AI-style invalid login credentials.
+     * Produces:
+     * - malformed usernames
+     * - weak or invalid passwords
+     * - reason for debugging
+     *
+     * NOTE: Must avoid non-BMP Unicode (ChromeDriver limitation)
+     */
+    public static Map<String, String> generateInvalidLogin() {
+        ensureAiEnabled();
+
+        // BMP-safe invalid usernames
+        List<String> badUsernames = List.of(
+                "wrongUser",
+                "invalid@example",
+                "admin' OR 1=1 --",
+                "",
+                "user" + generateLongString(20),
+                "DROP_TABLE_USER"
+        );
+
+        // BMP-safe invalid passwords
+        List<String> badPasswords = List.of(
+                "123",
+                "wrongPass",
+                "Password!DROP TABLE users;",
+                "",
+                generateLongString(25),
+                "invalid-password"
+        );
+
+        String username = badUsernames.get(random.nextInt(badUsernames.size()));
+        String password = badPasswords.get(random.nextInt(badPasswords.size()));
+
+        Map<String, String> result = new HashMap<>();
+        result.put("username", username);
+        result.put("password", password);
+        result.put("reason", "AI-generated invalid login combination");
+
+        attach("ai-invalid-login", result);
+        return result;
+    }
+
+    /**
+     * Generate an AI-driven table scenario including:
+     * - Natural language instruction
+     * - Expected dataset
+     * - Action map for TablePage
+     */
+    public static TableScenario generateTableScenario() {
+        ensureAiEnabled();
+
+        List<String> languages = List.of("Java", "Python", "JavaScript");
+        List<String> levels = List.of("Beginner", "Intermediate", "Advanced");
+        List<String> sortColumns = List.of("Course Name", "Enrollments");
+
+        Map<String, Object> actions = new HashMap<>();
+
+        // Random language filter
+        if (random.nextBoolean()) {
+            actions.put("language", languages.get(random.nextInt(languages.size())));
+        }
+
+        // Random level toggles
+        actions.put("beginner", random.nextBoolean());
+        actions.put("intermediate", random.nextBoolean());
+        actions.put("advanced", random.nextBoolean());
+
+        // Random min enrollments
+        if (random.nextBoolean()) {
+            actions.put("minEnrollments", 10000);
+        }
+
+        // Random sorting
+        if (random.nextBoolean()) {
+            actions.put("sortBy", sortColumns.get(random.nextInt(sortColumns.size())));
+        }
+
+        // Expected dataset (mocked for UI validation)
+        List<Map<String, String>> expectedRows = generateExpectedTableRows(actions);
+
+        String instruction = "AI-generated table scenario with filters: " + actions;
+
+        TableScenario scenario = new TableScenario(instruction, expectedRows, actions);
+
+        attach("ai-table-scenario", Map.of(
+                "instruction", instruction,
+                "actions", actions,
+                "expectedRows", expectedRows
+        ));
+
+        return scenario;
+    }
+
+    // ============================================================
+    // Helper for expected table rows (mocked for UI validation)
+    // ============================================================
+    private static List<Map<String, String>> generateExpectedTableRows(Map<String, Object> actions) {
+
+        List<Map<String, String>> rows = new ArrayList<>();
+
+        int count = 3 + random.nextInt(4); // 3–6 rows
+
+        for (int i = 0; i < count; i++) {
+            Map<String, String> row = new HashMap<>();
+
+            // Language
+            if (actions.containsKey("language")) {
+                row.put("language", (String) actions.get("language"));
+            } else {
+                row.put("language", randomLanguage());
+            }
+
+            // Level
+            row.put("level", randomLevel());
+
+            // Enrollments
+            int enrollments = 1000 + random.nextInt(50000);
+            row.put("enrollments", String.valueOf(enrollments));
+
+            // Course name
+            row.put("course", randomCourseName());
+
+            rows.add(row);
+        }
+
+        return rows;
+    }
+
+    private static String randomLanguage() {
+        List<String> langs = List.of("Java", "Python", "JavaScript");
+        return langs.get(random.nextInt(langs.size()));
+    }
+
+    private static String randomLevel() {
+        List<String> levels = List.of("Beginner", "Intermediate", "Advanced");
+        return levels.get(random.nextInt(levels.size()));
+    }
+
+    private static String randomCourseName() {
+        List<String> names = List.of(
+                "Intro to Automation",
+                "Advanced Selenium",
+                "API Testing Mastery",
+                "Java Fundamentals",
+                "Python for Testers"
+        );
+        return names.get(random.nextInt(names.size()));
+    }
+
+    // ============================================================
+    // PUBLIC API — EXISTING (API TESTS)
+    // ============================================================
+
     public static Map<String, Object> generateUserPayload() {
         ensureAiEnabled();
 
@@ -44,7 +197,6 @@ public final class AiDataGenerator {
         return user;
     }
 
-    /** Generate AI-style post title */
     public static String generatePostTitle() {
         ensureAiEnabled();
         String title = randomSentence();
@@ -52,7 +204,6 @@ public final class AiDataGenerator {
         return title;
     }
 
-    /** Generate AI-style post body */
     public static String generatePostBody() {
         ensureAiEnabled();
         String body = randomParagraph();
@@ -60,7 +211,6 @@ public final class AiDataGenerator {
         return body;
     }
 
-    /** Generate invalid JSON for negative tests */
     public static String generateInvalidJson() {
         ensureAiEnabled();
         String invalid = "{ invalid-json-" + random.nextInt(9999) + " }";
@@ -68,7 +218,6 @@ public final class AiDataGenerator {
         return invalid;
     }
 
-    /** Generate malicious payload for negative tests */
     public static String generateMaliciousPayload() {
         ensureAiEnabled();
 
@@ -76,7 +225,7 @@ public final class AiDataGenerator {
                 {
                     "attack": "<script>alert('xss')</script>",
                     "sql": "' OR 1=1; DROP TABLE users; --",
-                    "unicode": "🔥💀🚨",
+                    "unicode": "SAFE",
                     "overflow": "%s"
                 }
                 """.formatted(generateLongString(500));
@@ -85,7 +234,6 @@ public final class AiDataGenerator {
         return payload;
     }
 
-    /** Generate long string for oversized payload tests */
     public static String generateLongString(int length) {
         ensureAiEnabled();
 
@@ -98,10 +246,6 @@ public final class AiDataGenerator {
         attach("ai-long-string-" + length, result);
         return result;
     }
-
-    // ============================================================
-    // EXISTING METHODS (KEPT + USED BY NEW TESTS)
-    // ============================================================
 
     public static Map<String, Object> generateUser() {
         ensureAiEnabled();
@@ -215,7 +359,6 @@ public final class AiDataGenerator {
     // ============================================================
     // ALLURE ATTACHMENT
     // ============================================================
-
     private static void attach(String name, Object data) {
         try {
             Map<String, Object> wrapper = new HashMap<>();
@@ -240,7 +383,6 @@ public final class AiDataGenerator {
     // ============================================================
     // SAFETY CHECK
     // ============================================================
-
     private static void ensureAiEnabled() {
         if (!ConfigManager.isAiDataEnabled()) {
             throw new IllegalStateException(

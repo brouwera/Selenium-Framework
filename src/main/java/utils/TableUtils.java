@@ -5,6 +5,7 @@ import io.qameta.allure.Step;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Utility class for parsing, filtering, and validating table data.
@@ -17,7 +18,6 @@ public final class TableUtils {
     // ============================================================
     // Numeric Parsing
     // ============================================================
-
     @Step("Parse enrollment value: {text}")
     public static int parseEnrollment(String text) {
         if (text == null || text.trim().isEmpty()) {
@@ -136,6 +136,38 @@ public final class TableUtils {
                 return false;
             }
         }
+        return true;
+    }
+
+    // ============================================================
+    // NEW: Row Comparison for AI-Driven Scenarios
+    // ============================================================
+    @Step("Compare actual table rows to expected AI-generated rows")
+    public static boolean rowsMatch(List<Map<String, String>> actual,
+                                    List<Map<String, String>> expected) {
+
+        if (actual == null || expected == null) {
+            return false;
+        }
+
+        if (actual.size() != expected.size()) {
+            return false;
+        }
+
+        for (int i = 0; i < actual.size(); i++) {
+            Map<String, String> a = actual.get(i);
+            Map<String, String> e = expected.get(i);
+
+            for (String key : e.keySet()) {
+                String expectedValue = e.get(key);
+                String actualValue = a.getOrDefault(key, "").trim();
+
+                if (!actualValue.equalsIgnoreCase(expectedValue.trim())) {
+                    return false;
+                }
+            }
+        }
+
         return true;
     }
 }

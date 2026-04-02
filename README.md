@@ -1869,7 +1869,9 @@ mvn clean test -Denv=local -Dbrowser=chrome -Dheadless=true
 [Day 48](#day-48) ·
 [Day 49](#day-49) ·
 [Day 50](#day-50) ·
-[Day 51](#day-51)
+[Day 51](#day-51) ·
+[Day 52](#day-52) ·
+[Day 53](#day-53)
 
 <p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
 
@@ -2472,6 +2474,22 @@ Key achievements:
 - Ensured consistent API logging, metadata capture, and attachment generation across the expanded suite
 
 Day 52 completes the API expansion phase of the framework, delivering a fully validated, AI‑augmented, contract‑driven API test suite with comprehensive coverage across Posts, Users, and Comments. The result is a mature, extensible API automation layer aligned with enterprise‑grade testing practices.
+
+---
+
+### **Day 53 — AI‑Driven UI Scenarios, Dynamic Table Validation, and Stabilized Allure Reporting**
+Day 53 focused on expanding the UI automation layer with **AI‑generated dynamic test scenarios**, bringing intelligent, behavior‑driven validation to the Course Table page. This included integrating AI‑driven filtering and sorting instructions, enhancing the TableTest suite with zero‑result awareness, and ensuring full compatibility with the custom Allure reporting architecture introduced on Day 47.
+
+Key achievements:
+- Added a fully AI‑driven table scenario test that dynamically applies filters, sorting rules, and enrollment thresholds based on generated instructions
+- Implemented robust zero‑result handling to prevent false failures when AI selects combinations that yield no matching rows
+- Enhanced behavior‑driven assertions across language, level, enrollment, and sorting validations to ensure realistic UI behavior is captured accurately
+- Confirmed that Allure results are correctly written to the root‑level `allure-results/` directory, maintaining the Day 47 reporting architecture
+- Validated that AI scenario instructions and action maps are attached to Allure for transparency and debugging
+- Ensured full suite stability with all 181 UI and API tests passing after integrating AI‑driven logic
+- Verified that the Allure CLI workflow (`allure serve allure-results`) continues to function reliably after the architectural shift away from `target/`
+
+Day 53 completes the introduction of AI‑augmented UI testing, delivering a dynamic, intelligent, and stable validation layer for the Course Table page. The result is a more expressive and resilient UI automation suite that mirrors real‑world user behavior while maintaining enterprise‑grade reporting and consistency.
 
 <p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
 
