@@ -9,6 +9,7 @@ import helpers.AssertionHelper;
 import io.qameta.allure.*;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+import utils.AiScenarioGenerator;
 import utils.AllureApiLogger;
 import utils.SchemaValidator;
 
@@ -17,17 +18,11 @@ import utils.SchemaValidator;
 @Owner("Adam Brouwer")
 public class ContractTests {
 
-    // ============================================================
-    // Fields
-    // ============================================================
     private ApiClient client;
     private PostsApi postsApi;
     private UsersApi usersApi;
     private CommentsApi commentsApi;
 
-    // ============================================================
-    // Setup
-    // ============================================================
     @BeforeClass(alwaysRun = true)
     @Story("Initialize API service layer")
     @Severity(SeverityLevel.CRITICAL)
@@ -47,6 +42,8 @@ public class ContractTests {
     @Description("Validate that GET /posts/{id} matches the post JSON schema.")
     public void testPostSchema(int id) {
 
+        AiScenarioGenerator.attachSuggestedScenarios("API Contract Validation");
+
         var response = postsApi.getPostById(id);
 
         AllureApiLogger.attachJson("GET /posts/" + id + " Response Body", response.getBody());
@@ -64,6 +61,8 @@ public class ContractTests {
     @Description("Validate that GET /users/{id} matches the user JSON schema.")
     public void testUserSchema(int id) {
 
+        AiScenarioGenerator.attachSuggestedScenarios("API Contract Validation");
+
         var response = usersApi.getUserById(id);
 
         AllureApiLogger.attachJson("GET /users/" + id + " Response Body", response.getBody());
@@ -80,6 +79,8 @@ public class ContractTests {
     @Severity(SeverityLevel.CRITICAL)
     @Description("Validate that GET /comments/{id} matches the comment JSON schema.")
     public void testCommentSchema(int id) {
+
+        AiScenarioGenerator.attachSuggestedScenarios("API Contract Validation");
 
         var response = commentsApi.getCommentById(id);
 

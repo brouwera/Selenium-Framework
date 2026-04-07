@@ -8,6 +8,7 @@ import io.qameta.allure.*;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import utils.AiDataGenerator;
+import utils.AiScenarioGenerator;
 import utils.AllureApiLogger;
 import utils.SchemaValidator;
 
@@ -35,6 +36,8 @@ public class UpdatePostsTests {
     @Description("Validates that PUT /posts/{id} updates a post using AI-generated data and matches the expected JSON schema.")
     @Test
     public void updatePostReturns200AndValidSchema() {
+
+        AiScenarioGenerator.attachSuggestedScenarios("Posts API — Update");
 
         String aiTitle = AiDataGenerator.generatePostTitle();
         String aiBody = AiDataGenerator.generatePostBody();
@@ -71,6 +74,8 @@ public class UpdatePostsTests {
     @Test
     public void updatePostWithEmptyTitleReturns200() {
 
+        AiScenarioGenerator.attachSuggestedScenarios("Posts API — Update");
+
         String payload = """
                 {
                     "id": 1,
@@ -94,6 +99,8 @@ public class UpdatePostsTests {
     @Description("Validates behavior when updating a post with a very long AI-generated title.")
     @Test
     public void updatePostWithVeryLongTitleReturns200() {
+
+        AiScenarioGenerator.attachSuggestedScenarios("Posts API — Update");
 
         String longTitle = AiDataGenerator.generateLongString(500);
 
@@ -126,6 +133,8 @@ public class UpdatePostsTests {
     @Test
     public void updatePostWithInvalidIdReturnsError() {
 
+        AiScenarioGenerator.attachSuggestedScenarios("Posts API — Update");
+
         String aiTitle = AiDataGenerator.generatePostTitle();
 
         AllureApiLogger.attachText("AI Generated Title", aiTitle);
@@ -154,6 +163,8 @@ public class UpdatePostsTests {
     @Test
     public void updatePostWithInvalidJsonReturnsError() {
 
+        AiScenarioGenerator.attachSuggestedScenarios("Posts API — Update");
+
         String invalidJson = AiDataGenerator.generateInvalidJson();
 
         AllureApiLogger.attachText("AI Generated Invalid JSON", invalidJson);
@@ -173,6 +184,8 @@ public class UpdatePostsTests {
     @Description("Validates behavior when updating a post with missing fields in the payload.")
     @Test
     public void updatePostWithMissingFieldsReturns200OrError() {
+
+        AiScenarioGenerator.attachSuggestedScenarios("Posts API — Update");
 
         String payload = """
                 {

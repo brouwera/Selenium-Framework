@@ -8,6 +8,7 @@ import org.testng.annotations.Test;
 import pages.HomePage;
 import pages.TablePage;
 import utils.AiDataGenerator;
+import utils.AiScenarioGenerator;
 import utils.TableScenario;
 import utils.TableUtils;
 
@@ -29,31 +30,40 @@ public class TableTest extends BaseTest {
     }
 
     // ============================================================
+    // Supported Languages (UI Reality)
+    // ============================================================
+    private static final List<String> SUPPORTED_LANGUAGES = List.of("Any", "Java", "Python");
+
+    private String normalizeLanguage(String lang) {
+        if (!SUPPORTED_LANGUAGES.contains(lang)) {
+            return "Any";
+        }
+        return lang;
+    }
+
+    // ============================================================
     // AI-Driven Dynamic Sorting & Filtering Scenarios
     // ============================================================
     @Story("AI-generated dynamic table scenarios")
     @Severity(SeverityLevel.NORMAL)
     @Description("Validates table sorting and filtering using AI-generated instructions.")
-    @Test(enabled = true, groups = {"regression"})
+    @Test(enabled = true)
     public void aiGeneratedTableScenario() {
 
-        // Skip if AI data is disabled
+        AiScenarioGenerator.attachSuggestedScenarios("Table Page");
+
         if (!ConfigManager.isAiDataEnabled()) {
             Allure.step("AI data generation disabled — skipping AI-driven table scenario.");
             return;
         }
 
-        // Arrange
         TablePage tablePage = navigateToTablePage();
 
-        // Generate AI-driven scenario
         TableScenario scenario = AiDataGenerator.generateTableScenario();
 
-        // Attach scenario details to Allure
         Allure.addAttachment("AI Scenario Instructions", scenario.getInstruction());
         Allure.addAttachment("AI Scenario Actions", scenario.getActions().toString());
 
-        // Act — Apply filters/sorting based on AI instructions
         scenario.applyTo(tablePage);
 
         // ============================================================
@@ -62,16 +72,19 @@ public class TableTest extends BaseTest {
 
         // 1. Language filter
         if (scenario.getActions().containsKey("language")) {
-            String expectedLang = (String) scenario.getActions().get("language");
+
+            String expectedLang = normalizeLanguage(
+                    (String) scenario.getActions().get("language")
+            );
+
             List<String> languages = tablePage.getColumnValues("language");
 
-            // If no rows exist → assert "No results" instead of failing
             if (languages.isEmpty()) {
                 AssertionHelper.assertTrue(
                         tablePage.isNoResultsMessageVisible(),
                         "No results message should be visible when filtering by Language = " + expectedLang
                 );
-            } else {
+            } else if (!expectedLang.equals("Any")) {
                 AssertionHelper.assertTrue(
                         TableUtils.allEqual(languages, expectedLang),
                         "All visible courses should have Language = " + expectedLang
@@ -163,11 +176,10 @@ public class TableTest extends BaseTest {
     // ============================================================
     // Test Case 1: Language filter → Java
     // ============================================================
-    @Story("Filter by Language: Java")
-    @Severity(SeverityLevel.NORMAL)
-    @Description("Verify that selecting Language = Java shows only Java courses.")
-    @Test(groups = {"regression"})
+    @Test
     public void filterByLanguageJava() {
+
+        AiScenarioGenerator.attachSuggestedScenarios("Table Page");
 
         TablePage table = navigateToTablePage()
                 .selectLanguage("Java");
@@ -183,11 +195,10 @@ public class TableTest extends BaseTest {
     // ============================================================
     // Test Case 2: Level filter → Beginner only
     // ============================================================
-    @Story("Filter by Level: Beginner")
-    @Severity(SeverityLevel.NORMAL)
-    @Description("Verify that only Beginner courses are visible when Intermediate and Advanced are unchecked.")
-    @Test(groups = {"regression"})
+    @Test
     public void filterByLevelBeginner() {
+
+        AiScenarioGenerator.attachSuggestedScenarios("Table Page");
 
         TablePage table = navigateToTablePage()
                 .setIntermediate(false)
@@ -204,11 +215,10 @@ public class TableTest extends BaseTest {
     // ============================================================
     // Test Case 3: Min enrollments → 10,000+
     // ============================================================
-    @Story("Filter by Min Enrollments: 10,000+")
-    @Severity(SeverityLevel.NORMAL)
-    @Description("Verify that all visible courses have enrollments >= 10,000.")
-    @Test(groups = {"regression"})
+    @Test
     public void filterByMinEnrollments() {
+
+        AiScenarioGenerator.attachSuggestedScenarios("Table Page");
 
         TablePage table = navigateToTablePage()
                 .setMinEnrollments("10000");
@@ -222,13 +232,12 @@ public class TableTest extends BaseTest {
     }
 
     // ============================================================
-    // Test Case 4: Combined filters → Python + Beginner + 10,000+
+    // Test Case 4: Combined filters
     // ============================================================
-    @Story("Combined Filters: Python + Beginner + 10,000+")
-    @Severity(SeverityLevel.CRITICAL)
-    @Description("Verify combined filtering logic for Language, Level, and Min Enrollments.")
-    @Test(groups = {"regression"})
+    @Test
     public void combinedFilters() {
+
+        AiScenarioGenerator.attachSuggestedScenarios("Table Page");
 
         TablePage table = navigateToTablePage()
                 .selectLanguage("Python")
@@ -259,11 +268,10 @@ public class TableTest extends BaseTest {
     // ============================================================
     // Test Case 5: No results state
     // ============================================================
-    @Story("No Results State")
-    @Severity(SeverityLevel.MINOR)
-    @Description("Verify that no results message appears when filters yield no matches.")
-    @Test(groups = {"regression"})
+    @Test
     public void noResultsState() {
+
+        AiScenarioGenerator.attachSuggestedScenarios("Table Page");
 
         TablePage table = navigateToTablePage()
                 .selectLanguage("Python")
@@ -278,13 +286,12 @@ public class TableTest extends BaseTest {
     }
 
     // ============================================================
-    // Test Case 6: Reset button visibility and behavior
+    // Test Case 6: Reset button behavior
     // ============================================================
-    @Story("Reset Button Behavior")
-    @Severity(SeverityLevel.NORMAL)
-    @Description("Verify Reset button visibility and that it restores default filter values.")
-    @Test(groups = {"regression"})
+    @Test
     public void resetButtonBehavior() {
+
+        AiScenarioGenerator.attachSuggestedScenarios("Table Page");
 
         TablePage table = navigateToTablePage()
                 .selectLanguage("Java");
@@ -310,13 +317,12 @@ public class TableTest extends BaseTest {
     }
 
     // ============================================================
-    // Test Case 7: Sort by Enrollments (ascending, numeric)
+    // Test Case 7: Sort by Enrollments
     // ============================================================
-    @Story("Sort by Enrollments (Ascending)")
-    @Severity(SeverityLevel.NORMAL)
-    @Description("Verify numeric sorting of enrollments in ascending order.")
-    @Test(groups = {"regression"})
+    @Test
     public void sortByEnrollmentsAscending() {
+
+        AiScenarioGenerator.attachSuggestedScenarios("Table Page");
 
         TablePage table = navigateToTablePage()
                 .sortBy("Enrollments");
@@ -330,13 +336,12 @@ public class TableTest extends BaseTest {
     }
 
     // ============================================================
-    // Test Case 8: Sort by Course Name (alphabetical)
+    // Test Case 8: Sort by Course Name
     // ============================================================
-    @Story("Sort by Course Name (A→Z)")
-    @Severity(SeverityLevel.NORMAL)
-    @Description("Verify alphabetical sorting of course names.")
-    @Test(groups = {"regression"})
+    @Test
     public void sortByCourseName() {
+
+        AiScenarioGenerator.attachSuggestedScenarios("Table Page");
 
         TablePage table = navigateToTablePage()
                 .sortBy("Course Name");

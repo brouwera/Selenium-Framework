@@ -9,6 +9,7 @@ import io.qameta.allure.*;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import utils.AiDataGenerator;
+import utils.AiScenarioGenerator;
 import utils.AllureApiLogger;
 import utils.SchemaValidator;
 
@@ -21,9 +22,6 @@ public class CreateUsersTests {
 
     private UsersApi usersApi;
 
-    // ============================================================
-    // Setup
-    // ============================================================
     @BeforeClass
     public void setUp() {
         ApiClient client = new ApiClient();
@@ -39,13 +37,12 @@ public class CreateUsersTests {
     @Test
     public void createUserReturns201AndValidSchema() {
 
+        AiScenarioGenerator.attachSuggestedScenarios("Users API — Create");
+
         String name;
         String username;
         String email;
 
-        // ============================================================
-        // AI Data Integration (config-driven)
-        // ============================================================
         if (ConfigManager.isAiDataEnabled()) {
 
             Map<String, Object> aiUser = AiDataGenerator.generateUserPayload();
@@ -85,6 +82,8 @@ public class CreateUsersTests {
     @Test
     public void createUserWithEmptyNameStillReturns201() {
 
+        AiScenarioGenerator.attachSuggestedScenarios("Users API — Create");
+
         ApiResponse response = usersApi.createUser(
                 "",
                 "testuser",
@@ -104,6 +103,8 @@ public class CreateUsersTests {
     @Description("Validates behavior when creating a user with a very long username.")
     @Test
     public void createUserWithVeryLongUsernameReturns201() {
+
+        AiScenarioGenerator.attachSuggestedScenarios("Users API — Create");
 
         String longUsername = AiDataGenerator.generateLongString(300);
 
@@ -132,6 +133,8 @@ public class CreateUsersTests {
     @Test
     public void createUserWithInvalidJsonReturnsError() {
 
+        AiScenarioGenerator.attachSuggestedScenarios("Users API — Create");
+
         String invalidJson = AiDataGenerator.generateInvalidJson();
 
         AllureApiLogger.attachText("Invalid JSON Payload", invalidJson);
@@ -151,6 +154,8 @@ public class CreateUsersTests {
     @Description("Validates behavior when creating a user with missing fields in the payload.")
     @Test
     public void createUserWithMissingFieldsReturns201OrError() {
+
+        AiScenarioGenerator.attachSuggestedScenarios("Users API — Create");
 
         String payload = "{ \"email\": \"test@example.com\" }";
 

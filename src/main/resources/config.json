@@ -10,6 +10,7 @@
     "apiRetryBackoffMs": 200,
     "aiDataEnabled": true,
     "aiDataProvider": "local",
+    "aiScenarioEnabled": true,
     "timeouts": {
       "explicit": 10,
       "pageLoad": 30,
@@ -34,6 +35,7 @@
     "apiRetryBackoffMs": 200,
     "aiDataEnabled": true,
     "aiDataProvider": "local",
+    "aiScenarioEnabled": true,
     "timeouts": {
       "explicit": 10,
       "pageLoad": 30,
@@ -58,6 +60,7 @@
     "apiRetryBackoffMs": 200,
     "aiDataEnabled": true,
     "aiDataProvider": "local",
+    "aiScenarioEnabled": true,
     "timeouts": {
       "explicit": 10,
       "pageLoad": 30,
@@ -82,6 +85,7 @@
     "apiRetryBackoffMs": 200,
     "aiDataEnabled": true,
     "aiDataProvider": "local",
+    "aiScenarioEnabled": true,
     "timeouts": {
       "explicit": 10,
       "pageLoad": 30,

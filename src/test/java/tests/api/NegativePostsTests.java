@@ -8,6 +8,7 @@ import io.qameta.allure.*;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import utils.AiDataGenerator;
+import utils.AiScenarioGenerator;
 import utils.AllureApiLogger;
 
 @Epic("API")
@@ -36,6 +37,8 @@ public class NegativePostsTests {
     @Test
     public void getPostWithInvalidIdReturnsError() {
 
+        AiScenarioGenerator.attachSuggestedScenarios("Posts API — Negative");
+
         ApiResponse response = postsApi.getPostById(-1);
 
         int status = response.getStatusCode();
@@ -51,6 +54,8 @@ public class NegativePostsTests {
     @Description("Validates behavior when GET /posts/{id} is called with a non-numeric ID.")
     @Test
     public void getPostWithNonNumericIdReturnsError() {
+
+        AiScenarioGenerator.attachSuggestedScenarios("Posts API — Negative");
 
         ApiResponse response = postsApi.getRaw("posts/abc123");
 
@@ -72,6 +77,8 @@ public class NegativePostsTests {
     @Test
     public void createPostWithInvalidJsonReturnsError() {
 
+        AiScenarioGenerator.attachSuggestedScenarios("Posts API — Negative");
+
         String invalidJson = AiDataGenerator.generateInvalidJson();
         AllureApiLogger.attachText("AI Generated Invalid JSON", invalidJson);
 
@@ -90,6 +97,8 @@ public class NegativePostsTests {
     @Description("Validates behavior when PUT /posts/{id} receives malformed JSON.")
     @Test
     public void updatePostWithInvalidJsonReturnsError() {
+
+        AiScenarioGenerator.attachSuggestedScenarios("Posts API — Negative");
 
         String invalidJson = AiDataGenerator.generateInvalidJson();
         AllureApiLogger.attachText("AI Generated Invalid JSON", invalidJson);
@@ -114,6 +123,8 @@ public class NegativePostsTests {
     @Test
     public void createPostWithMissingFieldsReturnsErrorOr201() {
 
+        AiScenarioGenerator.attachSuggestedScenarios("Posts API — Negative");
+
         String payload = """
                 {
                     "userId": 1
@@ -135,6 +146,8 @@ public class NegativePostsTests {
     @Description("Validates behavior when PUT /posts/{id} is missing required fields.")
     @Test
     public void updatePostWithMissingFieldsReturnsErrorOr200() {
+
+        AiScenarioGenerator.attachSuggestedScenarios("Posts API — Negative");
 
         String payload = """
                 {
@@ -162,6 +175,8 @@ public class NegativePostsTests {
     @Test
     public void createPostWithMaliciousPayloadReturnsErrorOr201() {
 
+        AiScenarioGenerator.attachSuggestedScenarios("Posts API — Negative");
+
         String maliciousPayload = AiDataGenerator.generateMaliciousPayload();
         AllureApiLogger.attachText("AI Generated Malicious Payload", maliciousPayload);
 
@@ -180,6 +195,8 @@ public class NegativePostsTests {
     @Description("Validates behavior when PUT /posts/{id} receives an extremely large AI-generated payload.")
     @Test
     public void updatePostWithOversizedPayloadReturnsErrorOr200() {
+
+        AiScenarioGenerator.attachSuggestedScenarios("Posts API — Negative");
 
         String longTitle = AiDataGenerator.generateLongString(2000);
         String longBody = AiDataGenerator.generateLongString(5000);
@@ -214,6 +231,8 @@ public class NegativePostsTests {
     @Description("Validates behavior when the server returns a 500 error for /posts.")
     @Test
     public void triggerServerErrorReturns500() {
+
+        AiScenarioGenerator.attachSuggestedScenarios("Posts API — Negative");
 
         ApiResponse response = postsApi.triggerServerError();
 

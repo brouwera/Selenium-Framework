@@ -285,6 +285,13 @@ public final class ConfigManager {
     }
 
     // ============================================================
+    // AI Scenario Settings (Day 55)
+    // ============================================================
+    public static boolean isAiScenarioEnabled() {
+        return getBoolean("aiScenarioEnabled", false);
+    }
+
+    // ============================================================
     // Reporting Metadata
     // ============================================================
     public static String getBuildTimestamp() {

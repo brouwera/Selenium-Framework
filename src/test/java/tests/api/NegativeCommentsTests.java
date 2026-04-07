@@ -8,6 +8,7 @@ import io.qameta.allure.*;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import utils.AiDataGenerator;
+import utils.AiScenarioGenerator;
 import utils.AllureApiLogger;
 
 @Epic("API")
@@ -35,6 +36,8 @@ public class NegativeCommentsTests {
     @Test
     public void getCommentWithInvalidIdReturnsError() {
 
+        AiScenarioGenerator.attachSuggestedScenarios("Comments API — Negative");
+
         ApiResponse response = commentsApi.getCommentById(-1);
 
         AllureApiLogger.attachJson("GET /comments/-1 Response Body", response.getBody());
@@ -52,6 +55,8 @@ public class NegativeCommentsTests {
     @Description("Validates behavior when GET /comments/{id} is called with a non-numeric ID.")
     @Test
     public void getCommentWithNonNumericIdReturnsError() {
+
+        AiScenarioGenerator.attachSuggestedScenarios("Comments API — Negative");
 
         ApiResponse response = commentsApi.getRaw("comments/abc123");
 
@@ -74,6 +79,8 @@ public class NegativeCommentsTests {
     @Test
     public void createCommentWithInvalidJsonReturnsError() {
 
+        AiScenarioGenerator.attachSuggestedScenarios("Comments API — Negative");
+
         String invalidJson = AiDataGenerator.generateInvalidJson();
 
         AllureApiLogger.attachText("AI Generated Invalid JSON", invalidJson);
@@ -93,6 +100,8 @@ public class NegativeCommentsTests {
     @Description("Validates behavior when PUT /comments/{id} receives malformed JSON.")
     @Test
     public void updateCommentWithInvalidJsonReturnsError() {
+
+        AiScenarioGenerator.attachSuggestedScenarios("Comments API — Negative");
 
         String invalidJson = AiDataGenerator.generateInvalidJson();
 
@@ -117,6 +126,8 @@ public class NegativeCommentsTests {
     @Test
     public void createCommentWithMissingFieldsReturns201OrError() {
 
+        AiScenarioGenerator.attachSuggestedScenarios("Comments API — Negative");
+
         String payload = "{ \"postId\": 1 }";
 
         AllureApiLogger.attachText("Missing Fields Payload", payload);
@@ -136,6 +147,8 @@ public class NegativeCommentsTests {
     @Description("Validates behavior when PUT /comments/{id} is missing required fields.")
     @Test
     public void updateCommentWithMissingFieldsReturns200OrError() {
+
+        AiScenarioGenerator.attachSuggestedScenarios("Comments API — Negative");
 
         String payload = "{ \"name\": \"Only Name Provided\" }";
 
@@ -160,6 +173,8 @@ public class NegativeCommentsTests {
     @Test
     public void createCommentWithMaliciousPayloadReturns201OrError() {
 
+        AiScenarioGenerator.attachSuggestedScenarios("Comments API — Negative");
+
         String maliciousPayload = AiDataGenerator.generateMaliciousPayload();
 
         AllureApiLogger.attachText("AI Generated Malicious Payload", maliciousPayload);
@@ -179,6 +194,8 @@ public class NegativeCommentsTests {
     @Description("Validates behavior when PUT /comments/{id} receives an extremely large AI-generated payload.")
     @Test
     public void updateCommentWithOversizedPayloadReturns200OrError() {
+
+        AiScenarioGenerator.attachSuggestedScenarios("Comments API — Negative");
 
         String longName = AiDataGenerator.generateLongString(2000);
         String longBody = AiDataGenerator.generateLongString(5000);
@@ -214,6 +231,8 @@ public class NegativeCommentsTests {
     @Description("Validates behavior when the DELETE endpoint is malformed.")
     @Test
     public void deleteCommentWithMalformedEndpointReturnsError() {
+
+        AiScenarioGenerator.attachSuggestedScenarios("Comments API — Negative");
 
         ApiResponse response = commentsApi.deleteRaw("comments//1");
 

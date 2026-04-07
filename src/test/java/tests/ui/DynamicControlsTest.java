@@ -6,6 +6,7 @@ import io.qameta.allure.*;
 import org.testng.annotations.Test;
 import pages.DynamicControlsPage;
 import pages.HomePage;
+import utils.AiScenarioGenerator;
 
 @Epic("Dynamic Controls")
 @Feature("Dynamic UI Behavior")
@@ -32,7 +33,8 @@ public class DynamicControlsTest extends BaseTest {
     @Test
     public void testRemoveAndAddCheckbox() {
 
-        // Arrange
+        AiScenarioGenerator.attachSuggestedScenarios("Dynamic Controls Page");
+
         DynamicControlsPage page = navigateToDynamicControlsPage();
 
         // Act — Remove checkbox
@@ -77,7 +79,8 @@ public class DynamicControlsTest extends BaseTest {
     @Test
     public void testEnableAndDisableInput() {
 
-        // Arrange
+        AiScenarioGenerator.attachSuggestedScenarios("Dynamic Controls Page");
+
         DynamicControlsPage page = navigateToDynamicControlsPage();
 
         // Act — Enable input
@@ -122,7 +125,8 @@ public class DynamicControlsTest extends BaseTest {
     @Test
     public void testLoadingIndicatorBehavior() {
 
-        // Arrange
+        AiScenarioGenerator.attachSuggestedScenarios("Dynamic Controls Page");
+
         DynamicControlsPage page = navigateToDynamicControlsPage();
 
         // Act

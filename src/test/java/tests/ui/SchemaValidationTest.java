@@ -2,6 +2,7 @@ package tests.ui;
 
 import io.qameta.allure.*;
 import org.testng.annotations.Test;
+import utils.AiScenarioGenerator;
 import utils.TestDataManager;
 
 @Epic("Test Data Validation")
@@ -28,6 +29,9 @@ public class SchemaValidationTest {
     @Description("Ensures that loginData.json conforms to loginData.schema.json for all environments.")
     @Test
     public void validateLoginSchema() {
+
+        AiScenarioGenerator.attachSuggestedScenarios("Schema Validation");
+
         validateLoginDataSchema();
     }
 }

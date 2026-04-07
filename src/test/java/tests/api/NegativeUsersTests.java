@@ -8,6 +8,7 @@ import io.qameta.allure.*;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import utils.AiDataGenerator;
+import utils.AiScenarioGenerator;
 import utils.AllureApiLogger;
 
 @Epic("API")
@@ -35,6 +36,8 @@ public class NegativeUsersTests {
     @Test
     public void getUserWithInvalidIdReturnsError() {
 
+        AiScenarioGenerator.attachSuggestedScenarios("Users API — Negative");
+
         ApiResponse response = usersApi.getUserById(-1);
 
         AllureApiLogger.attachJson("GET /users/-1 Response Body", response.getBody());
@@ -52,6 +55,8 @@ public class NegativeUsersTests {
     @Description("Validates behavior when GET /users/{id} is called with a non-numeric ID.")
     @Test
     public void getUserWithNonNumericIdReturnsError() {
+
+        AiScenarioGenerator.attachSuggestedScenarios("Users API — Negative");
 
         ApiResponse response = usersApi.getRaw("users/abc123");
 
@@ -74,6 +79,8 @@ public class NegativeUsersTests {
     @Test
     public void createUserWithInvalidJsonReturnsError() {
 
+        AiScenarioGenerator.attachSuggestedScenarios("Users API — Negative");
+
         String invalidJson = AiDataGenerator.generateInvalidJson();
 
         AllureApiLogger.attachText("AI Generated Invalid JSON", invalidJson);
@@ -93,6 +100,8 @@ public class NegativeUsersTests {
     @Description("Validates behavior when PUT /users/{id} receives malformed JSON.")
     @Test
     public void updateUserWithInvalidJsonReturnsError() {
+
+        AiScenarioGenerator.attachSuggestedScenarios("Users API — Negative");
 
         String invalidJson = AiDataGenerator.generateInvalidJson();
 
@@ -117,6 +126,8 @@ public class NegativeUsersTests {
     @Test
     public void createUserWithMissingFieldsReturns201OrError() {
 
+        AiScenarioGenerator.attachSuggestedScenarios("Users API — Negative");
+
         String payload = "{ \"email\": \"test@example.com\" }";
 
         AllureApiLogger.attachText("Missing Fields Payload", payload);
@@ -136,6 +147,8 @@ public class NegativeUsersTests {
     @Description("Validates behavior when PUT /users/{id} is missing required fields.")
     @Test
     public void updateUserWithMissingFieldsReturns200OrError() {
+
+        AiScenarioGenerator.attachSuggestedScenarios("Users API — Negative");
 
         String payload = "{ \"username\": \"OnlyUsernameProvided\" }";
 
@@ -160,6 +173,8 @@ public class NegativeUsersTests {
     @Test
     public void createUserWithMaliciousPayloadReturns201OrError() {
 
+        AiScenarioGenerator.attachSuggestedScenarios("Users API — Negative");
+
         String maliciousPayload = AiDataGenerator.generateMaliciousPayload();
 
         AllureApiLogger.attachText("AI Generated Malicious Payload", maliciousPayload);
@@ -179,6 +194,8 @@ public class NegativeUsersTests {
     @Description("Validates behavior when PUT /users/{id} receives an extremely large AI-generated payload.")
     @Test
     public void updateUserWithOversizedPayloadReturns200OrError() {
+
+        AiScenarioGenerator.attachSuggestedScenarios("Users API — Negative");
 
         String longName = AiDataGenerator.generateLongString(2000);
         String longEmail = AiDataGenerator.generateLongString(3000);
@@ -213,6 +230,8 @@ public class NegativeUsersTests {
     @Description("Validates behavior when the DELETE endpoint is malformed.")
     @Test
     public void deleteUserWithMalformedEndpointReturnsError() {
+
+        AiScenarioGenerator.attachSuggestedScenarios("Users API — Negative");
 
         ApiResponse response = usersApi.deleteRaw("users//1");
 

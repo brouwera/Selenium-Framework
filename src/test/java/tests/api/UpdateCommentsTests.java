@@ -9,6 +9,7 @@ import io.qameta.allure.*;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import utils.AiDataGenerator;
+import utils.AiScenarioGenerator;
 import utils.AllureApiLogger;
 import utils.SchemaValidator;
 
@@ -39,14 +40,13 @@ public class UpdateCommentsTests {
     @Test
     public void updateCommentReturns200AndValidSchema() {
 
+        AiScenarioGenerator.attachSuggestedScenarios("Comments API — Update");
+
         String name;
         String email;
         String body;
         int postId;
 
-        // ============================================================
-        // AI Data Integration (config-driven)
-        // ============================================================
         if (ConfigManager.isAiDataEnabled()) {
 
             Map<String, Object> aiComment = AiDataGenerator.generateCommentPayload();
@@ -100,6 +100,8 @@ public class UpdateCommentsTests {
     @Test
     public void updateCommentWithEmptyNameReturns200() {
 
+        AiScenarioGenerator.attachSuggestedScenarios("Comments API — Update");
+
         String payload = """
                 {
                     "id": 1,
@@ -126,6 +128,8 @@ public class UpdateCommentsTests {
     @Description("Validates behavior when updating a comment with a very long body.")
     @Test
     public void updateCommentWithVeryLongBodyReturns200() {
+
+        AiScenarioGenerator.attachSuggestedScenarios("Comments API — Update");
 
         String longBody = AiDataGenerator.generateLongString(3000);
 
@@ -161,6 +165,8 @@ public class UpdateCommentsTests {
     @Test
     public void updateCommentWithInvalidIdReturnsError() {
 
+        AiScenarioGenerator.attachSuggestedScenarios("Comments API — Update");
+
         String payload = """
                 {
                     "postId": 1,
@@ -188,6 +194,8 @@ public class UpdateCommentsTests {
     @Test
     public void updateCommentWithInvalidJsonReturnsError() {
 
+        AiScenarioGenerator.attachSuggestedScenarios("Comments API — Update");
+
         String invalidJson = AiDataGenerator.generateInvalidJson();
 
         AllureApiLogger.attachText("AI Generated Invalid JSON", invalidJson);
@@ -207,6 +215,8 @@ public class UpdateCommentsTests {
     @Description("Validates behavior when updating a comment with missing fields in the payload.")
     @Test
     public void updateCommentWithMissingFieldsReturns200OrError() {
+
+        AiScenarioGenerator.attachSuggestedScenarios("Comments API — Update");
 
         String payload = """
                 {

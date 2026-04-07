@@ -7,6 +7,7 @@ import org.openqa.selenium.ElementNotInteractableException;
 import org.testng.annotations.Test;
 import pages.ExceptionsPage;
 import pages.HomePage;
+import utils.AiScenarioGenerator;
 
 @Epic("Practice Test Automation")
 @Feature("Exceptions Module")
@@ -32,6 +33,8 @@ public class ExceptionsTest extends BaseTest {
     @Test
     public void testRow2AppearsAfterDelay() {
 
+        AiScenarioGenerator.attachSuggestedScenarios("Exceptions Page");
+
         ExceptionsPage page = navigateToExceptionsPage();
 
         page.clickAddButton()
@@ -52,6 +55,8 @@ public class ExceptionsTest extends BaseTest {
     @Test
     public void testSaveTextRow2() {
 
+        AiScenarioGenerator.attachSuggestedScenarios("Exceptions Page");
+
         ExceptionsPage page = navigateToExceptionsPage();
 
         page.clickAddButton()
@@ -71,6 +76,8 @@ public class ExceptionsTest extends BaseTest {
     @Test
     public void testInvisibleSaveThrowsException() {
 
+        AiScenarioGenerator.attachSuggestedScenarios("Exceptions Page");
+
         ExceptionsPage page = navigateToExceptionsPage();
 
         AssertionHelper.assertThrows(
@@ -88,6 +95,8 @@ public class ExceptionsTest extends BaseTest {
     @Test
     public void testRow1IsDisabledInitially() {
 
+        AiScenarioGenerator.attachSuggestedScenarios("Exceptions Page");
+
         ExceptionsPage page = navigateToExceptionsPage();
 
         AssertionHelper.assertFalse(
@@ -101,6 +110,8 @@ public class ExceptionsTest extends BaseTest {
     @Description("Verify that editing Row 1 requires clicking Edit first.")
     @Test
     public void testEditRow1() {
+
+        AiScenarioGenerator.attachSuggestedScenarios("Exceptions Page");
 
         ExceptionsPage page = navigateToExceptionsPage();
 
@@ -125,6 +136,8 @@ public class ExceptionsTest extends BaseTest {
     @Test
     public void testInstructionsDisappear() {
 
+        AiScenarioGenerator.attachSuggestedScenarios("Exceptions Page");
+
         ExceptionsPage page = navigateToExceptionsPage();
 
         AssertionHelper.assertTrue(
@@ -147,6 +160,8 @@ public class ExceptionsTest extends BaseTest {
     @Test
     public void testInstructionsRemovedFromDOM() {
 
+        AiScenarioGenerator.attachSuggestedScenarios("Exceptions Page");
+
         ExceptionsPage page = navigateToExceptionsPage();
 
         page.clickAddButton()
@@ -166,6 +181,8 @@ public class ExceptionsTest extends BaseTest {
     @Description("Verify that a 3-second wait fails because Row 2 appears after ~5 seconds.")
     @Test
     public void testShortTimeoutFails() {
+
+        AiScenarioGenerator.attachSuggestedScenarios("Exceptions Page");
 
         ExceptionsPage page = navigateToExceptionsPage();
 

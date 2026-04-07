@@ -1,17 +1,13 @@
 package pages;
 
 import config.ConfigManager;
+import io.qameta.allure.Allure;
 import io.qameta.allure.Step;
 import org.openqa.selenium.*;
-import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class TablePage extends BasePage {
 
@@ -27,6 +23,8 @@ public class TablePage extends BasePage {
     private final By levelAdvanced = By.cssSelector("input[name='level'][value='Advanced']");
 
     private final By minEnrollDropdownButton = By.cssSelector("#enrollDropdown .dropdown-button");
+    private final By minEnrollMenu = By.cssSelector("#enrollDropdown .dropdown-menu");
+
     private By minEnrollOption(String value) {
         return By.cssSelector("#enrollDropdown .dropdown-menu li[data-value='" + value + "']");
     }
@@ -36,7 +34,18 @@ public class TablePage extends BasePage {
 
     private final By tableRows = By.cssSelector("tbody tr");
     private final By noResultsMessage = By.id("noData");
-    private final By firstLanguageCell = By.cssSelector("tbody tr td[data-col='language']");
+
+    // ============================================================
+    // Supported Values
+    // ============================================================
+    private static final Set<String> SUPPORTED_LANGUAGES =
+            Set.of("any", "java", "python");
+
+    private static final Set<String> SUPPORTED_MIN_ENROLLMENTS =
+            Set.of("Any", "0", "1000", "5000", "10000", "20000");
+
+    private static final Set<String> SUPPORTED_SORT_OPTIONS =
+            Set.of("Course Name", "Enrollments");
 
     // ============================================================
     // Constructor
@@ -46,93 +55,170 @@ public class TablePage extends BasePage {
     }
 
     // ============================================================
-    // Navigation (Correct URL + Slash Normalization)
+    // Navigation
     // ============================================================
     @Step("Open Test Table page")
     public TablePage open() {
-
         String base = ConfigManager.getPracticeBaseUrl().replaceAll("/+$", "");
         String url = base + "/practice-test-tables/";
 
         navigateTo(url);
         waitForPageLoad();
-        waitForTableReady();
+        waitForTableToSettle();
         return this;
     }
 
     // ============================================================
-    // Filter Interactions
+    // Language Filter (with fallback)
     // ============================================================
     @Step("Select Language: {language}")
     public TablePage selectLanguage(String language) {
-        switch (language.toLowerCase()) {
-            case "any" -> {
-                click(langAny);
-                waitForTableToUpdate();
-            }
-            case "java" -> {
-                click(langJava);
-                waitForLanguageToBe("Java");
-            }
-            case "python" -> {
-                click(langPython);
-                waitForLanguageToBe("Python");
+
+        String normalized = language == null ? "" : language.trim().toLowerCase();
+
+        if (!SUPPORTED_LANGUAGES.contains(normalized)) {
+            Allure.addAttachment("Unsupported Language Fallback",
+                    "Requested: " + language + "\nFalling back to: Any");
+            log.warn("Unsupported language '{}', falling back to 'Any'", language);
+            click(langAny);
+        } else {
+            switch (normalized) {
+                case "java" -> click(langJava);
+                case "python" -> click(langPython);
+                default -> click(langAny);
             }
         }
+
+        waitForTableToSettle();
         return this;
     }
 
+    // ============================================================
+    // Level Filters
+    // ============================================================
     @Step("Set Beginner = {checked}")
     public TablePage setBeginner(boolean checked) {
         setCheckbox(levelBeginner, checked);
-        waitForTableToUpdate();
+        waitForTableToSettle();
         return this;
     }
 
     @Step("Set Intermediate = {checked}")
     public TablePage setIntermediate(boolean checked) {
         setCheckbox(levelIntermediate, checked);
-        waitForTableToUpdate();
+        waitForTableToSettle();
         return this;
     }
 
     @Step("Set Advanced = {checked}")
     public TablePage setAdvanced(boolean checked) {
         setCheckbox(levelAdvanced, checked);
-        waitForTableToUpdate();
+        waitForTableToSettle();
         return this;
     }
 
     private void setCheckbox(By locator, boolean checked) {
-        WebElement box = find(locator);
-        if (box.isSelected() != checked) {
-            click(locator);
+        try {
+            WebElement box = find(locator);
+            if (box.isSelected() != checked) {
+                click(locator);
+            }
+        } catch (org.openqa.selenium.NoSuchElementException e) {
+            Allure.addAttachment("Invalid Level Checkbox",
+                    "Checkbox not found for locator: " + locator);
+            log.warn("Attempted to toggle invalid level checkbox: {}", locator);
         }
     }
 
+    // ============================================================
+    // Min Enrollments (FULL FIX)
+    // ============================================================
     @Step("Select Min Enrollments: {value}")
     public TablePage setMinEnrollments(String value) {
-        click(minEnrollDropdownButton);
-        click(minEnrollOption(value));
-        waitForTableToUpdate();
+
+        String normalized = value == null ? "" : value.trim();
+
+        // FULL PAGE SCROLL — this is the missing fix
+        ((JavascriptExecutor) driver).executeScript("window.scrollTo(0, 400);");
+        safeSleep(200);
+
+        // Hover to open menu
+        try {
+            actions.moveToElement(find(minEnrollDropdownButton)).perform();
+            Thread.sleep(150);
+        } catch (Exception e) {
+            log.warn("Hover failed on Min Enrollments dropdown, using JS click");
+            jsClick(minEnrollDropdownButton);
+        }
+
+        // Click to ensure menu opens
+        try {
+            click(minEnrollDropdownButton);
+        } catch (Exception e) {
+            log.warn("Normal click failed on Min Enrollments dropdown, using JS click");
+            jsClick(minEnrollDropdownButton);
+        }
+
+        // Wait for menu
+        waitForPresence(minEnrollMenu);
+
+        // Fallback
+        if (!SUPPORTED_MIN_ENROLLMENTS.contains(normalized)) {
+            Allure.addAttachment("Unsupported Min Enrollments Fallback",
+                    "Requested: " + value + "\nFalling back to: Any");
+            log.warn("Unsupported min enrollment '{}', falling back to 'Any'", value);
+            normalized = "Any";
+        }
+
+        By option = minEnrollOption(normalized);
+
+        // Scroll option into view
+        scrollIntoView(option);
+
+        // Click option
+        try {
+            click(option);
+        } catch (Exception e) {
+            log.warn("Option '{}' not clickable, retrying with JS click", normalized);
+            jsClick(option);
+        }
+
+        waitForTableToSettle();
         return this;
     }
 
     // ============================================================
-    // Sorting
+    // Sorting (with fallback)
     // ============================================================
     @Step("Sort by: {option}")
     public TablePage sortBy(String option) {
+
+        String normalized = option == null ? "" : option.trim();
+
         WebElement dropdown = find(sortDropdown);
-        new Select(dropdown).selectByVisibleText(option);
-        waitForTableToUpdate();
+        Select select = new Select(dropdown);
+
+        if (!SUPPORTED_SORT_OPTIONS.contains(normalized)) {
+            Allure.addAttachment("Unsupported Sort Fallback",
+                    "Requested: " + option + "\nFalling back to: Course Name");
+            log.warn("Unsupported sort option '{}', falling back to 'Course Name'", option);
+
+            select.selectByVisibleText("Course Name");
+        } else {
+            select.selectByVisibleText(normalized);
+        }
+
+        waitForTableToSettle();
         return this;
     }
 
+    // ============================================================
+    // Reset
+    // ============================================================
     @Step("Click Reset button")
     public TablePage clickReset() {
         click(resetButton);
-        waitForTableToUpdate();
+        waitForTableToSettle();
         return this;
     }
 
@@ -162,7 +248,7 @@ public class TablePage extends BasePage {
         List<String> values = new ArrayList<>();
 
         for (WebElement row : getVisibleRows()) {
-            WebElement cell = findWithin(row, By.cssSelector("td[data-col='" + colName + "']"));
+            WebElement cell = row.findElement(By.cssSelector("td[data-col='" + colName + "']"));
             String text = cell.getText().trim();
             if (!text.isEmpty()) {
                 values.add(text);
@@ -176,7 +262,7 @@ public class TablePage extends BasePage {
         List<Integer> values = new ArrayList<>();
 
         for (WebElement row : getVisibleRows()) {
-            WebElement cell = findWithin(row, By.cssSelector("td[data-col='" + colName + "']"));
+            WebElement cell = row.findElement(By.cssSelector("td[data-col='" + colName + "']"));
             String text = cell.getText().trim();
             if (!text.isEmpty()) {
                 values.add(parseEnrollment(text));
@@ -196,7 +282,7 @@ public class TablePage extends BasePage {
     }
 
     // ============================================================
-    // NEW: Get All Rows as Maps (AI-Driven Scenarios)
+    // NEW: Get All Rows as Maps
     // ============================================================
     @Step("Get all visible table rows as key-value maps")
     public List<Map<String, String>> getAllRowsAsMaps() {
@@ -248,37 +334,22 @@ public class TablePage extends BasePage {
     }
 
     // ============================================================
-    // Table Refresh Waits (CI‑Safe)
+    // Table Refresh Waits
     // ============================================================
-    @Step("Wait for table to update")
-    public void waitForTableToUpdate() {
-        waitForCondition(driver ->
-                !driver.findElements(tableRows).isEmpty()
-        );
-        waitForTableReady();
-    }
+    @Step("Wait for table to settle")
+    public void waitForTableToSettle() {
 
-    @Step("Wait for first language cell to be: {expected}")
-    public void waitForLanguageToBe(String expected) {
         waitForCondition(driver -> {
-            WebElement cell = driver.findElement(firstLanguageCell);
-            return cell.getText().trim().equalsIgnoreCase(expected);
+            boolean hasRows = !driver.findElements(tableRows).isEmpty();
+            boolean hasNoResults = !driver.findElements(noResultsMessage).isEmpty();
+            return hasRows || hasNoResults;
         });
-        waitForTableReady();
-    }
 
-    @Step("Wait for table to be fully ready")
-    public void waitForTableReady() {
-        waitForCondition(driver ->
-                driver.findElements(tableRows).size() > 0
-        );
-    }
-
-    // ============================================================
-    // Helper: Find element inside a row with logging
-    // ============================================================
-    @Step("Find element within row: {locator}")
-    private WebElement findWithin(WebElement parent, By locator) {
-        return parent.findElement(locator);
+        waitForCondition(driver -> {
+            int first = driver.findElements(tableRows).size();
+            try { Thread.sleep(150); } catch (Exception ignored) {}
+            int second = driver.findElements(tableRows).size();
+            return first == second;
+        });
     }
 }

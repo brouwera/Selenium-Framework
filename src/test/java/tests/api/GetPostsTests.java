@@ -7,6 +7,7 @@ import helpers.AssertionHelper;
 import io.qameta.allure.*;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+import utils.AiScenarioGenerator;
 import utils.AllureApiLogger;
 import utils.SchemaValidator;
 
@@ -17,9 +18,6 @@ public class GetPostsTests {
 
     private PostsApi postsApi;
 
-    // ============================================================
-    // Setup
-    // ============================================================
     @BeforeClass
     public void setUp() {
         ApiClient client = new ApiClient();
@@ -34,6 +32,8 @@ public class GetPostsTests {
     @Description("Validates that GET /posts returns status 200 and matches the expected JSON schema.")
     @Test
     public void getAllPostsReturns200AndValidSchema() {
+
+        AiScenarioGenerator.attachSuggestedScenarios("Posts API — GET");
 
         ApiResponse response = postsApi.getAllPosts();
 
@@ -53,6 +53,8 @@ public class GetPostsTests {
     @Description("Validates that GET /posts/{id} returns status 200 and matches the expected JSON schema.")
     @Test
     public void getPostByValidIdReturns200AndValidSchema() {
+
+        AiScenarioGenerator.attachSuggestedScenarios("Posts API — GET");
 
         ApiResponse response = postsApi.getPostById(1);
 
@@ -76,6 +78,8 @@ public class GetPostsTests {
     @Test
     public void getPostByIdZeroReturns404OrEmpty() {
 
+        AiScenarioGenerator.attachSuggestedScenarios("Posts API — GET");
+
         ApiResponse response = postsApi.getPostById(0);
 
         AllureApiLogger.attachJson("GET /posts/0 Response Body", response.getBody());
@@ -93,6 +97,8 @@ public class GetPostsTests {
     @Description("Validates behavior when requesting a post with a very large ID.")
     @Test
     public void getPostByVeryLargeIdReturns404OrEmpty() {
+
+        AiScenarioGenerator.attachSuggestedScenarios("Posts API — GET");
 
         ApiResponse response = postsApi.getPostById(999999);
 

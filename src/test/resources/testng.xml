@@ -12,6 +12,7 @@
     <listeners>
         <listener class-name="listeners.TestListener"/>
         <listener class-name="listeners.RetryListener"/>
+        <listener class-name="io.qameta.allure.testng.AllureTestNg"/>
     </listeners>
 
     <!-- ============================================================
@@ -24,6 +25,7 @@
             <class name="tests.ui.LoginTest"/>
             <class name="tests.ui.ExceptionsTest"/>
             <class name="tests.ui.TableTest"/>
+            <class name="tests.ui.NegativeTableTest"/>
             <class name="tests.ui.FramesTest"/>
             <class name="tests.ui.DynamicControlsTest"/>
             <class name="tests.ui.DragAndDropTest"/>

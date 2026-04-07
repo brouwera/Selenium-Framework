@@ -9,6 +9,7 @@ import io.qameta.allure.*;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import utils.AiDataGenerator;
+import utils.AiScenarioGenerator;
 import utils.AllureApiLogger;
 import utils.SchemaValidator;
 
@@ -21,9 +22,6 @@ public class CreateCommentsTests {
 
     private CommentsApi commentsApi;
 
-    // ============================================================
-    // Setup
-    // ============================================================
     @BeforeClass
     public void setUp() {
         ApiClient client = new ApiClient();
@@ -39,14 +37,13 @@ public class CreateCommentsTests {
     @Test
     public void createCommentReturns201AndValidSchema() {
 
+        AiScenarioGenerator.attachSuggestedScenarios("Comments API — Create");
+
         String name;
         String email;
         String body;
         int postId;
 
-        // ============================================================
-        // AI Data Integration (config-driven)
-        // ============================================================
         if (ConfigManager.isAiDataEnabled()) {
 
             Map<String, Object> aiComment = AiDataGenerator.generateCommentPayload();
@@ -62,7 +59,6 @@ public class CreateCommentsTests {
             AllureApiLogger.attachText("AI Generated PostId", String.valueOf(postId));
 
         } else {
-            // Fallback to static values if AI is disabled
             name = "Test User";
             email = "test@example.com";
             body = "This is a test comment.";
@@ -91,6 +87,8 @@ public class CreateCommentsTests {
     @Test
     public void createCommentWithEmptyNameStillReturns201() {
 
+        AiScenarioGenerator.attachSuggestedScenarios("Comments API — Create");
+
         ApiResponse response = commentsApi.createComment(
                 1,
                 "",
@@ -112,6 +110,8 @@ public class CreateCommentsTests {
     @Description("Validates behavior when creating a comment with a very long body.")
     @Test
     public void createCommentWithVeryLongBodyReturns201() {
+
+        AiScenarioGenerator.attachSuggestedScenarios("Comments API — Create");
 
         String longBody = AiDataGenerator.generateLongString(2000);
 
@@ -142,6 +142,8 @@ public class CreateCommentsTests {
     @Test
     public void createCommentWithInvalidJsonReturnsError() {
 
+        AiScenarioGenerator.attachSuggestedScenarios("Comments API — Create");
+
         String invalidJson = "{ invalid json }";
 
         AllureApiLogger.attachText("Invalid JSON Payload", invalidJson);
@@ -161,6 +163,8 @@ public class CreateCommentsTests {
     @Description("Validates behavior when creating a comment with missing fields in the payload.")
     @Test
     public void createCommentWithMissingFieldsReturns201OrError() {
+
+        AiScenarioGenerator.attachSuggestedScenarios("Comments API — Create");
 
         String payload = "{ \"postId\": 1 }";
 

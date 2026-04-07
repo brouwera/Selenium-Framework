@@ -33,6 +33,9 @@
         <jackson.version>2.17.0</jackson.version>
         <everit.schema.version>1.14.2</everit.schema.version>
         <orgjson.version>20231013</orgjson.version>
+
+        <!-- Allure results directory -->
+        <allure.results.directory>allure-results</allure.results.directory>
     </properties>
 
     <!-- ========================================================= -->
@@ -97,50 +100,34 @@
             <version>3.0.0</version>
         </dependency>
 
-        <!-- ========================================================= -->
-        <!--                           LOGGING                         -->
-        <!-- ========================================================= -->
-
-        <!-- SLF4J API -->
+        <!-- Logging -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
             <version>${slf4j.version}</version>
         </dependency>
-
-        <!-- Logback Core -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-core</artifactId>
             <version>${logback.version}</version>
         </dependency>
-
-        <!-- Logback Classic -->
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
             <version>${logback.version}</version>
         </dependency>
 
-        <!-- ========================================================= -->
-        <!--                     JSON / SCHEMA SUPPORT                -->
-        <!-- ========================================================= -->
-
-        <!-- Jackson for JSON parsing -->
+        <!-- JSON / Schema -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
             <version>${jackson.version}</version>
         </dependency>
-
-        <!-- JSON Schema validation -->
         <dependency>
             <groupId>com.github.erosb</groupId>
             <artifactId>everit-json-schema</artifactId>
             <version>${everit.schema.version}</version>
         </dependency>
-
-        <!-- org.json -->
         <dependency>
             <groupId>org.json</groupId>
             <artifactId>json</artifactId>
@@ -153,7 +140,6 @@
     <!--                           BUILD                           -->
     <!-- ========================================================= -->
     <build>
-
         <plugins>
 
             <!-- Allure Maven Plugin -->
@@ -161,6 +147,10 @@
                 <groupId>io.qameta.allure</groupId>
                 <artifactId>allure-maven</artifactId>
                 <version>${allure.maven.version}</version>
+                <configuration>
+                    <resultsDirectory>${allure.results.directory}</resultsDirectory>
+                    <reportDirectory>${project.build.directory}/site/allure-maven-plugin</reportDirectory>
+                </configuration>
                 <executions>
                     <execution>
                         <id>allure</id>
@@ -188,25 +178,12 @@
 
                     <!-- Correct suite path -->
                     <suiteXmlFiles>
-                        <suiteXmlFile>src/test/resources/combined-suite.xml</suiteXmlFile>
+                        <suiteXmlFile>src/test/resources/testng.xml</suiteXmlFile>
                     </suiteXmlFiles>
 
-                    <!-- Day 46: Allure metadata + CI metadata -->
+                    <!-- Allure + reporting metadata -->
                     <systemPropertyVariables>
-                        <allure.results.directory>allure-results</allure.results.directory>
-
-                        <!-- Reporting metadata -->
-                        <browser.version>${browser.version}</browser.version>
-                        <build.timestamp>${build.timestamp}</build.timestamp>
-                        <os.version>${os.version}</os.version>
-
-                        <!-- CI metadata -->
-                        <ci.job.name>${ci.job.name}</ci.job.name>
-                        <ci.build.number>${ci.build.number}</ci.build.number>
-                        <ci.build.url>${ci.build.url}</ci.build.url>
-                        <ci.executor>${ci.executor}</ci.executor>
-                        <ci.branch>${ci.branch}</ci.branch>
-                        <ci.commit>${ci.commit}</ci.commit>
+                        <allure.results.directory>${allure.results.directory}</allure.results.directory>
                     </systemPropertyVariables>
 
                 </configuration>

@@ -1,15 +1,25 @@
 package dataproviders;
 
+import config.ConfigManager;
+import io.qameta.allure.Allure;
 import org.testng.annotations.DataProvider;
+import utils.AiDataGenerator;
+
+import java.util.Map;
 
 /**
  * Centralized DataProviders for API test cases.
- * Supports GET, POST, and negative test scenarios.
+ * Includes:
+ * - Original static providers (required by existing tests)
+ * - AI-generated positive payloads
+ * - AI-generated negative payloads
+ * - Hybrid (AI → fallback) providers
+ * - Static fallback data for deterministic runs
  */
 public class ApiDataProviders {
 
     // ============================================================
-    // GET ID Providers
+    // STATIC ID PROVIDERS (existing tests depend on these)
     // ============================================================
     @DataProvider(name = "validUserIds")
     public Object[][] validUserIds() {
@@ -33,7 +43,21 @@ public class ApiDataProviders {
     }
 
     // ============================================================
-    // POST Payload Providers
+    // STATIC NEGATIVE ID PROVIDER (required by NegativeApiTests)
+    // ============================================================
+    @DataProvider(name = "invalidIds")
+    public Object[][] invalidIds() {
+        return new Object[][]{
+                {-1},
+                {0},
+                {9999},
+                {123456},
+                {Integer.MAX_VALUE}
+        };
+    }
+
+    // ============================================================
+    // STATIC PAYLOAD PROVIDERS (fallback)
     // ============================================================
     @DataProvider(name = "createUserPayloads")
     public Object[][] createUserPayloads() {
@@ -54,19 +78,8 @@ public class ApiDataProviders {
     }
 
     // ============================================================
-    // Negative Test Providers
+    // STATIC NEGATIVE PAYLOAD PROVIDERS (required by NegativeApiTests)
     // ============================================================
-    @DataProvider(name = "invalidIds")
-    public Object[][] invalidIds() {
-        return new Object[][]{
-                {-1},
-                {0},
-                {9999},
-                {123456},
-                {Integer.MAX_VALUE}
-        };
-    }
-
     @DataProvider(name = "invalidAuthPayloads")
     public Object[][] invalidAuthPayloads() {
         return new Object[][]{
@@ -86,6 +99,177 @@ public class ApiDataProviders {
                 {1, "name", "", "body"},                       // empty email
                 {1, "name", "email@example.com", ""},          // empty body
                 {1, null, null, null}                          // all null
+        };
+    }
+
+    // ============================================================
+    // AI-GENERATED POSITIVE PAYLOADS
+    // ============================================================
+    @DataProvider(name = "createUserPayloadsAi")
+    public Object[][] createUserPayloadsAi() {
+
+        if (!ConfigManager.isAiDataEnabled()) {
+            throw new IllegalStateException("AI user payloads requested but aiDataEnabled=false");
+        }
+
+        Map<String, Object> user = AiDataGenerator.generateUserPayload();
+        Allure.addAttachment("AI User Payload", user.toString());
+
+        return new Object[][]{
+                {
+                        user.get("name"),
+                        user.get("username"),
+                        user.get("email")
+                }
+        };
+    }
+
+    @DataProvider(name = "createPostPayloadsAi")
+    public Object[][] createPostPayloadsAi() {
+
+        if (!ConfigManager.isAiDataEnabled()) {
+            throw new IllegalStateException("AI post payloads requested but aiDataEnabled=false");
+        }
+
+        Map<String, Object> post = AiDataGenerator.generatePostPayload();
+        Allure.addAttachment("AI Post Payload", post.toString());
+
+        return new Object[][]{
+                {
+                        post.get("title"),
+                        post.get("body"),
+                        post.get("userId")
+                }
+        };
+    }
+
+    @DataProvider(name = "createCommentPayloadsAi")
+    public Object[][] createCommentPayloadsAi() {
+
+        if (!ConfigManager.isAiDataEnabled()) {
+            throw new IllegalStateException("AI comment payloads requested but aiDataEnabled=false");
+        }
+
+        Map<String, Object> comment = AiDataGenerator.generateCommentPayload();
+        Allure.addAttachment("AI Comment Payload", comment.toString());
+
+        return new Object[][]{
+                {
+                        comment.get("postId"),
+                        comment.get("name"),
+                        comment.get("email"),
+                        comment.get("body")
+                }
+        };
+    }
+
+    // ============================================================
+    // AI-GENERATED NEGATIVE PAYLOADS
+    // ============================================================
+    @DataProvider(name = "invalidJsonAi")
+    public Object[][] invalidJsonAi() {
+
+        if (!ConfigManager.isAiDataEnabled()) {
+            throw new IllegalStateException("AI invalid JSON requested but aiDataEnabled=false");
+        }
+
+        String invalid = AiDataGenerator.generateInvalidJson();
+        Allure.addAttachment("AI Invalid JSON", invalid);
+
+        return new Object[][]{
+                {invalid}
+        };
+    }
+
+    @DataProvider(name = "maliciousPayloadsAi")
+    public Object[][] maliciousPayloadsAi() {
+
+        if (!ConfigManager.isAiDataEnabled()) {
+            throw new IllegalStateException("AI malicious payloads requested but aiDataEnabled=false");
+        }
+
+        String payload = AiDataGenerator.generateMaliciousPayload();
+        Allure.addAttachment("AI Malicious Payload", payload);
+
+        return new Object[][]{
+                {payload}
+        };
+    }
+
+    @DataProvider(name = "oversizedPayloadsAi")
+    public Object[][] oversizedPayloadsAi() {
+
+        if (!ConfigManager.isAiDataEnabled()) {
+            throw new IllegalStateException("AI oversized payloads requested but aiDataEnabled=false");
+        }
+
+        String longString = AiDataGenerator.generateLongString(500);
+        Allure.addAttachment("AI Oversized Payload", longString);
+
+        return new Object[][]{
+                {longString}
+        };
+    }
+
+    // ============================================================
+    // HYBRID PROVIDERS (AI → FALLBACK)
+    // ============================================================
+    @DataProvider(name = "createPostPayloadsHybrid")
+    public Object[][] createPostPayloadsHybrid() {
+
+        if (ConfigManager.isAiDataEnabled()) {
+            try {
+                Map<String, Object> post = AiDataGenerator.generatePostPayload();
+                Allure.addAttachment("Hybrid Post Payload (AI)", post.toString());
+
+                return new Object[][]{
+                        {
+                                post.get("title"),
+                                post.get("body"),
+                                post.get("userId")
+                        }
+                };
+            } catch (Exception ignored) {}
+        }
+
+        return createUserPayloads();
+    }
+
+    @DataProvider(name = "invalidJsonHybrid")
+    public Object[][] invalidJsonHybrid() {
+
+        if (ConfigManager.isAiDataEnabled()) {
+            try {
+                String invalid = AiDataGenerator.generateInvalidJson();
+                Allure.addAttachment("Hybrid Invalid JSON (AI)", invalid);
+
+                return new Object[][]{
+                        {invalid}
+                };
+            } catch (Exception ignored) {}
+        }
+
+        return new Object[][]{
+                {"{ invalid json }"}
+        };
+    }
+
+    @DataProvider(name = "maliciousPayloadsHybrid")
+    public Object[][] maliciousPayloadsHybrid() {
+
+        if (ConfigManager.isAiDataEnabled()) {
+            try {
+                String payload = AiDataGenerator.generateMaliciousPayload();
+                Allure.addAttachment("Hybrid Malicious Payload (AI)", payload);
+
+                return new Object[][]{
+                        {payload}
+                };
+            } catch (Exception ignored) {}
+        }
+
+        return new Object[][]{
+                {"{ \"attack\": \"<script>alert('xss')</script>\" }"}
         };
     }
 }

@@ -6,6 +6,7 @@ import io.qameta.allure.*;
 import org.testng.annotations.Test;
 import pages.DragAndDropPage;
 import pages.HomePage;
+import utils.AiScenarioGenerator;
 
 @Epic("Drag and Drop")
 @Feature("HTML5 Drag and Drop Behavior")
@@ -32,13 +33,12 @@ public class DragAndDropTest extends BaseTest {
     @Test
     public void testDragAtoB() {
 
-        // Arrange
+        AiScenarioGenerator.attachSuggestedScenarios("Drag and Drop Page");
+
         DragAndDropPage page = navigateToDragAndDropPage();
 
-        // Act
         page.dragAtoB();
 
-        // Assert
         AssertionHelper.assertTrue(
                 page.isColumnAHeader("B"),
                 "Column A should now contain header 'B' after drag"
@@ -59,13 +59,12 @@ public class DragAndDropTest extends BaseTest {
     @Test
     public void testDragBtoA() {
 
-        // Arrange
+        AiScenarioGenerator.attachSuggestedScenarios("Drag and Drop Page");
+
         DragAndDropPage page = navigateToDragAndDropPage();
 
-        // Act
         page.dragBtoA();
 
-        // Assert
         AssertionHelper.assertTrue(
                 page.isColumnAHeader("B"),
                 "Column A should contain header 'B' after drag"
@@ -86,13 +85,12 @@ public class DragAndDropTest extends BaseTest {
     @Test
     public void testDragUsingActionsFallback() {
 
-        // Arrange
+        AiScenarioGenerator.attachSuggestedScenarios("Drag and Drop Page");
+
         DragAndDropPage page = navigateToDragAndDropPage();
 
-        // Act
         page.dragAtoBWithActions();
 
-        // Assert
         AssertionHelper.assertTrue(
                 page.isColumnAHeader("B"),
                 "Column A should contain header 'B' after fallback drag"

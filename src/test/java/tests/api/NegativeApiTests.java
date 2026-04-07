@@ -7,6 +7,7 @@ import io.qameta.allure.*;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import utils.AiDataGenerator;
+import utils.AiScenarioGenerator;
 import utils.AllureApiLogger;
 
 @Epic("API Testing")
@@ -14,18 +15,12 @@ import utils.AllureApiLogger;
 @Owner("Adam Brouwer")
 public class NegativeApiTests {
 
-    // ============================================================
-    // Fields
-    // ============================================================
     private ApiClient client;
     private UsersApi usersApi;
     private PostsApi postsApi;
     private CommentsApi commentsApi;
     private AuthApi authApi;
 
-    // ============================================================
-    // Setup
-    // ============================================================
     @BeforeClass
     @Story("Initialize API service layer")
     @Severity(SeverityLevel.CRITICAL)
@@ -38,12 +33,15 @@ public class NegativeApiTests {
     }
 
     // ============================================================
-    // Invalid ID Tests (JSONPlaceholder returns 404)
+    // Invalid ID Tests
     // ============================================================
     @Test(dataProvider = "invalidIds", dataProviderClass = ApiDataProviders.class)
     @Story("GET /users/{id} with invalid ID")
     @Description("Verify GET /users/{id} returns 404 for invalid IDs.")
     public void testGetUser_InvalidId_ShouldReturn404(int id) {
+
+        AiScenarioGenerator.attachSuggestedScenarios("API — Negative Suite");
+
         var response = usersApi.getUserById(id);
         AssertionHelper.assertStatusCode(response, 404);
     }
@@ -52,6 +50,9 @@ public class NegativeApiTests {
     @Story("GET /posts/{id} with invalid ID")
     @Description("Verify GET /posts/{id} returns 404 for invalid IDs.")
     public void testGetPost_InvalidId_ShouldReturn404(int id) {
+
+        AiScenarioGenerator.attachSuggestedScenarios("API — Negative Suite");
+
         var response = postsApi.getPostById(id);
         AssertionHelper.assertStatusCode(response, 404);
     }
@@ -60,18 +61,23 @@ public class NegativeApiTests {
     @Story("GET /comments/{id} with invalid ID")
     @Description("Verify GET /comments/{id} returns 404 for invalid IDs.")
     public void testGetComment_InvalidId_ShouldReturn404(int id) {
+
+        AiScenarioGenerator.attachSuggestedScenarios("API — Negative Suite");
+
         var response = commentsApi.getCommentById(id);
         AssertionHelper.assertStatusCode(response, 404);
     }
 
     // ============================================================
-    // Invalid Payload Tests (JSONPlaceholder returns 201)
+    // Invalid Payload Tests
     // ============================================================
     @Test(dataProvider = "invalidCommentPayloads", dataProviderClass = ApiDataProviders.class)
     @Story("POST /comments with invalid payload")
     @Description("Verify POST /comments still returns 201 even with invalid payloads.")
     public void testCreateComment_InvalidPayload_ShouldStillReturn201(
             Integer postId, String name, String email, String body) {
+
+        AiScenarioGenerator.attachSuggestedScenarios("API — Negative Suite");
 
         var response = commentsApi.createComment(
                 postId == null ? 0 : postId,
@@ -95,6 +101,8 @@ public class NegativeApiTests {
     @Description("Verify POST /comments returns 201 or error when receiving an AI-generated malicious payload.")
     public void testCreateComment_MaliciousPayload_ShouldReturn201OrError() {
 
+        AiScenarioGenerator.attachSuggestedScenarios("API — Negative Suite");
+
         String maliciousPayload = AiDataGenerator.generateMaliciousPayload();
         AllureApiLogger.attachText("AI Generated Malicious Payload", maliciousPayload);
 
@@ -112,6 +120,8 @@ public class NegativeApiTests {
     @Story("POST /comments with AI-generated oversized payload")
     @Description("Verify POST /comments returns 201 or error when receiving an oversized AI-generated payload.")
     public void testCreateComment_OversizedPayload_ShouldReturn201OrError() {
+
+        AiScenarioGenerator.attachSuggestedScenarios("API — Negative Suite");
 
         String longName = AiDataGenerator.generateLongString(2000);
         String longBody = AiDataGenerator.generateLongString(5000);
@@ -139,12 +149,15 @@ public class NegativeApiTests {
     }
 
     // ============================================================
-    // Auth Tests (JSONPlaceholder has no auth → always 404)
+    // Auth Tests
     // ============================================================
     @Test(dataProvider = "invalidAuthPayloads", dataProviderClass = ApiDataProviders.class)
     @Story("POST /auth/login with invalid credentials")
     @Description("Verify POST /auth/login returns 404 because auth endpoints do not exist.")
     public void testLogin_InvalidCredentials_ShouldReturn404(String username, String password) {
+
+        AiScenarioGenerator.attachSuggestedScenarios("API — Negative Suite");
+
         var response = authApi.login(username, password);
         AssertionHelper.assertStatusCode(response, 404);
     }
@@ -153,6 +166,9 @@ public class NegativeApiTests {
     @Story("POST /auth/refresh with invalid token")
     @Description("Verify POST /auth/refresh returns 404 because auth endpoints do not exist.")
     public void testRefreshToken_InvalidToken_ShouldReturn404() {
+
+        AiScenarioGenerator.attachSuggestedScenarios("API — Negative Suite");
+
         var response = authApi.refreshToken("invalid-token");
         AssertionHelper.assertStatusCode(response, 404);
     }
@@ -161,17 +177,23 @@ public class NegativeApiTests {
     @Story("POST /auth/logout with invalid token")
     @Description("Verify POST /auth/logout returns 404 because auth endpoints do not exist.")
     public void testLogout_InvalidToken_ShouldReturn404() {
+
+        AiScenarioGenerator.attachSuggestedScenarios("API — Negative Suite");
+
         var response = authApi.logout("invalid-token");
         AssertionHelper.assertStatusCode(response, 404);
     }
 
     // ============================================================
-    // Missing Field Tests (JSONPlaceholder returns 201)
+    // Missing Field Tests
     // ============================================================
     @Test
     @Story("POST /users with missing fields")
     @Description("Verify POST /users still returns 201 even when fields are missing.")
     public void testCreateUser_MissingFields_ShouldStillReturn201() {
+
+        AiScenarioGenerator.attachSuggestedScenarios("API — Negative Suite");
+
         var response = usersApi.createUser("", "", "");
         AssertionHelper.assertEquals(
                 response.getStatusCode(),
@@ -181,12 +203,15 @@ public class NegativeApiTests {
     }
 
     // ============================================================
-    // Server Error Simulation (JSONPlaceholder returns 404)
+    // Server Error Simulation
     // ============================================================
     @Test
     @Story("GET /posts/trigger-500 (mocked server error)")
     @Description("Verify mocked server error endpoint returns 404 (endpoint does not exist).")
     public void testServerError_MockedEndpoint_ShouldReturn404() {
+
+        AiScenarioGenerator.attachSuggestedScenarios("API — Negative Suite");
+
         var response = postsApi.triggerServerError();
         AssertionHelper.assertStatusCode(response, 404);
     }

@@ -7,6 +7,7 @@ import helpers.AssertionHelper;
 import io.qameta.allure.*;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+import utils.AiScenarioGenerator;
 import utils.AllureApiLogger;
 
 @Epic("API")
@@ -16,9 +17,6 @@ public class DeletePostsTests {
 
     private PostsApi postsApi;
 
-    // ============================================================
-    // Setup
-    // ============================================================
     @BeforeClass
     public void setUp() {
         ApiClient client = new ApiClient();
@@ -33,6 +31,8 @@ public class DeletePostsTests {
     @Description("Validates that DELETE /posts/{id} returns a successful status code.")
     @Test
     public void deletePostReturns200() {
+
+        AiScenarioGenerator.attachSuggestedScenarios("Posts API — DELETE");
 
         ApiResponse response = postsApi.deleteRaw("posts/1");
 
@@ -54,6 +54,8 @@ public class DeletePostsTests {
     @Test
     public void deletePostWithIdZeroReturns404Or200() {
 
+        AiScenarioGenerator.attachSuggestedScenarios("Posts API — DELETE");
+
         ApiResponse response = postsApi.deleteRaw("posts/0");
 
         AllureApiLogger.attachJson("DELETE /posts/0 Response Body", response.getBody());
@@ -71,6 +73,8 @@ public class DeletePostsTests {
     @Description("Validates behavior when deleting a post with a very large ID.")
     @Test
     public void deletePostWithVeryLargeIdReturns404Or200() {
+
+        AiScenarioGenerator.attachSuggestedScenarios("Posts API — DELETE");
 
         ApiResponse response = postsApi.deleteRaw("posts/999999");
 
@@ -93,6 +97,8 @@ public class DeletePostsTests {
     @Test
     public void deletePostWithInvalidIdReturnsError() {
 
+        AiScenarioGenerator.attachSuggestedScenarios("Posts API — DELETE");
+
         ApiResponse response = postsApi.deleteRaw("posts/invalid-id");
 
         AllureApiLogger.attachText("DELETE /posts/invalid-id Response Body", response.getBody());
@@ -110,6 +116,8 @@ public class DeletePostsTests {
     @Description("Validates behavior when the DELETE endpoint is malformed.")
     @Test
     public void deletePostWithMalformedEndpointReturnsError() {
+
+        AiScenarioGenerator.attachSuggestedScenarios("Posts API — DELETE");
 
         ApiResponse response = postsApi.deleteRaw("posts//1");
 

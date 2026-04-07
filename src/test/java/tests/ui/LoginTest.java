@@ -11,6 +11,7 @@ import pages.HomePage;
 import pages.LoginPage;
 import pages.SuccessfulLoginPage;
 import utils.AiDataGenerator;
+import utils.AiScenarioGenerator;
 
 import java.util.Map;
 
@@ -39,29 +40,25 @@ public class LoginTest extends BaseTest {
     @Test(enabled = true)
     public void aiGeneratedNegativeLoginTest() {
 
-        // Skip if AI data is disabled
+        AiScenarioGenerator.attachSuggestedScenarios("Login Page");
+
         if (!ConfigManager.isAiDataEnabled()) {
             Allure.step("AI data generation disabled — skipping AI-driven negative login test.");
             return;
         }
 
-        // Arrange
         LoginPage loginPage = navigateToLoginPage();
 
-        // Generate AI-driven invalid login data
         Map<String, String> aiData = AiDataGenerator.generateInvalidLogin();
 
         String username = aiData.get("username");
         String password = aiData.get("password");
         String reason = aiData.get("reason");
 
-        // Attach AI payload to Allure
         Allure.addAttachment("AI-Generated Invalid Login Data", aiData.toString());
 
-        // Act
         String actualError = loginPage.loginExpectingFailure(username, password);
 
-        // Assert
         AssertionHelper.assertTrue(
                 loginPage.isErrorMessageVisible(),
                 "Error message should be visible for AI-generated invalid login"
@@ -84,6 +81,8 @@ public class LoginTest extends BaseTest {
     @Description("Validates login behavior using CSV-driven test data for both positive and negative scenarios.")
     @Test(dataProvider = "loginDataCsv", dataProviderClass = LoginDataProvider.class)
     public void loginDataDrivenTest(Map<String, String> data) {
+
+        AiScenarioGenerator.attachSuggestedScenarios("Login Page");
 
         String username = data.get("username");
         String password = data.get("password");
@@ -136,6 +135,9 @@ public class LoginTest extends BaseTest {
     @Description("Validates login behavior using JSON-driven test data (environment-specific + schema validated).")
     @Test(dataProvider = "loginDataJson", dataProviderClass = JsonDataProvider.class)
     public void loginDataDrivenTestJson(Map<String, String> data) {
+
+        AiScenarioGenerator.attachSuggestedScenarios("Login Page");
+
         loginDataDrivenTest(data);
     }
 
@@ -147,6 +149,8 @@ public class LoginTest extends BaseTest {
     @Description("Validates that a user can navigate through the site and successfully log in.")
     @Test
     public void userCanLoginThroughNavigationFlow() {
+
+        AiScenarioGenerator.attachSuggestedScenarios("Login Page");
 
         LoginPage loginPage = navigateToLoginPage();
         loginPage.attachBrowserConsoleLogs();
@@ -169,6 +173,8 @@ public class LoginTest extends BaseTest {
     @Description("Validates that a logged-in user can log out and return to the Login page.")
     @Test
     public void userCanLogoutAfterSuccessfulLogin() {
+
+        AiScenarioGenerator.attachSuggestedScenarios("Login Page");
 
         LoginPage loginPage = navigateToLoginPage();
         SuccessfulLoginPage successPage = loginPage.loginExpectingSuccess("student", "Password123");
@@ -195,6 +201,8 @@ public class LoginTest extends BaseTest {
     @Test
     public void invalidUsernameShowsError() {
 
+        AiScenarioGenerator.attachSuggestedScenarios("Login Page");
+
         LoginPage loginPage = navigateToLoginPage();
         String error = loginPage.loginExpectingFailure("wrongUser", "Password123");
 
@@ -208,6 +216,8 @@ public class LoginTest extends BaseTest {
     @Test
     public void invalidPasswordShowsError() {
 
+        AiScenarioGenerator.attachSuggestedScenarios("Login Page");
+
         LoginPage loginPage = navigateToLoginPage();
         String error = loginPage.loginExpectingFailure("student", "WrongPassword");
 
@@ -220,6 +230,8 @@ public class LoginTest extends BaseTest {
     @Description("Ensures that submitting empty login fields triggers the expected error message.")
     @Test
     public void emptyFieldsShowError() {
+
+        AiScenarioGenerator.attachSuggestedScenarios("Login Page");
 
         LoginPage loginPage = navigateToLoginPage();
         loginPage.clearLoginForm();
@@ -238,6 +250,8 @@ public class LoginTest extends BaseTest {
     @Description("Ensures that pressing Enter in the password field does not trigger a successful login.")
     @Test
     public void submitWithEnterKeyTriggersLogin() {
+
+        AiScenarioGenerator.attachSuggestedScenarios("Login Page");
 
         LoginPage loginPage = navigateToLoginPage();
 

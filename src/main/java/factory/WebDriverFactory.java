@@ -78,18 +78,18 @@ public class WebDriverFactory {
 
         options.setPageLoadStrategy(PageLoadStrategy.NORMAL);
 
-        // Local headless
-        if (headless) {
+        // Headless logic
+        if (headless || isCiEnvironment()) {
             options.addArguments("--headless=new");
         }
 
-        // CI always headless
-        if (isCiEnvironment()) {
-            options.addArguments("--headless=new");
-        }
+        // Modern, stable flags
+        options.addArguments("--remote-allow-origins=*");
+        options.addArguments("--disable-dev-shm-usage");
+        options.addArguments("--no-sandbox");
 
-        applyCiSafeFlags(options);
-        applyWindowSize(options);
+        // Window size
+        options.addArguments("--window-size=" + WINDOW_WIDTH + "," + WINDOW_HEIGHT);
 
         return options;
     }
@@ -118,7 +118,9 @@ public class WebDriverFactory {
             options.addArguments("-headless");
         }
 
-        applyWindowSize(options);
+        options.addArguments("--width=" + WINDOW_WIDTH);
+        options.addArguments("--height=" + WINDOW_HEIGHT);
+
         return options;
     }
 
@@ -146,8 +148,10 @@ public class WebDriverFactory {
             options.addArguments("--headless=new");
         }
 
-        applyCiSafeFlags(options);
-        applyWindowSize(options);
+        options.addArguments("--remote-allow-origins=*");
+        options.addArguments("--disable-dev-shm-usage");
+        options.addArguments("--no-sandbox");
+        options.addArguments("--window-size=" + WINDOW_WIDTH + "," + WINDOW_HEIGHT);
 
         return options;
     }
@@ -207,41 +211,6 @@ public class WebDriverFactory {
         driver.manage().timeouts().pageLoadTimeout(pageLoad);
         driver.manage().timeouts().scriptTimeout(script);
         driver.manage().timeouts().implicitlyWait(Duration.ZERO);
-    }
-
-    private static void applyCiSafeFlags(ChromeOptions options) {
-        options.addArguments("--disable-gpu");
-        options.addArguments("--no-sandbox");
-        options.addArguments("--disable-dev-shm-usage");
-        options.addArguments("--disable-extensions");
-        options.addArguments("--disable-infobars");
-        options.addArguments("--remote-allow-origins=*");
-        options.addArguments("--disable-software-rasterizer");
-        options.addArguments("--disable-backgrounding-occluded-windows");
-        options.addArguments("--disable-background-timer-throttling");
-        options.addArguments("--disable-renderer-backgrounding");
-    }
-
-    private static void applyCiSafeFlags(EdgeOptions options) {
-        options.addArguments("--disable-gpu");
-        options.addArguments("--no-sandbox");
-        options.addArguments("--disable-dev-shm-usage");
-        options.addArguments("--disable-extensions");
-        options.addArguments("--disable-infobars");
-        options.addArguments("--remote-allow-origins=*");
-    }
-
-    private static void applyWindowSize(ChromeOptions options) {
-        options.addArguments("--window-size=" + WINDOW_WIDTH + "," + WINDOW_HEIGHT);
-    }
-
-    private static void applyWindowSize(EdgeOptions options) {
-        options.addArguments("--window-size=" + WINDOW_WIDTH + "," + WINDOW_HEIGHT);
-    }
-
-    private static void applyWindowSize(FirefoxOptions options) {
-        options.addArguments("--width=" + WINDOW_WIDTH);
-        options.addArguments("--height=" + WINDOW_HEIGHT);
     }
 
     // ============================================================

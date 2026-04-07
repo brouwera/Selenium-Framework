@@ -9,6 +9,7 @@ import io.qameta.allure.*;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 import utils.AiDataGenerator;
+import utils.AiScenarioGenerator;
 import utils.AllureApiLogger;
 import utils.SchemaValidator;
 
@@ -21,9 +22,6 @@ public class CreatePostsTests {
 
     private PostsApi postsApi;
 
-    // ============================================================
-    // Setup
-    // ============================================================
     @BeforeClass
     public void setUp() {
         ApiClient client = new ApiClient();
@@ -39,13 +37,12 @@ public class CreatePostsTests {
     @Test
     public void createPostReturns201AndValidSchema() {
 
+        AiScenarioGenerator.attachSuggestedScenarios("Posts API — Create");
+
         String title;
         String body;
         int userId;
 
-        // ============================================================
-        // AI Data Integration (config-driven)
-        // ============================================================
         if (ConfigManager.isAiDataEnabled()) {
 
             Map<String, Object> aiPost = AiDataGenerator.generatePostPayload();
@@ -59,7 +56,6 @@ public class CreatePostsTests {
             AllureApiLogger.attachText("AI Generated UserId", String.valueOf(userId));
 
         } else {
-            // Fallback to static values if AI is disabled
             title = "My New Post";
             body = "This is the body of the new post.";
             userId = 1;
@@ -87,6 +83,8 @@ public class CreatePostsTests {
     @Test
     public void createPostWithEmptyTitleStillReturns201() {
 
+        AiScenarioGenerator.attachSuggestedScenarios("Posts API — Create");
+
         ApiResponse response = postsApi.createPost(
                 "",
                 "Body with empty title",
@@ -107,6 +105,8 @@ public class CreatePostsTests {
     @Description("Validates behavior when creating a post with a very long title.")
     @Test
     public void createPostWithVeryLongTitleReturns201() {
+
+        AiScenarioGenerator.attachSuggestedScenarios("Posts API — Create");
 
         String longTitle = "A".repeat(500);
 
@@ -136,6 +136,8 @@ public class CreatePostsTests {
     @Test
     public void createPostWithInvalidJsonReturnsError() {
 
+        AiScenarioGenerator.attachSuggestedScenarios("Posts API — Create");
+
         String invalidJson = "{ invalid json }";
 
         AllureApiLogger.attachText("Invalid JSON Payload", invalidJson);
@@ -155,6 +157,8 @@ public class CreatePostsTests {
     @Description("Validates behavior when creating a post with missing fields in the payload.")
     @Test
     public void createPostWithMissingFieldsReturns201OrError() {
+
+        AiScenarioGenerator.attachSuggestedScenarios("Posts API — Create");
 
         String payload = "{ \"userId\": 1 }";
 

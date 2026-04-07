@@ -55,17 +55,32 @@ public abstract class BasePage {
                 .replace(": ", "=") + "]";
     }
 
+    // ============================================================
+    // Allure Step Wrapper (void)
+    // ============================================================
     protected void step(String action, Runnable runnable) {
         int stepNum = stepCounter.get().getAndIncrement();
         long start = System.currentTimeMillis();
+
+        // Emit to Allure
+        Allure.step(String.format("[%02d] %s", stepNum, action));
+
         runnable.run();
+
         long end = System.currentTimeMillis();
         log.info("[{}] {} ({} ms)", String.format("%02d", stepNum), action, end - start);
     }
 
+    // ============================================================
+    // Allure Step Wrapper (returning value)
+    // ============================================================
     private <T> T stepReturn(String action, SupplierWithException<T> supplier) {
         int stepNum = stepCounter.get().getAndIncrement();
         long start = System.currentTimeMillis();
+
+        // Emit to Allure
+        Allure.step(String.format("[%02d] %s", stepNum, action));
+
         try {
             T result = supplier.get();
             long end = System.currentTimeMillis();
@@ -289,16 +304,10 @@ public abstract class BasePage {
         );
     }
 
-    // ============================================================
-    // Generic Condition Wait Helper
-    // ============================================================
     protected void waitForCondition(java.util.function.Function<WebDriver, Boolean> condition) {
         step("WAIT custom condition", () -> wait.until(condition));
     }
 
-    // ============================================================
-    // Visibility wait for error message elements
-    // ============================================================
     protected void waitForErrorMessage(By locator) {
         step("WAIT error message visible " + fmt(locator), () ->
                 wait.until(ExpectedConditions.visibilityOfElementLocated(locator))

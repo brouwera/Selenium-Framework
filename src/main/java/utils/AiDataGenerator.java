@@ -182,6 +182,56 @@ public final class AiDataGenerator {
     }
 
     // ============================================================
+    // AI Scenario Suggestions
+    // ============================================================
+
+    public static List<String> generateScenarioSuggestions(String featureName) {
+
+        if (featureName == null) {
+            return List.of("No feature name provided.");
+        }
+
+        switch (featureName.toLowerCase()) {
+
+            case "login page":
+                return List.of(
+                        "Attempt login with leading/trailing spaces",
+                        "Attempt login with Unicode characters",
+                        "Attempt login with SQL injection patterns",
+                        "Attempt login with extremely long username",
+                        "Attempt login with valid username but invalid password"
+                );
+
+            case "users api — invalid id":
+                return List.of(
+                        "Request user with negative ID",
+                        "Request user with extremely large ID",
+                        "Request user with alphanumeric ID",
+                        "Request user with special characters",
+                        "Request user with null ID"
+                );
+
+            case "table sorting":
+                return List.of(
+                        "Sort table with mixed numeric and text values",
+                        "Sort table with empty cells",
+                        "Sort table with duplicate values",
+                        "Sort table after filtering",
+                        "Sort table after resizing columns"
+                );
+
+            default:
+                return List.of(
+                        "No predefined scenarios — consider adding more cases.",
+                        "Try boundary values.",
+                        "Try invalid formats.",
+                        "Try concurrency or rapid interactions.",
+                        "Try unexpected user flows."
+                );
+        }
+    }
+
+    // ============================================================
     // PUBLIC API — EXISTING (API TESTS)
     // ============================================================
 

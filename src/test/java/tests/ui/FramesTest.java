@@ -7,6 +7,7 @@ import org.testng.annotations.Test;
 import pages.FramesPage;
 import pages.NestedFramesPage;
 import pages.IFramePage;
+import utils.AiScenarioGenerator;
 
 @Epic("Frames")
 @Feature("Nested Frames and iFrame Editor")
@@ -29,6 +30,8 @@ public class FramesTest extends BaseTest {
     @Description("Validate that LEFT, MIDDLE, RIGHT, and BOTTOM frame texts are correct.")
     @Test
     public void testNestedFrames() {
+
+        AiScenarioGenerator.attachSuggestedScenarios("Frames Page");
 
         FramesPage framesPage = navigateToFramesPage();
         NestedFramesPage nested = framesPage.clickNestedFrames();
@@ -66,6 +69,8 @@ public class FramesTest extends BaseTest {
     @Description("Validate that the TinyMCE editor loads with the expected default text.")
     @Test
     public void testIFrameDefaultText() {
+
+        AiScenarioGenerator.attachSuggestedScenarios("Frames Page");
 
         FramesPage framesPage = navigateToFramesPage();
         IFramePage iframe = framesPage.clickIFrame();
