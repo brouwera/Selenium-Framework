@@ -65,7 +65,15 @@ public class CreateCommentsTests {
             postId = 1;
         }
 
-        ApiResponse response = commentsApi.createComment(postId, name, email, body);
+        // NEW: Build Map payload
+        Map<String, Object> payload = Map.of(
+                "postId", postId,
+                "name", name,
+                "email", email,
+                "body", body
+        );
+
+        ApiResponse response = commentsApi.createComment(payload);
 
         AllureApiLogger.attachJson("POST /comments Response Body", response.getBody());
 
@@ -89,12 +97,14 @@ public class CreateCommentsTests {
 
         AiScenarioGenerator.attachSuggestedScenarios("Comments API — Create");
 
-        ApiResponse response = commentsApi.createComment(
-                1,
-                "",
-                "test@example.com",
-                "Body with empty name"
+        Map<String, Object> payload = Map.of(
+                "postId", 1,
+                "name", "",
+                "email", "test@example.com",
+                "body", "Body with empty name"
         );
+
+        ApiResponse response = commentsApi.createComment(payload);
 
         AllureApiLogger.attachJson("POST /comments (Empty Name) Response Body", response.getBody());
 
@@ -117,12 +127,14 @@ public class CreateCommentsTests {
 
         AllureApiLogger.attachText("Generated Long Body (2000 chars)", longBody);
 
-        ApiResponse response = commentsApi.createComment(
-                1,
-                "Test User",
-                "test@example.com",
-                longBody
+        Map<String, Object> payload = Map.of(
+                "postId", 1,
+                "name", "Test User",
+                "email", "test@example.com",
+                "body", longBody
         );
+
+        ApiResponse response = commentsApi.createComment(payload);
 
         AllureApiLogger.attachJson("POST /comments (Long Body) Response Body", response.getBody());
 

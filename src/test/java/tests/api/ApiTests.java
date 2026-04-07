@@ -13,6 +13,8 @@ import utils.AiScenarioGenerator;
 import utils.AllureApiLogger;
 import utils.SchemaValidator;
 
+import java.util.Map;
+
 @Epic("API Testing")
 @Feature("JSONPlaceholder API Suite")
 @Owner("Adam Brouwer")
@@ -128,7 +130,15 @@ public class ApiTests {
 
         AiScenarioGenerator.attachSuggestedScenarios("JSONPlaceholder API — General Suite");
 
-        var response = commentsApi.createComment(postId, name, email, body);
+        // Convert old-style parameters into a Map payload
+        Map<String, Object> payload = Map.of(
+                "postId", postId,
+                "name", name,
+                "email", email,
+                "body", body
+        );
+
+        var response = commentsApi.createComment(payload);
 
         AllureApiLogger.attachJson("POST /comments Response Body", response.getBody());
 

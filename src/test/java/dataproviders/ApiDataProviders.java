@@ -78,27 +78,50 @@ public class ApiDataProviders {
     }
 
     // ============================================================
-    // STATIC NEGATIVE PAYLOAD PROVIDERS (required by NegativeApiTests)
+    // STATIC NEGATIVE PAYLOAD PROVIDERS (UPDATED — MAP-BASED)
     // ============================================================
+
     @DataProvider(name = "invalidAuthPayloads")
     public Object[][] invalidAuthPayloads() {
         return new Object[][]{
-                {"", ""},                     // empty username/password
-                {"user", ""},                 // missing password
-                {"", "password"},             // missing username
-                {"invalid", "invalid"},       // wrong credentials
-                {null, null}                  // null values
+                // Empty fields
+                { Map.of("username", "", "password", "") },
+
+                // Missing password
+                { Map.of("username", "user") },
+
+                // Missing username
+                { Map.of("password", "password") },
+
+                // Wrong credentials
+                { Map.of("username", "invalid", "password", "invalid") },
+
+                // Wrong types
+                { Map.of("username", 123, "password", true) },
+
+                // Extra unexpected fields
+                { Map.of("username", "student", "password", "Password123", "extra", "value") }
         };
     }
 
     @DataProvider(name = "invalidCommentPayloads")
     public Object[][] invalidCommentPayloads() {
         return new Object[][]{
-                {null, "name", "email@example.com", "body"},   // null postId
-                {1, "", "email@example.com", "body"},          // empty name
-                {1, "name", "", "body"},                       // empty email
-                {1, "name", "email@example.com", ""},          // empty body
-                {1, null, null, null}                          // all null
+                // Empty strings
+                { Map.of("postId", "", "name", "", "email", "", "body", "") },
+
+                // Wrong types
+                { Map.of("postId", -1, "name", 123, "email", true, "body", 999) },
+
+                // Missing fields
+                { Map.of("postId", 1, "name", "x") },
+                { Map.of("email", "bad@example.com", "body", "test") },
+
+                // Invalid email format
+                { Map.of("postId", 1, "name", "Adam", "email", "not-an-email", "body", "test") },
+
+                // Extra unexpected fields
+                { Map.of("postId", 1, "name", "Adam", "email", "test@test.com", "body", "test", "extra", "value") }
         };
     }
 

@@ -10,6 +10,8 @@ import utils.AiDataGenerator;
 import utils.AiScenarioGenerator;
 import utils.AllureApiLogger;
 
+import java.util.Map;
+
 @Epic("API Testing")
 @Feature("Negative Testing Suite")
 @Owner("Adam Brouwer")
@@ -69,22 +71,16 @@ public class NegativeApiTests {
     }
 
     // ============================================================
-    // Invalid Payload Tests
+    // Invalid Payload Tests (UPDATED TO USE MAP)
     // ============================================================
     @Test(dataProvider = "invalidCommentPayloads", dataProviderClass = ApiDataProviders.class)
     @Story("POST /comments with invalid payload")
     @Description("Verify POST /comments still returns 201 even with invalid payloads.")
-    public void testCreateComment_InvalidPayload_ShouldStillReturn201(
-            Integer postId, String name, String email, String body) {
+    public void testCreateComment_InvalidPayload_ShouldStillReturn201(Map<String, Object> payload) {
 
         AiScenarioGenerator.attachSuggestedScenarios("API — Negative Suite");
 
-        var response = commentsApi.createComment(
-                postId == null ? 0 : postId,
-                name,
-                email,
-                body
-        );
+        var response = commentsApi.createComment(payload);
 
         AssertionHelper.assertEquals(
                 response.getStatusCode(),
@@ -149,16 +145,16 @@ public class NegativeApiTests {
     }
 
     // ============================================================
-    // Auth Tests
+    // Auth Tests (UPDATED TO USE MAP)
     // ============================================================
     @Test(dataProvider = "invalidAuthPayloads", dataProviderClass = ApiDataProviders.class)
     @Story("POST /auth/login with invalid credentials")
     @Description("Verify POST /auth/login returns 404 because auth endpoints do not exist.")
-    public void testLogin_InvalidCredentials_ShouldReturn404(String username, String password) {
+    public void testLogin_InvalidCredentials_ShouldReturn404(Map<String, Object> payload) {
 
         AiScenarioGenerator.attachSuggestedScenarios("API — Negative Suite");
 
-        var response = authApi.login(username, password);
+        var response = authApi.login(payload);
         AssertionHelper.assertStatusCode(response, 404);
     }
 

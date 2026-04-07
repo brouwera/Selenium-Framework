@@ -3,6 +3,8 @@ package api;
 import io.qameta.allure.Owner;
 import io.qameta.allure.Step;
 
+import java.util.Map;
+
 /**
  * Mock authentication service-layer class.
  * JSONPlaceholder does not support real authentication,
@@ -15,8 +17,11 @@ public class AuthApi extends BaseApi {
         super(client);
     }
 
-    @Step("Send mocked login request for user: {username}")
-    public ApiResponse login(String username, String password) {
+    // ============================================================
+    // LOGIN (UPDATED TO ACCEPT MAP PAYLOAD)
+    // ============================================================
+    @Step("Send mocked login request with payload map")
+    public ApiResponse login(Map<String, Object> payload) {
         return new ApiResponse(
                 404,
                 "{\"error\":\"Auth endpoint does not exist\"}",
@@ -25,6 +30,9 @@ public class AuthApi extends BaseApi {
         );
     }
 
+    // ============================================================
+    // REFRESH TOKEN
+    // ============================================================
     @Step("Send mocked refresh token request")
     public ApiResponse refreshToken(String refreshToken) {
         return new ApiResponse(
@@ -35,6 +43,9 @@ public class AuthApi extends BaseApi {
         );
     }
 
+    // ============================================================
+    // LOGOUT
+    // ============================================================
     @Step("Send mocked logout request")
     public ApiResponse logout(String token) {
         return new ApiResponse(

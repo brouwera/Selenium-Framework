@@ -1871,7 +1871,11 @@ mvn clean test -Denv=local -Dbrowser=chrome -Dheadless=true
 [Day 50](#day-50) ·
 [Day 51](#day-51) ·
 [Day 52](#day-52) ·
-[Day 53](#day-53)
+[Day 53](#day-53) ·
+[Day 54](#day-54) ·
+[Day 55](#day-55) ·
+[Day 56](#day-56) ·
+[Day 57](#day-57)
 
 <p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
 
@@ -2535,6 +2539,20 @@ Key achievements:
 - Executed the full suite of **184 UI and API tests** with **zero failures**, confirming end‑to‑end stability after the negative scenario cleanup
 
 Day 56 completes the negative‑scenario hardening milestone by delivering a clean separation between valid and invalid test flows, ensuring that the Table module behaves predictably under all conditions. The framework now supports robust positive testing, safe negative testing, and fully deterministic AI‑driven execution across the entire suite.
+
+---
+
+### **Day 57 — API Modernization, Framework Stabilization, and Full Environment Setup**
+Day 57 focused on modernizing the API service layer, migrating all dependent test suites to the new Map‑based payload architecture, and validating that the entire framework runs cleanly on the newly configured machine. This included converting legacy multi‑parameter API methods to Map‑driven request models, updating all API test classes to match the new signatures, and ensuring consistent behavior across both AI‑generated and static test paths.
+
+Key achievements:
+- Updated **CommentsApi** and **AuthApi** to use modern, Map‑based payloads, eliminating brittle multi‑parameter method signatures and enabling flexible request construction
+- Migrated all dependent API test classes (**ApiTests**, **CreateCommentsTests**, **NegativeApiTests**, and others) to the new payload format, ensuring full compatibility with the updated API layer
+- Cleaned up and aligned all DataProviders to support the new architecture, removing legacy parameter mismatches and stabilizing TestNG execution
+- Completed full environment setup on the new machine (JDK, Maven, IntelliJ, Git, drivers), ensuring consistent build and execution behavior across local and CI environments
+- Executed the entire suite of **186 UI and API tests** with **zero failures**, confirming full framework stability after the API modernization and environment migration
+
+Day 57 completes the API‑layer modernization milestone by delivering a unified, Map‑driven request model, consistent test behavior across all modules, and a fully operational development environment. With the framework now stable end‑to‑end, the next step is validating CI pipeline execution and ensuring Allure reporting behaves consistently across environments.
 
 <p align="right"><a href="#selenium-test-automation-framework">⬆️ Back to Top</a></p>
 
