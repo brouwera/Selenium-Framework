@@ -32,18 +32,21 @@ jobs:
           path: allure-history
         continue-on-error: true
 
+      # -------------------------------
+      # Run full test suite
+      # -------------------------------
       - name: Run tests
         run: mvn clean test
 
       # -------------------------------
-      # Upload Allure results
+      # Upload Allure results (ROOT)
       # -------------------------------
       - name: Upload Allure Results
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: allure-results
-          path: target/allure-results
+          path: allure-results
 
       # -------------------------------
       # Upload Surefire results
@@ -61,9 +64,9 @@ jobs:
       - name: Prepare Allure History
         if: always()
         run: |
-          mkdir -p target/allure-results/history
+          mkdir -p allure-results/history
           if [ -d "allure-history" ]; then
-            cp -R allure-history/* target/allure-results/history || true
+            cp -R allure-history/* allure-results/history || true
           fi
 
       # -------------------------------
@@ -74,4 +77,4 @@ jobs:
         if: always()
         with:
           name: allure-history
-          path: target/allure-results/history
+          path: allure-results/history
