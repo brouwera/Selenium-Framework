@@ -103,6 +103,9 @@ A clean, maintainable, and production‑ready Selenium + TestNG automation frame
 
 # ⭐ Executive Summary
 
+**Full Executive Summary Document**  
+[Executive Summary (PDF)](docs/Executive%20Summary.pdf)
+
 This engineering log documents the evolution of a modern, enterprise‑grade Selenium + TestNG automation framework built over a structured 60‑day development plan. The project began with a single working login test and matured into a fully modular, production‑ready UI + API automation platform featuring:
 
 - A complete Page Object Model architecture with defensive waits and step‑level tracing
@@ -124,6 +127,9 @@ Across 60 days, the framework progressed through iterative enhancements, archite
 ---
 
 # 🚀 Project Overview
+
+**Full Project Summary / Architecture Document**  
+[Project Summary (PDF)](docs/Project%20Summary.pdf)
 
 This framework automates multiple real‑world UI and API modules across two applications:
 
